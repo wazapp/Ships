@@ -106,7 +106,7 @@ final class ShipUsingMatrix {
 		clearRepresentation();
 
 		if ( horizontal ) {
-			fillRepresentation(xcolposition,yrowposition , false);
+			fillRepresentation(xcolposition, yrowposition , false);
 
 		} else {
 			fillRepresentation(xcolposition, yrowposition, true);
