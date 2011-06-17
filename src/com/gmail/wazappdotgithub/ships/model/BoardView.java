@@ -125,4 +125,8 @@ public final class BoardView extends View implements OnTouchListener{
 		return true;
 	}
 
+	public int shipIdUnderCursor() {
+		return board.getShipId(currentTouchCol, currentTouchRow);
+	}
+
 }
