@@ -1,5 +1,6 @@
 package com.gmail.wazappdotgithub.ships.model;
 
+import com.gmail.wazappdotgithub.ships.PreGame;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 
 import android.content.Context;
@@ -29,7 +30,7 @@ public final class BoardView extends View implements OnTouchListener{
 	
 	private Rect selectRow = new Rect();
 	private Rect selectCol = new Rect();
-	private IBoard board = new BoardUsingMatrix(); // TODO move...
+	private IBoard board = PreGame.board;
 	
 	private int selectedShip = -1;
 	private int currentTouchRow = 0;
