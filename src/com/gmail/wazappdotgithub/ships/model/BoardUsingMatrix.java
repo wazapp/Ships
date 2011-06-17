@@ -1,11 +1,13 @@
 package com.gmail.wazappdotgithub.ships.model;
 
+import java.util.Random;
+
 import com.gmail.wazappdotgithub.ships.common.Constants;
 /**
  * An IBoard implementation that use a boolean matrix as model.
  * @author Tor Hammar wazapp github at gmail com
  */
-final class BoardUsingMatrix implements IBoard {
+public final class BoardUsingMatrix implements IBoard {
 	/* internal model where board[xcoordinate][ycoordinate] (or column, row) 
 	 * (x,y) as seen on screen portrait mode, x is (horizontal,vertical)
 	 */
@@ -165,8 +167,50 @@ final class BoardUsingMatrix implements IBoard {
 
 	@Override
 	public void randomiseShipsLocations() {
-		//TODO
+		// randomize ship rotation and position 
+		if ( ! isFinal ) {
+			Random r = new Random(System.currentTimeMillis());
+			int dsn = Constants.DEFAULT_SHIPS_NUM;
+			int dbs = Constants.DEFAULT_BOARD_SIZE;
+			/*
+			 * Cannot use moveOK, since it will access null in ships[]
+			 * solutions ?
+			 * modify this class to deal with null elements (some methods need to change)
+			 * let all the elements be the same ship (!!)
+			 * do not use moveOk, rewrite much of that code
+			 * enable empty ships instead of nullvalue
+			 * let ships grow dynamically, adding new ships to the last position in the array
+			 *			
+			 * start with the largest ship and fill the array with it, same position
+			 */
+			
+			for (int i = dsn - 1; i > -1; i--) {
+				// Start with the largest ship, and create a new instance
+				ships[i] = ShipUsingMatrix.newInstance(Constants.DEFAULT_SHIPS[i], i);
+				
+				if ( i == dsn - 1 ) // only once, ensure no null's
+					cloneLayerToAllPositions(i);
+	
+				//the random code
+				boolean horizontal = r.nextInt(dsn) > ( dsn / 2 );
+				if ( horizontal )
+					while( ! moveShip(i, r.nextInt(dbs - ships[i].size), r.nextInt(dbs), horizontal) )
+						;
+				else
+					while( ! moveShip(i, r.nextInt(dbs), r.nextInt(dbs - ships[i].size), horizontal) )
+						;
+				
+				//need to ensure we write the first entry to all positions in the array after random accept
+				if ( i == dsn - 1 ) // only once, ensure no null's
+					cloneLayerToAllPositions(i);
+			}
+		}
 	}
-
+	
+	private void cloneLayerToAllPositions(int layer) {
+			for (int a = 0 ; a < Constants.DEFAULT_SHIPS_NUM ; a++ )
+				ships[a] = ships[layer];
+	}
+	
 }
 
