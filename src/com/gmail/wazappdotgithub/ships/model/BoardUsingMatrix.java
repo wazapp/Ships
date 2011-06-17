@@ -45,7 +45,7 @@ public final class BoardUsingMatrix implements IBoard {
 	@Override
 	public boolean moveShip(int id, int xcoordinate, int ycoordinate, boolean horizontal) {
 		if ( id > -1 ) {
-			if ( moveOK(id,xcoordinate,ycoordinate,horizontal) ) {
+			if ( moveOK(id,xcoordinate,ycoordinate,horizontal,false) ) {
 				ships[id].moveTo(xcoordinate, ycoordinate, horizontal);
 				return true;
 			}
@@ -75,18 +75,20 @@ public final class BoardUsingMatrix implements IBoard {
 		return -1;
 	}
 
-	private boolean moveOK(int id, int xcoordinate, int ycoordinate, boolean horizontal) {
+	private boolean moveOK(int id, int xcoordinate, int ycoordinate, boolean horizontal, boolean rotateOrder) {
 		if (isFinal)
 			return false;
 		if ( ! coordinatesOk(xcoordinate, ycoordinate))
 			return false;
 		if ( id < 0 ||  ! (id < Constants.DEFAULT_SHIPS_NUM))
 			return false;
-		if (xcoordinate == ships[id].xcolposition && ycoordinate == ships[id].yrowposition)
-			return false;
+		
+		if (!rotateOrder)
+			if (xcoordinate == ships[id].xcolposition && ycoordinate == ships[id].yrowposition)
+				return false;
 		
 		//deep check
-		if ( horizontal ) {     
+		if ( horizontal ) {
 			if ( ! (xcoordinate + ships[id].size <= Constants.DEFAULT_BOARD_SIZE) )
 				return false;
 		} else { 
@@ -100,18 +102,17 @@ public final class BoardUsingMatrix implements IBoard {
 		for( ShipUsingMatrix othership : ships ) {
 			if ( othership != ships[id] ) { // exclude the ship itself
 				if ( horizontal ) {
-//					if ( othership.yrowposition == ycoordinate ) // only if the ship is in the target row
-						for (int i = 0; i < ships[id].size ; i++) {
-							if ( othership.ship[xcoordinate + i][ycoordinate] == true )	// check horizontal positions
-								return false;
-						}
+
+					for (int i = 0; i < ships[id].size ; i++) {
+						if ( othership.ship[xcoordinate + i][ycoordinate] == true )	// check horizontal positions
+							return false;
+					}
 				}
 				else {
-//					if ( othership.xcolposition == xcoordinate ) // only if the ship is in the target column
-						for (int i = 0; i < ships[id].size ; i++) { // check vertical positions
-							if ( othership.ship[xcoordinate][ycoordinate + i] == true )
-								return false;
-						}
+					for (int i = 0; i < ships[id].size ; i++) { // check vertical positions
+						if ( othership.ship[xcoordinate][ycoordinate + i] == true )
+							return false;
+					}
 				}
 			}
 		}
@@ -123,13 +124,11 @@ public final class BoardUsingMatrix implements IBoard {
 	public boolean toggleOrientation(int id) {
 		if ( id > -1 ) {
 			ShipUsingMatrix s = ships[id];
-			s.toggleOrientation();
-			if ( moveOK(id,s.xcolposition,s.yrowposition,s.horizontal) ) {
-				return true;
-			} else
+			if ( moveOK(id,s.xcolposition,s.yrowposition,!s.horizontal,true) ) {
 				s.toggleOrientation();
+				return true;
+			} 
 		}
-
 		return false;
 	}
 
