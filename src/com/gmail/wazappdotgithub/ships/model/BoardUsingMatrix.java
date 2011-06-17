@@ -95,18 +95,19 @@ public final class BoardUsingMatrix implements IBoard {
 		}
 		/*
 		 * Need to check positions of all other ships against the suggested position.
+		 * 
 		 */
 		for( ShipUsingMatrix othership : ships ) {
 			if ( othership != ships[id] ) { // exclude the ship itself
 				if ( horizontal ) {
-					if ( othership.yrowposition == ycoordinate ) // only if the ship is in the target row
+//					if ( othership.yrowposition == ycoordinate ) // only if the ship is in the target row
 						for (int i = 0; i < ships[id].size ; i++) {
 							if ( othership.ship[xcoordinate + i][ycoordinate] == true )	// check horizontal positions
 								return false;
 						}
 				}
 				else {
-					if ( othership.xcolposition == xcoordinate ) // only if the ship is in the target column
+//					if ( othership.xcolposition == xcoordinate ) // only if the ship is in the target column
 						for (int i = 0; i < ships[id].size ; i++) { // check vertical positions
 							if ( othership.ship[xcoordinate][ycoordinate + i] == true )
 								return false;
