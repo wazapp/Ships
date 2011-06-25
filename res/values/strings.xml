@@ -2,4 +2,19 @@
 <resources>
     <string name="hello">Hello World, Ships!</string>
     <string name="app_name">Ships</string>
+    <string name="goodGuy">Good Guy</string>
+    <string name="badGuy">Bad Guy</string>
+    <string name="awsome">Awsome</string>
+    <string name="veryAwsome">Very Awsome</string>
+    <string name="whatF">WhatTheF</string>
+    <string name="levelAwsome">Level of Awsomeness?</string>
+    <string name="goodBad">Are you good or bad? </string>
+    <string name="ok">OK</string>
+    <string name="radical">Radical</string>
+    <string name="outrageous">Outrageous</string>
+    <string name="goodswimmer">Good swimmer?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="getItOn">"Let's get it on!"</string>
+    <string name="fleeHome">Flee home!</string>
 </resources>
