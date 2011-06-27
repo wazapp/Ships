@@ -211,6 +211,19 @@ public final class BoardUsingMatrix implements IBoard {
 			for (int a = 0 ; a < Constants.DEFAULT_SHIPS_NUM ; a++ )
 				ships[a] = ships[layer];
 	}
+
+	@Override
+	public IShip[] arrayOfShips() {
+		if ( ships != null ) {
+			IShip translated[] = new ShipSimple[ships.length];
+			for (int i = 0 ; i < Constants.DEFAULT_SHIPS_NUM; i++) {
+				translated[i] = new ShipSimple(ships[i].xcolposition, ships[i].yrowposition, ships[i].size, ships[i].horizontal);
+			}
+			return translated;
+		}
+		
+		return null;
+	}
 	
 }
 
