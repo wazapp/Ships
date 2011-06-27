@@ -57,6 +57,12 @@ public interface IBoard {
 	void randomiseShipsLocations();
 	
 	/**
+	 * Returns an array of IShip
+	 * @return an array of the ships in the model
+	 */
+	IShip[] arrayOfShips();
+	
+	/**
 	 * prevents further changes to the board.
 	 */
 	void finalise();
