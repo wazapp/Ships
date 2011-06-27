@@ -27,7 +27,8 @@ public final class BoardView extends View implements OnTouchListener{
 	private static Paint foregroundPaint = new Paint();
 	private static Paint shipsPaint = new Paint();
 	private static Paint selectPaint = new Paint();
-	
+	private static Paint whitePaint = new Paint();
+
 	private Rect selectRow = new Rect();
 	private Rect selectCol = new Rect();
 	private IBoard board = PreGame.board;
@@ -41,6 +42,7 @@ public final class BoardView extends View implements OnTouchListener{
 		BoardView.backgroundPaint.setColor(Color.WHITE);
 		BoardView.foregroundPaint.setColor(Color.BLACK);
 		BoardView.shipsPaint.setColor(Color.DKGRAY);
+		BoardView.whitePaint.setColor(Color.argb(125, 255, 255, 255));//TODO move to XML
 		BoardView.selectPaint.setColor(Color.argb(125, 0, 0, 255)); //TODO move to XML
 		
 		this.setOnTouchListener(this);
@@ -48,39 +50,44 @@ public final class BoardView extends View implements OnTouchListener{
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
-
 		int min = Math.min(this.getHeight(), this.getWidth());
 		int offs = min / Constants.DEFAULT_BOARD_SIZE;
 		
-		canvas.drawRect(new Rect(0, 0, Constants.DEFAULT_BOARD_SIZE * offs,
-				Constants.DEFAULT_BOARD_SIZE * offs), backgroundPaint);
-		//canvas.drawColor(Color.WHITE); // maybe too large?
-		
-		/* TODO because of rounding to int, there will be some pixels leftover at i * offset
-		 * figure out if it can be avoided using some other solution than the rect
-		 * 
-		 * why not let offs be a float?
-		 */
-		
-		//Since I want the grid placed on top of the ships I need to do this for now
-		// later i may have to know the size of the ship or have a ship draw method instead.
-		for (int i = 0 ; i < 11;i++) {
-			int itimeso = i*offs;
-			for (int j = 0; j < 11; j++) {
-				if ( board.hasShip(i, j) ) {
-					canvas.drawRect(new Rect(itimeso,j * offs, itimeso + offs, j * offs + offs), shipsPaint);
-				}
+		//the 'water'
+		canvas.drawRect(0, 0, Constants.DEFAULT_BOARD_SIZE * offs,
+				Constants.DEFAULT_BOARD_SIZE * offs, backgroundPaint);
+		canvas.drawRect(0, 0, Constants.DEFAULT_BOARD_SIZE * offs,
+				Constants.DEFAULT_BOARD_SIZE * offs, selectPaint);
+
+
+		// the ships
+		for (IShip s : board.arrayOfShips()) {
+			
+			int x = s.getXposition() * offs;
+			int y = s.getYPosition() * offs;
+			int si = s.getSize();
+			
+			if ( s.isHorizontal() ) {
+				canvas.drawRect(x, y, x + si * offs, y + offs, selectPaint);
+				canvas.drawRect(x+2, y+2, x - 2 + si * offs, y - 2 + offs, backgroundPaint);
+				canvas.drawRect(x+3, y+3, x - 3 + si * offs, y - 3 + offs, shipsPaint);
+			} else {
+				canvas.drawRect(x, y, x + offs, y + si * offs, selectPaint);
+				canvas.drawRect(x+2, y+2, x - 2 + offs, y - 2 + si * offs, backgroundPaint);
+				canvas.drawRect(x+3, y+3, x - 3 + offs, y - 3 + si * offs, shipsPaint);
 			}
 		}
 		
-		/*for (int i = 0 ; i < 11;i++) {
-			int itimeso = i*offs;			
+		// The grid
+		for (int i = 0 ; i < Constants.DEFAULT_BOARD_SIZE + 1;i++) {
+			int itimeso = i*offs;
 			canvas.drawLine(0, itimeso, min, itimeso, foregroundPaint);
 			canvas.drawLine(itimeso,0 , itimeso, min, foregroundPaint);
-		}*/
+		}
 		
-		canvas.drawRect(selectCol, selectPaint);
-		canvas.drawRect(selectRow, selectPaint);
+		//the select
+		canvas.drawRect(selectCol, whitePaint);
+		canvas.drawRect(selectRow, whitePaint);
 
 		canvas.drawText(currentTouchCol + ", "+currentTouchRow, selectCol.left, selectRow.top + 15, backgroundPaint);
 		
