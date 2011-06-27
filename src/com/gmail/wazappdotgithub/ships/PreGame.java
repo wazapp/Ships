@@ -12,7 +12,7 @@ import android.view.View.OnClickListener;
 
 public final class PreGame extends Activity {
 
-	public static final IBoard board = new BoardUsingMatrix(); 
+	public static final IBoard board = new BoardUsingSimpleShip(); 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
