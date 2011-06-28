@@ -5,8 +5,10 @@ import com.gmail.wazappdotgithub.ships.R;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -69,7 +71,7 @@ public final class BoardView extends View implements OnTouchListener{
 			int si = s.getSize() * offs;
 			
 			if ( s.isHorizontal() ) {
-				canvas.drawRect(x, y, x + si * offs, y + offs, waterPaint);
+				canvas.drawRect(x, y, x + si, y + offs, waterPaint);
 				canvas.drawRect(x + 2, y + 2, x - 2 + si, y - 2 + offs, backgroundPaint);
 				canvas.drawRect(x + 3, y + 3, x - 3 + si, y - 3 + offs, shipsPaint);
 			} else {
@@ -107,26 +109,29 @@ public final class BoardView extends View implements OnTouchListener{
 
 		//code to update the selection rectangles
 		if (currentTouchCol >= 0 && currentTouchRow >= 0)
-			if (currentTouchCol < Constants.DEFAULT_BOARD_SIZE && currentTouchRow < Constants.DEFAULT_BOARD_SIZE) {
-				selectCol.offsetTo(currentTouchCol * offs,0);
-				selectCol.bottom = selectCol.top + min;
-				selectCol.right = selectCol.left + offs;
-
-				selectRow.offsetTo(0, currentTouchRow * offs);
-				selectRow.bottom = selectRow.top + offs;
-				selectRow.right = selectRow.left + min;
-			}
+			updateSelect(currentTouchCol, currentTouchRow, offs, min);
 		
 		//code to perform some action on the selected or pressed ship
 		
-		switch ( event.getAction() ) {
-		case MotionEvent.ACTION_DOWN : selectedShip = board.getShipId(currentTouchCol, currentTouchRow); break;
-		case MotionEvent.ACTION_MOVE : board.moveShip(selectedShip, currentTouchCol, currentTouchRow); break;
-		case MotionEvent.ACTION_UP : selectedShip = -1; break;
-		default : Log.d("BoardView", "MotionEvent " + event.getAction() + " not caught");
+		if ( event.getEventTime() - event.getDownTime() > 300 ) { //TODO make this time a setting
+	
+			switch ( event.getAction() ) {
+			case MotionEvent.ACTION_DOWN : selectedShip = board.getShipId(currentTouchCol, currentTouchRow); break;
+			case MotionEvent.ACTION_MOVE : board.moveShip(selectedShip, currentTouchCol, currentTouchRow); break;
+			case MotionEvent.ACTION_UP : selectedShip = -1; break;
+			default : Log.d("BoardView", "MotionEvent " + event.getAction() + " not caught");
+			}
+		} else {
+			
+			switch ( event.getAction() ) {
+			case MotionEvent.ACTION_DOWN : selectedShip = board.getShipId(currentTouchCol, currentTouchRow); break;
+			case MotionEvent.ACTION_UP : board.toggleOrientation(selectedShip); selectedShip = -1; break;
+			default : Log.d("BoardView", "MotionEvent " + event.getAction() + " not caught");
+			}
 		}
+	
 		
-		Log.d("BoardView touchEvent: ","boardview ship:"+selectedShip+" \n" + currentTouchCol +","+ currentTouchRow);
+		Log.d("BoardView touchEvent: ","boardview ship:"+selectedShip+ " " + currentTouchCol +", "+ currentTouchRow +  " time: "+ (event.getEventTime() - event.getDownTime()));
 			
 		
 		invalidate(); // TODO make smaller
@@ -135,6 +140,21 @@ public final class BoardView extends View implements OnTouchListener{
 
 	public int shipIdUnderCursor() {
 		return board.getShipId(currentTouchCol, currentTouchRow);
+	}
+	
+	private void updateSelect(int column, int row, int offset, int min) {
+		int intr = offset / 3;
+		
+		if (currentTouchCol >= 0 && currentTouchRow >= 0)
+			if (currentTouchCol < Constants.DEFAULT_BOARD_SIZE && currentTouchRow < Constants.DEFAULT_BOARD_SIZE) {
+				selectCol.offsetTo(currentTouchCol * offset + intr,0);
+				selectCol.bottom = selectCol.top + min;
+				selectCol.right = selectCol.left + offset - (intr << 1);
+
+				selectRow.offsetTo(0, currentTouchRow * offset + intr);
+				selectRow.bottom = selectRow.top + offset - (intr << 1);
+				selectRow.right = selectRow.left + min;
+			}
 	}
 
 }
