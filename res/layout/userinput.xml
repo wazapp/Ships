@@ -1,23 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/linearLayout1" android:layout_width="fill_parent" android:layout_height="fill_parent" android:baselineAligned="true" android:orientation="vertical">
-        <TextView android:text="@string/goodBad" android:layout_height="wrap_content" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/textView2" android:layout_marginLeft="5dip" android:layout_marginTop="10dip"></TextView>
-        <RadioGroup android:layout_height="wrap_content" android:id="@+id/radioGroup1" android:baselineAligned="true" android:orientation="horizontal" android:layout_width="fill_parent">
-            <RadioButton android:layout_height="wrap_content" android:id="@+id/radio0" android:checked="true" android:layout_gravity="top" android:layout_weight="1" android:layout_width="wrap_content" android:text="@string/goodGuy"></RadioButton>
-            <RadioButton android:layout_height="wrap_content" android:id="@+id/radio1" android:layout_width="wrap_content" android:layout_weight="1" android:layout_gravity="right" android:text="@string/badGuy"></RadioButton>
-        </RadioGroup>
-        <TextView android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/textView1" android:layout_height="wrap_content" android:layout_weight="0.0" android:text="@string/levelAwsome" android:layout_marginLeft="5dip" android:layout_marginTop="60dip"></TextView>
-        <RadioGroup android:id="@+id/radioGroup2" android:orientation="horizontal" android:layout_height="wrap_content" android:baselineAligned="true" android:layout_gravity="fill_horizontal" android:layout_width="fill_parent">
-            <RadioButton android:id="@+id/radio0" android:layout_height="wrap_content" android:checked="true" android:text="@string/ok" android:layout_width="wrap_content" android:layout_gravity="left" android:layout_weight="1"></RadioButton>
-            <RadioButton android:id="@+id/radio1" android:layout_height="wrap_content" android:text="@string/radical" android:layout_width="wrap_content" android:layout_gravity="left" android:layout_weight="1"></RadioButton>
-            <RadioButton android:id="@+id/radio2" android:layout_height="wrap_content" android:text="@string/outrageous" android:layout_width="wrap_content" android:layout_gravity="left" android:layout_weight="1"></RadioButton>
-        </RadioGroup>
-        <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/textView3" android:text="@string/goodswimmer" android:layout_marginLeft="5dip" android:layout_marginTop="60dip"></TextView>
-        <RadioGroup android:id="@+id/radioGroup3" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent">
-            <RadioButton android:layout_width="wrap_content" android:id="@+id/radio0" android:layout_height="wrap_content" android:checked="true" android:layout_weight="1" android:text="@string/yes"></RadioButton>
-            <RadioButton android:layout_width="wrap_content" android:id="@+id/radio1" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/no"></RadioButton>
-        </RadioGroup>
-        <LinearLayout android:layout_width="fill_parent" android:id="@+id/linearLayout2" android:layout_height="fill_parent" android:layout_weight="0.0" android:baselineAligned="true" android:layout_gravity="bottom">
-            <Button android:id="@+id/button1" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/getItOn" android:layout_weight="1" android:layout_gravity="bottom"></Button>
-            <Button android:id="@+id/button2" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/fleeHome" android:layout_weight="1" android:layout_gravity="bottom"></Button>
-        </LinearLayout>
-    </LinearLayout>
+<ScrollView android:layout_height="wrap_content" android:id="@+id/scrollView1" xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent">
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/linearLayout1" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:baselineAligned="true"
+		android:orientation="vertical">
+		<TextView android:layout_width="wrap_content"
+			android:layout_marginTop="10dip" android:id="@+id/textView2"
+			android:layout_marginLeft="5dip" android:layout_height="wrap_content"
+			android:text="@string/goodBad" android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+		<RadioGroup android:layout_width="fill_parent" android:id="@+id/radioGroup1"
+			android:orientation="horizontal" android:baselineAligned="true"
+			android:layout_height="wrap_content">
+			<RadioButton android:layout_weight="1" android:checked="true"
+				android:layout_width="wrap_content" android:id="@+id/radio0"
+				android:text="@string/goodGuy" android:layout_gravity="top"
+				android:layout_height="wrap_content"></RadioButton>
+			<RadioButton android:layout_weight="1"
+				android:layout_width="wrap_content" android:id="@+id/radio1"
+				android:text="@string/badGuy" android:layout_gravity="right"
+				android:layout_height="wrap_content"></RadioButton>
+		</RadioGroup>
+		<TextView android:layout_width="wrap_content"
+			android:layout_marginTop="60dip" android:id="@+id/textView1"
+			android:layout_marginLeft="5dip" android:layout_height="wrap_content"
+			android:text="@string/levelAwsome" android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+		<RadioGroup android:layout_width="fill_parent"
+			android:layout_gravity="fill_horizontal" android:id="@+id/radioGroup2"
+			android:orientation="horizontal" android:baselineAligned="true"
+			android:layout_height="wrap_content">
+			<RadioButton android:layout_weight="1" android:checked="true"
+				android:layout_width="wrap_content" android:id="@+id/radio0"
+				android:text="@string/ok" android:layout_gravity="left"
+				android:layout_height="wrap_content"></RadioButton>
+			<RadioButton android:layout_weight="1"
+				android:layout_width="wrap_content" android:id="@+id/radio1"
+				android:text="@string/radical" android:layout_gravity="left"
+				android:layout_height="wrap_content"></RadioButton>
+			<RadioButton android:layout_weight="1"
+				android:layout_width="wrap_content" android:id="@+id/radio2"
+				android:text="@string/outrageous" android:layout_gravity="left"
+				android:layout_height="wrap_content"></RadioButton>
+		</RadioGroup>
+		<TextView android:layout_width="wrap_content"
+			android:layout_marginTop="60dip" android:id="@+id/textView3"
+			android:layout_marginLeft="5dip" android:layout_height="wrap_content"
+			android:text="@string/goodswimmer" android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+		<RadioGroup android:layout_width="fill_parent" android:id="@+id/radioGroup3"
+			android:orientation="horizontal" android:layout_height="wrap_content">
+			<RadioButton android:layout_weight="1" android:checked="true"
+				android:layout_width="wrap_content" android:id="@+id/radio0"
+				android:text="@string/yes" android:layout_height="wrap_content"></RadioButton>
+			<RadioButton android:layout_weight="1"
+				android:layout_width="wrap_content" android:id="@+id/radio1"
+				android:text="@string/no" android:layout_height="wrap_content"></RadioButton>
+		</RadioGroup>
+		<LinearLayout android:baselineAligned="true"
+			android:layout_width="fill_parent" android:layout_gravity="bottom"
+			android:layout_height="fill_parent" android:id="@+id/linearLayout2">
+			<Button android:layout_width="wrap_content"
+				android:layout_gravity="bottom" android:layout_weight="1"
+				android:id="@+id/button1" android:text="@string/getItOn"
+				android:layout_height="wrap_content"></Button>
+			<Button android:layout_width="wrap_content"
+				android:layout_gravity="bottom" android:layout_weight="1"
+				android:id="@+id/button2" android:text="@string/fleeHome"
+				android:layout_height="wrap_content"></Button>
+		</LinearLayout>
+	</LinearLayout>
+</ScrollView>
