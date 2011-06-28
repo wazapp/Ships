@@ -1,6 +1,7 @@
 package com.gmail.wazappdotgithub.ships.model;
 
 import com.gmail.wazappdotgithub.ships.PreGame;
+import com.gmail.wazappdotgithub.ships.R;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 
 import android.content.Context;
@@ -27,7 +28,7 @@ public final class BoardView extends View implements OnTouchListener{
 	private static Paint foregroundPaint = new Paint();
 	private static Paint shipsPaint = new Paint();
 	private static Paint selectPaint = new Paint();
-	private static Paint whitePaint = new Paint();
+	private static Paint waterPaint = new Paint();
 
 	private Rect selectRow = new Rect();
 	private Rect selectCol = new Rect();
@@ -42,8 +43,8 @@ public final class BoardView extends View implements OnTouchListener{
 		BoardView.backgroundPaint.setColor(Color.WHITE);
 		BoardView.foregroundPaint.setColor(Color.BLACK);
 		BoardView.shipsPaint.setColor(Color.DKGRAY);
-		BoardView.whitePaint.setColor(Color.argb(125, 255, 255, 255));//TODO move to XML
-		BoardView.selectPaint.setColor(Color.argb(125, 0, 0, 255)); //TODO move to XML
+		BoardView.waterPaint.setColor(getResources().getColor(R.color.waterColor));
+		BoardView.selectPaint.setColor(getResources().getColor(R.color.selectColor));
 		
 		this.setOnTouchListener(this);
 	}
@@ -57,7 +58,7 @@ public final class BoardView extends View implements OnTouchListener{
 		canvas.drawRect(0, 0, Constants.DEFAULT_BOARD_SIZE * offs,
 				Constants.DEFAULT_BOARD_SIZE * offs, backgroundPaint);
 		canvas.drawRect(0, 0, Constants.DEFAULT_BOARD_SIZE * offs,
-				Constants.DEFAULT_BOARD_SIZE * offs, selectPaint);
+				Constants.DEFAULT_BOARD_SIZE * offs, waterPaint);
 
 
 		// the ships
@@ -65,16 +66,16 @@ public final class BoardView extends View implements OnTouchListener{
 			
 			int x = s.getXposition() * offs;
 			int y = s.getYPosition() * offs;
-			int si = s.getSize();
+			int si = s.getSize() * offs;
 			
 			if ( s.isHorizontal() ) {
-				canvas.drawRect(x, y, x + si * offs, y + offs, selectPaint);
-				canvas.drawRect(x+2, y+2, x - 2 + si * offs, y - 2 + offs, backgroundPaint);
-				canvas.drawRect(x+3, y+3, x - 3 + si * offs, y - 3 + offs, shipsPaint);
+				canvas.drawRect(x, y, x + si * offs, y + offs, waterPaint);
+				canvas.drawRect(x + 2, y + 2, x - 2 + si, y - 2 + offs, backgroundPaint);
+				canvas.drawRect(x + 3, y + 3, x - 3 + si, y - 3 + offs, shipsPaint);
 			} else {
-				canvas.drawRect(x, y, x + offs, y + si * offs, selectPaint);
-				canvas.drawRect(x+2, y+2, x - 2 + offs, y - 2 + si * offs, backgroundPaint);
-				canvas.drawRect(x+3, y+3, x - 3 + offs, y - 3 + si * offs, shipsPaint);
+				canvas.drawRect(x, y, x + offs, y + si, waterPaint);
+				canvas.drawRect(x + 2, y + 2, x - 2 + offs, y - 2 + si, backgroundPaint);
+				canvas.drawRect(x + 3, y + 3, x - 3 + offs, y - 3 + si, shipsPaint);
 			}
 		}
 		
@@ -86,8 +87,8 @@ public final class BoardView extends View implements OnTouchListener{
 		}
 		
 		//the select
-		canvas.drawRect(selectCol, whitePaint);
-		canvas.drawRect(selectRow, whitePaint);
+		canvas.drawRect(selectCol, selectPaint);
+		canvas.drawRect(selectRow, selectPaint);
 
 		canvas.drawText(currentTouchCol + ", "+currentTouchRow, selectCol.left, selectRow.top + 15, backgroundPaint);
 		
