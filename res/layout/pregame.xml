@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/tableLayout1" android:layout_width="fill_parent" android:layout_height="fill_parent">
-    <TableRow android:layout_column="1" 
-    android:id="@+id/tableRow2" 
-    android:layout_width="fill_parent" 
-    android:layout_height="fill_parent" android:gravity="center">
-        <Button android:text="Rotate" android:id="@+id/pregame_button_rotate" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
-        <Button android:text="Randomize" android:id="@+id/pregame_button_randomize" android:layout_height="wrap_content" android:layout_width="wrap_content"></Button>
-        <Button android:text="Start" android:id="@+id/pregame_button_start" android:layout_height="wrap_content" android:layout_width="wrap_content"></Button>
-    </TableRow>
-	<TableRow android:layout_column="1" 
-	android:id="@+id/tableRow1" 
-	android:layout_width="fill_parent" 
-	android:layout_height="fill_parent" android:gravity="center" android:layout_margin="5dip">
-		<com.gmail.wazappdotgithub.ships.model.BoardView 
-		android:layout_width="fill_parent" 
-		android:id="@+id/pregame_BoardView" 
-		android:layout_height="fill_parent" android:layout_weight="1">
-		</com.gmail.wazappdotgithub.ships.model.BoardView>
+	android:id="@+id/tableLayout1" android:layout_width="fill_parent"
+	android:layout_height="fill_parent" android:layout_gravity="center">
+    <com.gmail.wazappdotgithub.ships.model.BoardView android:id="@+id/pregame_BoardView" android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="fill_parent"></com.gmail.wazappdotgithub.ships.model.BoardView>
+	<TableRow android:layout_column="1" android:id="@+id/tableRow2"
+		android:gravity="center" android:layout_height="wrap_content" android:layout_width="fill_parent">
+		<Button android:layout_width="wrap_content" android:id="@+id/pregame_button_rotate" android:text="Rotate" android:layout_height="wrap_content" android:layout_weight="1"></Button>
+		<Button android:layout_width="wrap_content" android:id="@+id/pregame_button_randomize" android:text="Randomize" android:layout_height="wrap_content" android:layout_weight="1"></Button>
+		<Button android:layout_width="wrap_content" android:id="@+id/pregame_button_start" android:text="Start" android:layout_height="wrap_content" android:layout_weight="1"></Button>
 	</TableRow>
 </TableLayout>
