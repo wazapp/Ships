@@ -1,5 +1,9 @@
 package com.gmail.wazappdotgithub.ships;
 
+import com.gmail.wazappdotgithub.ships.model.Game;
+import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
+import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,8 +24,8 @@ public class UserInput extends Activity{
             public void onClick(View v) {
             	
                 // Perform action on click
-            	Intent intent2= new Intent(UserInput.this, PreGame.class);
-		        
+            	Intent intent2 = new Intent(UserInput.this, PreGame.class);
+            	Game.startLocalOpponentInstance(); //TODO ensure this clears everything from previous Game
 		        startActivity(intent2);	
             }
         });

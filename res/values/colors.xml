@@ -2,4 +2,6 @@
 <resources>
     <color name="selectColor">#aaffffff</color>
     <color name="waterColor">#aa0000ff</color>
+    <color name="missColor">#aa000000</color>
+    <color name="hitColor">#aaff0000</color>
 </resources>

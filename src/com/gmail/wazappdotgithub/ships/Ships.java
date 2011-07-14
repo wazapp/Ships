@@ -9,7 +9,7 @@ import android.os.Bundle;
 public class Ships extends Activity {
 	
 	protected boolean _active = true;
-	protected int _splashTime = 5000;
+	protected int _splashTime = 2000;
 	
     /** Called when the activity is first created. */
     @Override
