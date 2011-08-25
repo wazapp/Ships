@@ -26,7 +26,7 @@ public class WaitBoardView extends BoardView {
 		for (IShip s : Game.getConfiguredInstance().getLocalClient().getBoard().arrayOfShips()) {
 
 			int x = s.getXposition() * offset;
-			int y = s.getYPosition() * offset;
+			int y = s.getYposition() * offset;
 			int si = s.getSize() * offset;
 
 			if ( s.isHorizontal() ) {
@@ -39,7 +39,15 @@ public class WaitBoardView extends BoardView {
 				canvas.drawRect(x + 3, y + 3, x - 3 + offset, y - 3 + si, shipsPaint);
 			}
 		}
-		for (Bomb b : Game.getConfiguredInstance().getOpponentsShots() ) { //TODO only draws the latest, bug here or ComputerClient
+		
+		for (Bomb b : Game.getConfiguredInstance().getOpponentsShots() ) {
+			if ( b.hit )
+				canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2, hitPaint);
+			else
+				canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2), offset / 2, missPaint);			
+		}
+		
+		for (Bomb b : Game.getConfiguredInstance().getOpponentsLatestShots() ) {
 			if ( b.hit ) 
 				canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2, hitPaint);
 			else
@@ -52,5 +60,4 @@ public class WaitBoardView extends BoardView {
 		// do nothing
 
 	}
-
 }

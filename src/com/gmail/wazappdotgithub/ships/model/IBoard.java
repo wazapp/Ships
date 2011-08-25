@@ -41,7 +41,7 @@ public interface IBoard {
 	boolean moveShip(int id, int xcord, int ycord);
 	
 	/**
-	 * return true if any part of a ship is present at the 
+	 * Return true if any part of a ship is present at the 
 	 * specified location
 	 * @param xcord
 	 * @param ycord
@@ -50,6 +50,15 @@ public interface IBoard {
 	 */
 	boolean hasShip(int xcord, int ycord);
 	
+	/**
+	 * Place a bomb on the specified location, make damage to any 
+	 * ship on that location and returns if this ship is still alive.
+	 * Will only return false if a ship was destroyed
+	 * @param xcord
+	 * @param ycord
+	 * @return true if the ship is still alive or if it is a miss
+	 */
+	Bomb bombCoordinate(Bomb bomb);
 	
 	/**
 	 * Randomise the ship's locations and orientations
@@ -75,4 +84,12 @@ public interface IBoard {
 	 * @return true if the orientation change was valid and performed
 	 */
 	boolean toggleOrientation(int id);
+	
+	/**
+	 * return the number of live ships on this board
+	 * @return the number of live ships on this board
+	 */
+	int numLiveShips();
+	
+	public boolean validate();
 }

@@ -16,6 +16,6 @@
         <activity android:name="UserInput" android:screenOrientation="portrait"></activity>
         <activity android:name="PreGame" android:screenOrientation="portrait"></activity>
         <activity android:screenOrientation="portrait" android:name="InGame"></activity>
-
+        <activity android:name="PostGame" android:label="@string/postgameTitle" android:theme="@android:style/Theme.Dialog"></activity>
     </application>
 </manifest>

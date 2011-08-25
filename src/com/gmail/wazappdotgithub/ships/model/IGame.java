@@ -14,6 +14,7 @@ public interface IGame {
 	List<Bomb> getOpponentsShots();
 	List<Bomb> getOpponentsLatestShots();
 	IShipsClient getLocalClient();
+	IShipsClient getOpponentClient();
 	Observable getLocalClientObservable();
 	
 }

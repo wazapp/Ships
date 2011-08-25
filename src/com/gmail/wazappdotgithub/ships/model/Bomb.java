@@ -9,15 +9,19 @@ public final class Bomb {
 	public int x;
 	public int y;
 	public boolean hit;
+	public boolean destrship;
 	
 	public Bomb(int xcoord, int ycoord) {
-		x = xcoord; y = ycoord; hit = false;
+		x = xcoord; y = ycoord; hit = false; destrship = false;
 	}
 	public void setHit(boolean washit) {
 		hit = washit;
 	}
 	public boolean getHit() {
 		return hit;
+	}
+	public boolean getDestrShip() {
+		return destrship;
 	}
 	
 	@Override

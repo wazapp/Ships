@@ -22,17 +22,23 @@ public abstract class AClient extends Observable implements IShipsClient {
 	protected IBoard board = null;
 	protected List<Bomb> shootingRange = null;
 	protected List<Bomb> inturnBombs = null;
+	protected int bombstoplace;
+	protected EndGameData endgamedata = null;
+	
+	public class EndGameData {
+		public boolean winner = false;
+		public int bombsShot = 0;
+		public int liveShips = 0;
+	}
 	
 	public AClient() {
-		board = Game.getNewBoard();
-		shootingRange = new LinkedList<Bomb>(); // possibly better with an ArrayList
+
 	}
 	
 	@Override
 	public IBoard getBoard() {
 		return board;
 	}
-
 
 	@Override
 	public List<Bomb> getBombsBoard() {
@@ -51,17 +57,51 @@ public abstract class AClient extends Observable implements IShipsClient {
 
 
 	@Override
-	public void placeBomb(int xcoord, int ycoord) {
+	public boolean placeBomb(int xcoord, int ycoord) {
 		//TODO sanity check on input!
-		Bomb b = new Bomb(xcoord, ycoord);
+		//TODO clean this method, it looks lousy
+		if ( bombstoplace > 0 ) {
+			Bomb b = new Bomb(xcoord, ycoord);
+
+			if ( shootingRange.contains(b) )
+				return false;	//do nothing
+
+			if ( inturnBombs.contains(b) ) { // compares coords
+				inturnBombs.remove(b);
+				bombstoplace++;
+
+			} else {
+				inturnBombs.add(b);
+				bombstoplace--;
+			}
+			
+			setChanged();
+			notifyObservers(Game.ClientState.RECOUNTBOMBS);
+			return true;
+			
+		} else if ( bombstoplace == 0 ) { // only removal is allowed
+			Bomb b = new Bomb(xcoord, ycoord);
+			
+			if ( shootingRange.contains(b) )
+				return false;	//do nothing
+			
+			if ( inturnBombs.contains(b) ) {
+					inturnBombs.remove(b);
+					bombstoplace++;
+					setChanged();
+					notifyObservers(Game.ClientState.RECOUNTBOMBS);
+					return true;
+			}
+			
+			return false;
+		}
 		
-		if ( shootingRange.contains(b) )
-			return;
-		
-		if ( inturnBombs.contains(b) ) // compares coords
-			inturnBombs.remove(b);
-		else
-			inturnBombs.add(b);
+		return false;
+	}
+	
+	@Override
+	public int getRemainingBombs() {
+		return numLiveShips() - bombstoplace;
 	}
 
 
@@ -75,26 +115,56 @@ public abstract class AClient extends Observable implements IShipsClient {
 	@Override
 	public void setToStateInTurn() {
 		currentState = Game.ClientState.INTURN;
+		bombstoplace = numLiveShips(); //TODO could have different rules
+		
 		setChanged();
 		notifyObservers(currentState);
-		
-		inturnBombs = new LinkedList<Bomb>();
 	}
 
 
 	@Override
-	public void setToStatePostGame() {
-		currentState = Game.ClientState.POSTGAME;
+	public void setToStatePostGameAsWinner() {
+		currentState = Game.ClientState.POSTGAMEWINNER;
+		gatherDataAfterGame(true);
+		
 		setChanged();
 		notifyObservers(currentState);
 	}
+	@Override
+	public void setToStatePostGameAsLooser() {
+		currentState = Game.ClientState.POSTGAMELOOSER;
+		gatherDataAfterGame(false);
+		
+		setChanged();
+		notifyObservers(currentState);
+	}
+	
+	private void gatherDataAfterGame(boolean isTheWinner) {
+		endgamedata = new EndGameData();
+		endgamedata.liveShips = numLiveShips();
+		endgamedata.bombsShot = shootingRange.size();
+		endgamedata.winner = isTheWinner;
+		
+		shootingRange.clear();
+		inturnBombs.clear();
+		bombstoplace = 0;
+	}
 
-
+	public EndGameData retrieveEndGameData() {
+		return endgamedata;
+	}
+	
+	protected void initialize() {
+		board = Game.getNewBoard();
+		shootingRange = new LinkedList<Bomb>();
+		inturnBombs = new LinkedList<Bomb>();
+	}
+	
 	@Override
 	public void setToStatePreGame() {
 		currentState = Game.ClientState.PREGAME;
-		board = Game.getNewBoard();
-		shootingRange = new LinkedList<Bomb>();
+		initialize();
+		
 		setChanged();
 		notifyObservers(currentState);
 	}
@@ -119,7 +189,13 @@ public abstract class AClient extends Observable implements IShipsClient {
 			Game.getConfiguredInstance().dropBomb(this, b);
 			shootingRange.add(b);
 		}
+		
+		inturnBombs.clear();
 		Game.getConfiguredInstance().clientReportFinishedBombing(this);
 	}
-
+	
+	@Override 
+	public int numLiveShips() {
+		return board.numLiveShips();
+	}
 }

@@ -25,9 +25,8 @@ public final class PreGame extends Activity implements Observer {
 		super.onCreate(savedInstanceState);
 		Game.getConfiguredInstance().getLocalClientObservable().addObserver(this);
 		
-		Log.d(tag,tag + "configuring pregame contentview");
+		//Log.d(tag,tag + "configuring pregame contentview");
 		setContentView(R.layout.pregame);
-		Log.d(tag,tag + "configured pregame contentview");
 		
 		View randomizeButton = findViewById(R.id.pregame_button_randomize);
 		randomizeButton.setOnClickListener(new OnClickListener() {
@@ -59,7 +58,7 @@ public final class PreGame extends Activity implements Observer {
 			
 			@Override
 			public void onClick(View v) {
-				Log.d(tag,"phone start button pressed");
+				Log.d(tag,"start button pressed");
 				Game.getConfiguredInstance().getLocalClient().reportReady();
 			}
 		});
@@ -69,7 +68,6 @@ public final class PreGame extends Activity implements Observer {
 
 	@Override
 	public void update(Observable observable, Object data) {
-		// the observable is the client, the data the new state
 		updateActivity((Game.ClientState) data);
 	}	
 	
@@ -82,6 +80,7 @@ public final class PreGame extends Activity implements Observer {
 		}
 	}
 	private void progress() {
+		Game.getConfiguredInstance().getLocalClientObservable().deleteObserver(this);
 		startActivity(new Intent(this,InGame.class));
 		finish();
 	}

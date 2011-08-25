@@ -3,6 +3,9 @@ package com.gmail.wazappdotgithub.ships.model;
 import java.util.List;
 import java.util.Observable;
 
+import android.util.Log;
+
+import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.model.Client.ComputerClient;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
 import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
@@ -18,12 +21,15 @@ public class Game implements IGame {
 	private IShipsClient currentPlayer = null,currentOpponent = null;
 	private IBoard playerBoard = null, opponentBoard = null;
 
+	private String tag = "Ships_Game";
 	public static enum ClientState {
 		WAITGAME,
 		PREGAME,
 		WAIT,
 		INTURN,
-		POSTGAME,
+		POSTGAMEWINNER,
+		POSTGAMELOOSER,
+		RECOUNTBOMBS
 	}
 	
 	private Game() {
@@ -51,11 +57,12 @@ public class Game implements IGame {
 	
 	private static void changeStateOfClient(IShipsClient client, Game.ClientState state) {
 		switch (state) {
-		case INTURN : client.setToStateInTurn(); break;
-		case WAIT : client.setToStateWait(); break;
-		case WAITGAME : client.setToStateWaitGame(); break;
-		case PREGAME : client.setToStatePreGame(); break;
-		case POSTGAME : client.setToStatePostGame(); break;
+		case INTURN 		: client.setToStateInTurn(); break;
+		case WAIT 			: client.setToStateWait(); break;
+		case WAITGAME 		: client.setToStateWaitGame(); break;
+		case PREGAME 		: client.setToStatePreGame(); break;
+		case POSTGAMEWINNER : client.setToStatePostGameAsWinner(); break;
+		case POSTGAMELOOSER : client.setToStatePostGameAsLooser(); break;
 		default : throw new IllegalStateException("state could not be changed");
 		}
 	}
@@ -96,11 +103,17 @@ public class Game implements IGame {
 	@Override
 	public Bomb dropBomb(IShipsClient shootingclient, Bomb b) {
 		
-		if (shootingclient == player)
-			b.setHit(opponentBoard.hasShip(b.x, b.y));
-		else
-			b.setHit(playerBoard.hasShip(b.x, b.y));
+		if (shootingclient == player) {
+			b = opponentBoard.bombCoordinate(b);
+		}
+		else {
+			b = playerBoard.bombCoordinate(b);
+		}
 		
+		Log.d(tag, tag + " Bomb properties " 
+				+ "(" + b.x + "," + b.y +") " 
+				+ "hit="+b.hit + ", "
+				+ "destrship="+b.destrship);
 		return b;
 	}
 
@@ -109,20 +122,38 @@ public class Game implements IGame {
 		if ( client != currentPlayer )
 			throw new IllegalStateException("client finished bombing is not currentplayer");
 			//assess states
+
+		Log.d(tag, tag + " currentPlayer has " + currentPlayer.numLiveShips() + "ships");
+		Log.d(tag, tag + " currentOpponent has " + currentOpponent.numLiveShips() + "ships");
 		
-		IShipsClient temp = currentOpponent;
-		currentOpponent = currentPlayer;
-		currentPlayer = temp;
+		//Check if the game is finished else - continue	
+		if ( currentOpponent.numLiveShips() == 0) {
+			changeStateOfClient(currentOpponent, Game.ClientState.POSTGAMELOOSER);
+			changeStateOfClient(currentPlayer, Game.ClientState.POSTGAMEWINNER);
 		
-		changeStateOfClient(currentOpponent, Game.ClientState.WAIT);
-		changeStateOfClient(currentPlayer, Game.ClientState.INTURN);
+		} else { 
+			if ( currentPlayer.getBombsBoard().size() == Constants.DEFAULT_BOARD_SIZE*Constants.DEFAULT_BOARD_SIZE)
+				throw new IllegalStateException("The player has filled the board with bombs, but opponent is not dead");
+			
+			IShipsClient temp = currentOpponent;
+			currentOpponent = currentPlayer;
+			currentPlayer = temp;
+
+			changeStateOfClient(currentOpponent, Game.ClientState.WAIT);
+			changeStateOfClient(currentPlayer, Game.ClientState.INTURN);
+		}
 	}
 
 	@Override
 	public IShipsClient getLocalClient() {
 		return player;
 	}
-
+	
+	@Override
+	public IShipsClient getOpponentClient() {
+		return opponent;
+	}
+	
 	@Override
 	public Observable getLocalClientObservable() {
 		return (Observable) player;
@@ -132,9 +163,9 @@ public class Game implements IGame {
 	public List<Bomb> getOpponentsLatestShots() {
 		return currentOpponent.getInTurnBombs();
 	}
+	
 	@Override
 	public List<Bomb> getOpponentsShots() {
 		return currentOpponent.getBombsBoard();
 	}
-	
 }

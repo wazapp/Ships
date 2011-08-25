@@ -1,7 +1,8 @@
 package com.gmail.wazappdotgithub.ships.model;
 
-
 import java.util.Random;
+
+import android.util.Log;
 
 import com.gmail.wazappdotgithub.ships.common.Constants;
 
@@ -17,22 +18,29 @@ public final class BoardUsingSimpleShip implements IBoard {
 
 	//TODO consider making this a Singleton class depending on how we end up using 
 	// it in activities
-	
+
 	private boolean[][] board;
 	private ShipSimple[] ships;
 	private boolean isFinal = false;
-	
+	private int liveships;
+	private String tag = "Ships_Board";
+
 	public BoardUsingSimpleShip() {
 		board = new boolean[Constants.DEFAULT_BOARD_SIZE][Constants.DEFAULT_BOARD_SIZE];
 		ships = new ShipSimple[Constants.DEFAULT_SHIPS_NUM];
+		liveships = Constants.DEFAULT_SHIPS_NUM;
+
 		//add new ships 
 		//THIS WILL BREAK if ever the number of ships != board size
 		for (int i = 0; i < Constants.DEFAULT_SHIPS_NUM; i++) {
 			ships[i] = new ShipSimple(i, 0, Constants.DEFAULT_SHIPS[i], false);
 			add(i);
 		}
+
+		if ( ! validate() )
+			throw new IllegalStateException("the board is not valid during construction()");
 	}
-	
+
 	@Override
 	public IShip[] arrayOfShips() {
 		return ships;
@@ -40,6 +48,9 @@ public final class BoardUsingSimpleShip implements IBoard {
 
 	@Override
 	public void finalise() {
+		if ( ! validate() )
+			throw new IllegalStateException("The board is not valid during finalise()");
+
 		isFinal = true;
 	}
 
@@ -63,7 +74,7 @@ public final class BoardUsingSimpleShip implements IBoard {
 				}
 			}
 		}
-		
+
 		return -1;
 	}
 
@@ -71,8 +82,22 @@ public final class BoardUsingSimpleShip implements IBoard {
 	public boolean hasShip(int xcoord, int ycoord) {
 		if ( ! coordinatesOk(xcoord, ycoord))
 			return false;
-		
+
 		return board[xcoord][ycoord];
+	}
+
+	@Override 
+	public Bomb bombCoordinate(Bomb b) {
+		int s;
+		if ( (s = getShipId(b.x, b.y) ) > -1 ) { // if there is a ship
+			b.setHit(true);
+
+			if ( ! ships[s].makeDamage() ) { // make damage and check if alive
+				liveships--;
+				b.destrship = true;
+			}
+		}
+		return b;
 	}
 
 	@Override
@@ -86,10 +111,11 @@ public final class BoardUsingSimpleShip implements IBoard {
 			return false;
 		if ( id < 0 ||  ! (id < Constants.DEFAULT_SHIPS_NUM))
 			return false;
-		
+
+
 		remove(id);
-		boolean update = moveOK(id, xcoord, ycoord, horizontal, false);
-		
+		boolean update = moveOK(id, xcoord, ycoord, horizontal, false);	
+
 		if ( update ) {		
 			//update ship data
 			ships[id].xcolpos = xcoord;
@@ -105,7 +131,7 @@ public final class BoardUsingSimpleShip implements IBoard {
 	public boolean moveShip(int id, int xcord, int ycord) {
 		if ( id < 0 ||  ! (id < Constants.DEFAULT_SHIPS_NUM))
 			return false;
-		
+
 		return moveShip(id, xcord, ycord, ships[id].ishorizontal);
 	}
 
@@ -116,63 +142,89 @@ public final class BoardUsingSimpleShip implements IBoard {
 			Random r = new Random(System.currentTimeMillis());
 			int dsn = Constants.DEFAULT_SHIPS_NUM;
 			int dbs = Constants.DEFAULT_BOARD_SIZE;
-			
+
 			board = new boolean[dbs][dbs];
-			
+			ships = new ShipSimple[Constants.DEFAULT_SHIPS_NUM];
+
+			if ( ! validate() )
+				throw new IllegalStateException("the board is not valid in empty state");
+
 			for (int i = dsn - 1; i > -1; i--) {
 				// Start with the largest ship
 				ships[i] = new ShipSimple(0, 0, Constants.DEFAULT_SHIPS[i], true);
-	
-				//the random code
+
+				//the randomization code
 				boolean horizontal = r.nextInt(dsn) > ( dsn / 2 );
-				
-				if ( horizontal )
-					while( ! moveShip(i, r.nextInt(dbs - ships[i].size), r.nextInt(dbs), horizontal) )
+				int xcoord, ycoord;
+
+
+				// must not use moveShip() at this point since this ship only exists in ships[]
+				// and moveShip interacts with board[][] 
+				if ( horizontal ) {
+					while( ! moveOK(i, xcoord = r.nextInt(dbs - ships[i].size), ycoord = r.nextInt(dbs), horizontal,false) )
 						;
-				else
-					while( ! moveShip(i, r.nextInt(dbs), r.nextInt(dbs - ships[i].size), horizontal) )
+
+				} else {
+					while( ! moveOK(i, xcoord = r.nextInt(dbs), ycoord = r.nextInt(dbs - ships[i].size), horizontal,false) )
 						;
+				}
+
+				//update ship data
+				ships[i].xcolpos = xcoord;
+				ships[i].yrowpos = ycoord;
+				ships[i].ishorizontal = horizontal;			
+				//add to board
+				add(i);
+
 			}
 		}
-
 	}
 
 	@Override
 	public boolean toggleOrientation(int id) {
 		if ( id < 0 ||  ! (id < Constants.DEFAULT_SHIPS_NUM))
 			return false;
-		
+
 		remove(id);
 		boolean update = moveOK(id, ships[id].xcolpos, ships[id].yrowpos, !ships[id].ishorizontal, true);
-		
+
 		if ( update )
 			ships[id].ishorizontal = !ships[id].ishorizontal;
-		
+
 		add(id);
 		return update;
 	}
-	
+
 	/* 	return true if the suggested move is OK.
-	*	@pre x,y and id are valid and in range
-	*	will check for rotations and moves outside the board or into other ships
-	*/
+	 *	@pre x,y and id are valid and in range
+	 *	will check for rotations and moves outside the board or into other ships
+	 */
 	private boolean moveOK(int id, int xcoordinate, int ycoordinate, boolean horizontal, boolean rotateOrder) {
-		if (isFinal)
+		if ( isFinal ) {
+			Log.d(tag,tag + "Move disallowed, in final state"); 
 			return false;
-		
-		if ( ! rotateOrder ) // only bother to check this if we do not rotate
-			if (xcoordinate == ships[id].xcolpos && ycoordinate == ships[id].yrowpos)
+		}
+
+		if ( ! rotateOrder ) {// only bother to check this if we do not rotate
+			if (xcoordinate == ships[id].xcolpos && ycoordinate == ships[id].yrowpos) {
+				Log.d(tag,tag + "Move disallowed, irrelevant");
 				return false;
-		
+			}
+		}
+
 		// deep check
 		if ( horizontal ) {
-			if ( ! (xcoordinate + ships[id].size <= Constants.DEFAULT_BOARD_SIZE) )
-				return false;
+			if ( ! (xcoordinate + ships[id].size <= Constants.DEFAULT_BOARD_SIZE) ) {
+				Log.d(tag,tag + "Move disallowed, will not fit (x coordinate)"); 
+				return false; 
+			}
 		} else { 
-			if ( ! (ycoordinate + ships[id].size <= Constants.DEFAULT_BOARD_SIZE) )
-				return false;
+			if ( ! (ycoordinate + ships[id].size <= Constants.DEFAULT_BOARD_SIZE) ) {
+				Log.d(tag,tag + "Move disallowed, will not fit (y coordinate)"); 
+				return false; 
+			}
 		}
-		
+
 		/*
 		 * Need to check positions of all other ships against the suggested position.
 		 */
@@ -181,19 +233,22 @@ public final class BoardUsingSimpleShip implements IBoard {
 				if ( horizontal ) {
 
 					for (int i = 0; i < ships[id].size ; i++) {
-						if ( board[xcoordinate + i][ycoordinate] == true )	// check horizontal positions
-							return false;
+						if ( board[xcoordinate + i][ycoordinate] == true ) {	// check horizontal positions
+							Log.d(tag,tag + "Move disallowed, space is occupied ("+(xcoordinate + i)+","+ycoordinate+")"); return false;
+						}
 					}
 				}
 				else {
 					for (int i = 0; i < ships[id].size ; i++) { // check vertical positions
-						if ( board[xcoordinate][ycoordinate + i] == true )
-							return false;
+						if ( board[xcoordinate][ycoordinate + i] == true ) {
+							Log.d(tag,tag + "Move disallowed, space is occupied ("+xcoordinate+","+(ycoordinate + i)+")"); return false;
+						}
 					}
 				}
 			}
 		}
 
+		//Log.d(tag,tag + "Move allowed, destination ("+xcoordinate+","+(ycoordinate)+") h="+horizontal + " s= "+ ships[id].size);
 		return true;
 	}
 
@@ -206,7 +261,7 @@ public final class BoardUsingSimpleShip implements IBoard {
 		}
 		return false;
 	}
-	
+
 	/*
 	 * Add a ship to the board
 	 */
@@ -219,7 +274,7 @@ public final class BoardUsingSimpleShip implements IBoard {
 				board[ships[id].xcolpos][ships[id].yrowpos + i] = true;
 		}
 	}
-	
+
 	/*
 	 * Remove a ship from the board
 	 */
@@ -231,5 +286,23 @@ public final class BoardUsingSimpleShip implements IBoard {
 			for ( int i = 0; i < ships[id].size; i++)
 				board[ships[id].xcolpos][ships[id].yrowpos + i] = false;
 		}
+	}
+
+	@Override
+	public int numLiveShips() {
+		return liveships;
+	}
+
+	@Override
+	public boolean validate() {
+		int count = 0;
+		for (int i = 0; i < Constants.DEFAULT_BOARD_SIZE; i++)
+			for (int j = 0; j < Constants.DEFAULT_BOARD_SIZE; j++)
+				if (board[i][j] == true ) { count++; }
+
+		for (int id = 0; id < Constants.DEFAULT_SHIPS_NUM; id++)
+			if (ships[id] != null) { count -= ships[id].size; };
+
+			return count == 0;
 	}
 }

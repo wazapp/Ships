@@ -1,8 +1,6 @@
 package com.gmail.wazappdotgithub.ships;
 
 import com.gmail.wazappdotgithub.ships.model.Game;
-import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
-import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -17,4 +17,10 @@
     <string name="no">No</string>
     <string name="getItOn">"Let's get it on!"</string>
     <string name="fleeHome">Flee home!</string>
+    <string name="postgameTitle">Game Over</string>
+    <string name="postgameWinnerGreet">Congratulations!</string>
+    <string name="postgameLooserGreet">Awww...</string>
+    <string name="postgameDataShots">Number of shots:</string>
+    <string name="postgameDataShips">Number of ships:</string>
+    <string name="ingameFireButton">Fire away!</string>
 </resources>

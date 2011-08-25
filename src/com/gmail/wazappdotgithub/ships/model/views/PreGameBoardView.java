@@ -11,8 +11,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 public class PreGameBoardView extends BoardView {
-
-	IBoard board;
+	IBoard board;	
 	
 	public PreGameBoardView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -28,7 +27,7 @@ public class PreGameBoardView extends BoardView {
 		for (IShip s : board.arrayOfShips()) {
 
 			int x = s.getXposition() * offset;
-			int y = s.getYPosition() * offset;
+			int y = s.getYposition() * offset;
 			int si = s.getSize() * offset;
 
 			if ( s.isHorizontal() ) {

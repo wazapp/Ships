@@ -25,7 +25,7 @@ import android.view.View.OnTouchListener;
  */
 public abstract class BoardView extends View implements OnTouchListener{
 
-	private String tag = "BoardView";
+	private String tag = "Ships_BoardView";
 	protected static Paint backgroundPaint = new Paint();
 	protected static Paint foregroundPaint = new Paint();
 	protected static Paint shipsPaint = new Paint();

@@ -1,6 +1,5 @@
 package com.gmail.wazappdotgithub.ships.model.Client;
 
-import java.util.LinkedList;
 import java.util.Random;
 
 import com.gmail.wazappdotgithub.ships.common.Constants;
@@ -14,17 +13,24 @@ import com.gmail.wazappdotgithub.ships.model.Game;
 public final class ComputerClient extends AClient {
 	
 	private static ComputerClient instance = null;
+	private static String tag = "Ships_ComputerClient";
 	// Some AI
 	private Random rand;
 	
 	//just a random bomb
 	private Bomb getBomb() {
 		Bomb boom = null;
-		while ( boom == null || shootingRange.contains(boom) ) {
+		while ( boom == null || shootingRange.contains(boom) || inturnBombs.contains(boom)) {
 			boom = new Bomb(rand.nextInt(Constants.DEFAULT_BOARD_SIZE),
 					rand.nextInt(Constants.DEFAULT_BOARD_SIZE));
+			/*Log.d(tag, tag + "bomb is " 
+					+ String.valueOf(boom == null) 
+					+ String.valueOf(shootingRange.contains(boom) + " (" +shootingRange.size() +") "
+					+ String.valueOf(inturnBombs.contains(boom)) +  " (" +inturnBombs.size() +") "));
+					*/
 		}
 		
+		//Log.d(tag, tag + "bomb is accepted");
 		return boom;
 	}
 	
@@ -48,9 +54,8 @@ public final class ComputerClient extends AClient {
 	@Override
 	public void setToStatePreGame() {
 		currentState = Game.ClientState.PREGAME;
+		initialize();
 		
-		board = Game.getNewBoard();
-		shootingRange = new LinkedList<Bomb>();
 		board.randomiseShipsLocations();
 		board.finalise();
 		setChanged();
@@ -63,9 +68,10 @@ public final class ComputerClient extends AClient {
 		setChanged();
 		notifyObservers(currentState);
 		
-		inturnBombs = new LinkedList<Bomb>();
+		for (int i = 0; i < numLiveShips(); i++ ) //TODO separate rules for number of bombs
+			inturnBombs.add(getBomb());
+			//inturnBombs.add(Game.getConfiguredInstance().dropBomb(this, getBomb()));
 		
-		inturnBombs.add(Game.getConfiguredInstance().dropBomb(this, getBomb()));
 		reportAcceptBombs();
 	}
 }
