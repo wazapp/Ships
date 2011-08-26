@@ -1,6 +1,7 @@
 package com.gmail.wazappdotgithub.ships;
 
-import com.gmail.wazappdotgithub.ships.model.Game;
+import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
+import com.gmail.wazappdotgithub.ships.model.Client.LocalClient.opponentType;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -23,7 +24,7 @@ public class UserInput extends Activity{
             	
                 // Perform action on click
             	Intent intent2 = new Intent(UserInput.this, PreGame.class);
-            	Game.startLocalOpponentInstance(); //TODO ensure this clears everything from previous Game
+            	LocalClient.newInstance(opponentType.LOCALCOMPUTER); //TODO ensure this clears everything from previous Game
 		        startActivity(intent2);	
             }
         });

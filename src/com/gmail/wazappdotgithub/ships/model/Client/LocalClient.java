@@ -1,5 +1,8 @@
 package com.gmail.wazappdotgithub.ships.model.Client;
 
+import com.gmail.wazappdotgithub.ships.model.Game;
+import com.gmail.wazappdotgithub.ships.model.IGame;
+
 /**
  * Default instance of AClient, currently works as the "normal" player
  * @author tor
@@ -7,15 +10,27 @@ package com.gmail.wazappdotgithub.ships.model.Client;
  */
 public final class LocalClient extends AClient {
 	private static LocalClient instance = null;
+	private static IGame currentgame = null;
 	
-	public static IShipsClient newInstance() {
+	public static enum opponentType {
+		LOCALCOMPUTER,
+		LOCALPERSON,
+		REMOTECOMPUTER,
+		REMOTEPERSON
+	}
+	
+	public static IShipsClient newInstance(opponentType opponent) {
 		instance = new LocalClient();
+		switch (opponent) {
+			case LOCALCOMPUTER : currentgame = Game.startLocalOpponentInstance(instance); break;
+			default : throw new IllegalArgumentException("This opponent type is not supported by client");
+		}
 		
 		return instance;
 	}
-	public static IShipsClient getInstance() {
+	public static IShipsClient getInstance() throws IllegalStateException {
 		if ( instance == null )
-			LocalClient.newInstance();
+			throw new IllegalStateException("The Client is not initiated, create a new instance first");
 		
 		return instance;
 	}

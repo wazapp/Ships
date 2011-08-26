@@ -35,6 +35,12 @@ public abstract class AClient extends Observable implements IShipsClient {
 
 	}
 	
+	@Override 
+	public Observable getClientAsObservable() {
+		return this;
+	}
+	
+	
 	@Override
 	public IBoard getBoard() {
 		return board;

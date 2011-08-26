@@ -1,8 +1,8 @@
 package com.gmail.wazappdotgithub.ships.model.views;
 
-import com.gmail.wazappdotgithub.ships.model.Game;
 import com.gmail.wazappdotgithub.ships.model.IBoard;
 import com.gmail.wazappdotgithub.ships.model.IShip;
+import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -15,7 +15,7 @@ public class PreGameBoardView extends BoardView {
 	
 	public PreGameBoardView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		board = Game.getConfiguredInstance().getLocalClient().getBoard();
+		board = LocalClient.getInstance().getBoard();
 	}
 
 	public int shipIdUnderCursor() {

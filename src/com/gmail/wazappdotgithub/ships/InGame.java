@@ -5,8 +5,8 @@ import java.util.Observer;
 
 import com.gmail.wazappdotgithub.ships.model.Game;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
+import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
 import com.gmail.wazappdotgithub.ships.model.views.BoardView;
-import com.gmail.wazappdotgithub.ships.model.views.InTurnBoardView;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -41,7 +41,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		//Log.d(tag,tag + " initiating");
 		super.onCreate(savedInstanceState);
 		
-		Game.getConfiguredInstance().getLocalClientObservable().addObserver(this);
+		LocalClient.getInstance().getClientAsObservable().addObserver(this);
 		
 		setContentView(R.layout.ingame);
 		in.setStartTime(Animation.START_ON_FIRST_FRAME);
@@ -76,7 +76,8 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		if ( v == waitokbutton )
 			vf.showNext();
 		else if ( v == inturnokbutton ) {
-			Game.getConfiguredInstance().getLocalClient().reportAcceptBombs();
+			LocalClient.getInstance().reportAcceptBombs(); 
+			
 			vf.invalidate();
 			vf.showNext();
 		}
@@ -101,7 +102,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	}
 	
 	private void updateFireButtonText() {
-		IShipsClient c = Game.getConfiguredInstance().getLocalClient();
+		IShipsClient c = LocalClient.getInstance();
 		int remain = c.getRemainingBombs();
 		int max = c.numLiveShips();
 		Button b = ((Button)inturnokbutton);
@@ -116,7 +117,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	}
 	
 	private void progress() {
-		Game.getConfiguredInstance().getLocalClientObservable().deleteObserver(this);
+		LocalClient.getInstance().getClientAsObservable().deleteObserver(this);
 		startActivity(new Intent(this,PostGame.class));
 		finish();
 	}

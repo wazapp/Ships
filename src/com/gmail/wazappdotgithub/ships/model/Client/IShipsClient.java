@@ -1,6 +1,7 @@
 package com.gmail.wazappdotgithub.ships.model.Client;
 
 import java.util.List;
+import java.util.Observable;
 
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Game;
@@ -25,6 +26,8 @@ public interface IShipsClient {
 	public List<Bomb> getBombsBoard();
 	public List<Bomb> getInTurnBombs();
 	public void reportAcceptBombs();
+	public Observable getClientAsObservable();
+	
 	/**
 	 * attempt to place or remove a bomb at the selected coordinates 
 	 * @param xcoord

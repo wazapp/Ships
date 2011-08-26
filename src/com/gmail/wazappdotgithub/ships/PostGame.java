@@ -1,7 +1,7 @@
 package com.gmail.wazappdotgithub.ships;
 
 import com.gmail.wazappdotgithub.ships.R.id;
-import com.gmail.wazappdotgithub.ships.model.Game;
+import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
 import com.gmail.wazappdotgithub.ships.model.Client.AClient.EndGameData;
 
 import android.app.Activity;
@@ -23,7 +23,7 @@ public class PostGame extends Activity {
 		Log.d(tag,tag + " initiating");
 		setContentView(R.layout.postgame);
 		
-		clientData = Game.getConfiguredInstance().getLocalClient().retrieveEndGameData();
+		clientData = LocalClient.getInstance().retrieveEndGameData();
 		TextView tv = (TextView) findViewById(id.postgameTextView);
 		if ( clientData != null ) {
 			StringBuffer sb = new StringBuffer();

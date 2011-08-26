@@ -3,6 +3,7 @@ package com.gmail.wazappdotgithub.ships.model.views;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Game;
 import com.gmail.wazappdotgithub.ships.model.IShip;
+import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -23,7 +24,7 @@ public class WaitBoardView extends BoardView {
 
 	@Override
 	protected void drawSpecial(Canvas canvas, int offset) {
-		for (IShip s : Game.getConfiguredInstance().getLocalClient().getBoard().arrayOfShips()) {
+		for (IShip s : LocalClient.getInstance().getBoard().arrayOfShips()) {
 
 			int x = s.getXposition() * offset;
 			int y = s.getYposition() * offset;

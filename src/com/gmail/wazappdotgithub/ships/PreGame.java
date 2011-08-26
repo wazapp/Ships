@@ -23,7 +23,7 @@ public final class PreGame extends Activity implements Observer {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Game.getConfiguredInstance().getLocalClientObservable().addObserver(this);
+		LocalClient.getInstance().getClientAsObservable().addObserver(this);
 		
 		//Log.d(tag,tag + "configuring pregame contentview");
 		setContentView(R.layout.pregame);
@@ -34,7 +34,7 @@ public final class PreGame extends Activity implements Observer {
 			@Override
 			public void onClick(View v) {
 				Log.d(tag,"randomisingShips");
-				Game.getConfiguredInstance().getLocalClient().getBoard().randomiseShipsLocations();
+				LocalClient.getInstance().getBoard().randomiseShipsLocations();
 				findViewById(R.id.pregame_BoardView).invalidate();
 			}
 		});
@@ -47,7 +47,7 @@ public final class PreGame extends Activity implements Observer {
 				int id = ((PreGameBoardView) findViewById(R.id.pregame_BoardView)).shipIdUnderCursor();
 				Log.d(tag,"rotatingShip id " + id);
 				if ( id >= 0 ) {
-					Game.getConfiguredInstance().getLocalClient().getBoard().toggleOrientation(id);
+					LocalClient.getInstance().getBoard().toggleOrientation(id);
 					findViewById(R.id.pregame_BoardView).invalidate();
 				}
 			}
@@ -59,7 +59,7 @@ public final class PreGame extends Activity implements Observer {
 			@Override
 			public void onClick(View v) {
 				Log.d(tag,"start button pressed");
-				Game.getConfiguredInstance().getLocalClient().reportReady();
+				LocalClient.getInstance().reportReady();
 			}
 		});
 		
@@ -80,7 +80,7 @@ public final class PreGame extends Activity implements Observer {
 		}
 	}
 	private void progress() {
-		Game.getConfiguredInstance().getLocalClientObservable().deleteObserver(this);
+		LocalClient.getInstance().getClientAsObservable().deleteObserver(this);
 		startActivity(new Intent(this,InGame.class));
 		finish();
 	}

@@ -1,15 +1,12 @@
 package com.gmail.wazappdotgithub.ships.model.views;
 
 import com.gmail.wazappdotgithub.ships.model.Bomb;
-import com.gmail.wazappdotgithub.ships.model.Game;
-import com.gmail.wazappdotgithub.ships.model.IShip;
-import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
+import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.Button;
 /**
  * Implementation of BoardView which is used while the client is inturn state 
  * @author tor
@@ -29,7 +26,7 @@ public final class InTurnBoardView extends BoardView {
 	@Override
 	protected void drawSpecial(Canvas canvas, int offset) {
 		int obytwo = offset / 2;
-		//TODO only for debugging, remove at some point
+		/*TODO only for debugging, remove at some point
 		for (IShip s : Game.getConfiguredInstance().getOpponentClient().getBoard().arrayOfShips()) {
 			int x = s.getXposition() * offset;
 			int y = s.getYposition() * offset;
@@ -45,15 +42,16 @@ public final class InTurnBoardView extends BoardView {
 				//canvas.drawRect(x + 3, y + 3, x - 3 + offset, y - 3 + si, shipsPaint);
 			}
 		}
-		//end only for debugging
+		end only for debugging
+		*/
 		
-		for (Bomb b : Game.getConfiguredInstance().getLocalClient().getBombsBoard()) { // TODO change graphics of these
+		for (Bomb b : LocalClient.getInstance().getBombsBoard()) { // TODO change graphics of these
 			if ( b.hit ) 
 				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo , obytwo, hitPaint);
 			else
 				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo, missPaint);
 		}
-		for (Bomb b : Game.getConfiguredInstance().getLocalClient().getInTurnBombs()) {
+		for (Bomb b : LocalClient.getInstance().getInTurnBombs()) {
 			if ( b.hit ) 
 				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo , obytwo, hitPaint);
 			else
@@ -65,8 +63,7 @@ public final class InTurnBoardView extends BoardView {
 	protected void onTouchSpecial(MotionEvent event) {
 		if ( event.getAction() == MotionEvent.ACTION_UP) {
 			
-			IShipsClient c = Game.getConfiguredInstance().getLocalClient(); 
-			c.placeBomb(translateX(event), translateY(event));
+			LocalClient.getInstance().placeBomb(translateX(event), translateY(event));
 		}
 	}
 }

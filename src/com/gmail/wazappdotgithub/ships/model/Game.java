@@ -1,14 +1,12 @@
 package com.gmail.wazappdotgithub.ships.model;
 
 import java.util.List;
-import java.util.Observable;
 
 import android.util.Log;
 
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.model.Client.ComputerClient;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
-import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
 /**
  * implementation of IGame, contains game logic and manages the states of clients 
  * @author tor
@@ -43,10 +41,10 @@ public class Game implements IGame {
 		return instance;
 	}
 	
-	public static IGame startLocalOpponentInstance() {
+	public static IGame startLocalOpponentInstance(IShipsClient InitiatingClient) {
 		instance = new Game();
 		//maybe null all parameters here...
-		player = LocalClient.newInstance();
+		player = InitiatingClient;
 		opponent = ComputerClient.newInstance();
 		
 		changeStateOfClient(player, Game.ClientState.PREGAME);
@@ -142,21 +140,6 @@ public class Game implements IGame {
 			changeStateOfClient(currentOpponent, Game.ClientState.WAIT);
 			changeStateOfClient(currentPlayer, Game.ClientState.INTURN);
 		}
-	}
-
-	@Override
-	public IShipsClient getLocalClient() {
-		return player;
-	}
-	
-	@Override
-	public IShipsClient getOpponentClient() {
-		return opponent;
-	}
-	
-	@Override
-	public Observable getLocalClientObservable() {
-		return (Observable) player;
 	}
 
 	@Override

@@ -39,11 +39,10 @@ public class Ships extends Activity {
                     Intent intent = new Intent(Ships.this, UserInput.class);
                 
                     startActivity(intent);
-                    stop();
+                    finish();
                 }
             }
         };
         splashTread.start();
-        
     }
 }
