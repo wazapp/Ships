@@ -1,7 +1,7 @@
 package com.gmail.wazappdotgithub.ships.model.views;
 
+
 import com.gmail.wazappdotgithub.ships.model.Bomb;
-import com.gmail.wazappdotgithub.ships.model.Game;
 import com.gmail.wazappdotgithub.ships.model.IShip;
 import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
 
@@ -17,6 +17,8 @@ import android.view.MotionEvent;
  */
 public class WaitBoardView extends BoardView {
 
+	private String tag = "Ships_WaitBoardView";
+	
 	public WaitBoardView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		
@@ -24,6 +26,7 @@ public class WaitBoardView extends BoardView {
 
 	@Override
 	protected void drawSpecial(Canvas canvas, int offset) {
+		//Paint my own ships
 		for (IShip s : LocalClient.getInstance().getBoard().arrayOfShips()) {
 
 			int x = s.getXposition() * offset;
@@ -41,24 +44,26 @@ public class WaitBoardView extends BoardView {
 			}
 		}
 		
-		for (Bomb b : Game.getConfiguredInstance().getOpponentsShots() ) {
+		//Paint the old bombs
+		for (Bomb b : LocalClient.getInstance().requestOpponentBombsBoard() ) {
 			if ( b.hit )
 				canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2, hitPaint);
 			else
 				canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2), offset / 2, missPaint);			
 		}
-		
-		for (Bomb b : Game.getConfiguredInstance().getOpponentsLatestShots() ) {
-			if ( b.hit ) 
-				canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2, hitPaint);
-			else
-				canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2), offset / 2, missPaint);			
+		//Paint the new bombs
+		for (Bomb b : LocalClient.getInstance().requestOpponentLatestTurnBombs() ) {
+			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2, backgroundPaint);
+			if ( b.hit ) {
+				canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2 - 2 , hitPaint);
+			} else {
+				canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2), offset / 2 - 2, missPaint);
+			}
 		}
 	}
 
 	@Override
 	protected void onTouchSpecial(MotionEvent event) {
-		// do nothing
-
+		return;// do nothing
 	}
 }

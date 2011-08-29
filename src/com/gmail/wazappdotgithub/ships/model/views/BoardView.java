@@ -156,5 +156,4 @@ public abstract class BoardView extends View implements OnTouchListener{
 				selectRow.right = selectRow.left + min;
 			}
 	}
-
 }

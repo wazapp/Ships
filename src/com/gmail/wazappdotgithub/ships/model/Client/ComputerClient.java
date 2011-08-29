@@ -73,5 +73,6 @@ public final class ComputerClient extends AClient {
 			//inturnBombs.add(Game.getConfiguredInstance().dropBomb(this, getBomb()));
 		
 		reportAcceptBombs();
+		reportBombingCompleted();
 	}
 }

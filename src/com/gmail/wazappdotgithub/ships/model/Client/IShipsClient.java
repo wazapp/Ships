@@ -21,11 +21,18 @@ public interface IShipsClient {
 	public EndGameData retrieveEndGameData();
 	
 	//possibly sit in another interface!
+	public List<Bomb> getBombsBoard();
+	public List<Bomb> requestOpponentBombsBoard();
+	
+	public List<Bomb> getLatestTurnBombs();
+	public List<Bomb> requestOpponentLatestTurnBombs();
+	
+	public List<Bomb> getInTurnBombs();
+	
 	public Game.ClientState getState();
 	public IBoard getBoard();
-	public List<Bomb> getBombsBoard();
-	public List<Bomb> getInTurnBombs();
 	public void reportAcceptBombs();
+	public void reportBombingCompleted();
 	public Observable getClientAsObservable();
 	
 	/**

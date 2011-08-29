@@ -5,6 +5,8 @@ import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 /**
@@ -16,8 +18,16 @@ public final class InTurnBoardView extends BoardView {
 	
 	private String tag = "Ships_InTurnBoardView";
 	
+	private static Paint target_one = new Paint();
+	private static Paint target_two = new Paint();
+	private static Paint target_center = new Paint();
+	
 	public InTurnBoardView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		
+		target_one.setColor(Color.WHITE);
+		target_two.setColor(Color.GREEN);
+		target_center.setColor(Color.RED);
 	}
 
 	/*
@@ -26,36 +36,33 @@ public final class InTurnBoardView extends BoardView {
 	@Override
 	protected void drawSpecial(Canvas canvas, int offset) {
 		int obytwo = offset / 2;
-		/*TODO only for debugging, remove at some point
-		for (IShip s : Game.getConfiguredInstance().getOpponentClient().getBoard().arrayOfShips()) {
-			int x = s.getXposition() * offset;
-			int y = s.getYposition() * offset;
-			int si = s.getSize() * offset;
-
-			if ( s.isHorizontal() ) {
-				canvas.drawRect(x, y, x + si, y + offset, waterPaint);
-				canvas.drawRect(x + 2, y + 2, x - 2 + si, y - 2 + offset, backgroundPaint);
-				//canvas.drawRect(x + 3, y + 3, x - 3 + si, y - 3 + offset, shipsPaint);
-			} else {
-				canvas.drawRect(x, y, x + offset, y + si, waterPaint);
-				canvas.drawRect(x + 2, y + 2, x - 2 + offset, y - 2 + si, backgroundPaint);
-				//canvas.drawRect(x + 3, y + 3, x - 3 + offset, y - 3 + si, shipsPaint);
-			}
-		}
-		end only for debugging
-		*/
 		
-		for (Bomb b : LocalClient.getInstance().getBombsBoard()) { // TODO change graphics of these
+		for (Bomb b : LocalClient.getInstance().getBombsBoard()) {
 			if ( b.hit ) 
 				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo , obytwo, hitPaint);
 			else
 				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo, missPaint);
 		}
+		
 		for (Bomb b : LocalClient.getInstance().getInTurnBombs()) {
 			if ( b.hit ) 
 				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo , obytwo, hitPaint);
-			else
-				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo, missPaint);
+			else {
+				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo, target_one);
+				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo-2, target_two);
+				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo-4, target_one);
+				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo-6, target_two);
+				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo-8, target_center);
+			}
+		}
+		
+		for (Bomb b : LocalClient.getInstance().getLatestTurnBombs()) {
+			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2, backgroundPaint);
+			if ( b.hit ) {
+				canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2 - 2 , hitPaint);
+			} else {
+				canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2), offset / 2 - 2, missPaint);
+			}
 		}
 	}
 	

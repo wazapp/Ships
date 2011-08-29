@@ -143,12 +143,12 @@ public class Game implements IGame {
 	}
 
 	@Override
-	public List<Bomb> getOpponentsLatestShots() {
-		return currentOpponent.getInTurnBombs();
+	public List<Bomb> getOpponentsLatestTurnBombs() {
+		return currentOpponent.getLatestTurnBombs();
 	}
 	
 	@Override
-	public List<Bomb> getOpponentsShots() {
+	public List<Bomb> getOpponentsBombsBoard() {
 		return currentOpponent.getBombsBoard();
 	}
 }

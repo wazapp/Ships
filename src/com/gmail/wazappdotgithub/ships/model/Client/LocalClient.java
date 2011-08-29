@@ -1,7 +1,6 @@
 package com.gmail.wazappdotgithub.ships.model.Client;
 
 import com.gmail.wazappdotgithub.ships.model.Game;
-import com.gmail.wazappdotgithub.ships.model.IGame;
 
 /**
  * Default instance of AClient, currently works as the "normal" player
@@ -10,7 +9,6 @@ import com.gmail.wazappdotgithub.ships.model.IGame;
  */
 public final class LocalClient extends AClient {
 	private static LocalClient instance = null;
-	private static IGame currentgame = null;
 	
 	public static enum opponentType {
 		LOCALCOMPUTER,
@@ -22,7 +20,7 @@ public final class LocalClient extends AClient {
 	public static IShipsClient newInstance(opponentType opponent) {
 		instance = new LocalClient();
 		switch (opponent) {
-			case LOCALCOMPUTER : currentgame = Game.startLocalOpponentInstance(instance); break;
+			case LOCALCOMPUTER : Game.startLocalOpponentInstance(instance); break;
 			default : throw new IllegalArgumentException("This opponent type is not supported by client");
 		}
 		

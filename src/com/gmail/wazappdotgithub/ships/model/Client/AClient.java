@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
+import android.util.Log;
+
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Game;
 import com.gmail.wazappdotgithub.ships.model.IBoard;
@@ -21,6 +23,7 @@ public abstract class AClient extends Observable implements IShipsClient {
 	protected Game.ClientState currentState = null;
 	protected IBoard board = null;
 	protected List<Bomb> shootingRange = null;
+	protected List<Bomb> latestTurnBombs = null;
 	protected List<Bomb> inturnBombs = null;
 	protected int bombstoplace;
 	protected EndGameData endgamedata = null;
@@ -40,7 +43,6 @@ public abstract class AClient extends Observable implements IShipsClient {
 		return this;
 	}
 	
-	
 	@Override
 	public IBoard getBoard() {
 		return board;
@@ -55,7 +57,22 @@ public abstract class AClient extends Observable implements IShipsClient {
 	public List<Bomb> getInTurnBombs() {
 		return inturnBombs;
 	}
-
+	
+	@Override
+	public List<Bomb> getLatestTurnBombs() {
+		return latestTurnBombs;
+	}
+	
+	@Override
+	public List<Bomb> requestOpponentBombsBoard() {
+		return Game.getConfiguredInstance().getOpponentsBombsBoard();
+	}
+	
+	@Override
+	public List<Bomb> requestOpponentLatestTurnBombs() {
+		return Game.getConfiguredInstance().getOpponentsLatestTurnBombs();
+	}
+	
 	@Override
 	public ClientState getState() {
 		return currentState;
@@ -152,7 +169,9 @@ public abstract class AClient extends Observable implements IShipsClient {
 		endgamedata.winner = isTheWinner;
 		
 		shootingRange.clear();
+		latestTurnBombs.clear();
 		inturnBombs.clear();
+		
 		bombstoplace = 0;
 	}
 
@@ -163,6 +182,7 @@ public abstract class AClient extends Observable implements IShipsClient {
 	protected void initialize() {
 		board = Game.getNewBoard();
 		shootingRange = new LinkedList<Bomb>();
+		latestTurnBombs = new LinkedList<Bomb>();
 		inturnBombs = new LinkedList<Bomb>();
 	}
 	
@@ -195,8 +215,17 @@ public abstract class AClient extends Observable implements IShipsClient {
 			Game.getConfiguredInstance().dropBomb(this, b);
 			shootingRange.add(b);
 		}
+		//moving to store to be accessed later
+		latestTurnBombs = inturnBombs;
+		inturnBombs = new LinkedList<Bomb>();
 		
-		inturnBombs.clear();
+		Log.d("Ships_AClient", "Ships_AClient" + " Accepting bombs and updating them with hits");
+		
+		//NOTE: Remember to call reportBombingCompleted manually to let Game change the turn!
+	}
+	
+	@Override
+	public void reportBombingCompleted() {
 		Game.getConfiguredInstance().clientReportFinishedBombing(this);
 	}
 	

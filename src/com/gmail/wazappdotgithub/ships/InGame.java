@@ -1,8 +1,10 @@
 package com.gmail.wazappdotgithub.ships;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Game;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
 import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
@@ -28,7 +30,7 @@ import android.widget.ViewFlipper;
 public class InGame extends Activity implements OnClickListener, Observer {
 
 	private String tag = "Ships_InGame";
-	ViewFlipper vf;
+	ViewFlipper viewflipper;
 	View waitokbutton,inturnokbutton;
 	BoardView waitView,inturnView;
 	
@@ -51,7 +53,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		out.setDuration(1000);
 		
 		//Log.d(tag,tag + " animations completed");
-		vf = (ViewFlipper) findViewById(R.id.ingame_flipper);
+		viewflipper = (ViewFlipper) findViewById(R.id.ingame_flipper);
 		//Log.d(tag,tag + " viewcompleted");
 		waitokbutton = findViewById(R.id.ingame_wait_okbutton);
 		inturnokbutton = findViewById(R.id.ingame_inturn_okbutton);
@@ -65,24 +67,24 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		inturnokbutton.setOnClickListener(this);
 		
 		//Log.d(tag,tag + " onclick listeners completed");
-		vf.setInAnimation(in);
-		vf.setOutAnimation(out);
+		viewflipper.setInAnimation(in);
+		viewflipper.setOutAnimation(out);
 		
 		updateFireButtonText();
 	}
 
 	@Override
 	public void onClick(View v) {
-		if ( v == waitokbutton )
-			vf.showNext();
-		else if ( v == inturnokbutton ) {
-			LocalClient.getInstance().reportAcceptBombs(); 
+		if ( v == waitokbutton ) {
+			viewflipper.showNext();
 			
-			vf.invalidate();
-			vf.showNext();
+		} else if ( v == inturnokbutton ) {
+			LocalClient.getInstance().reportAcceptBombs();
+			LocalClient.getInstance().reportBombingCompleted();
 		}
 	}
 
+	
 	@Override
 	public void update(Observable observable, Object data) {
 		//Log.d(tag, tag + "received update information");
@@ -92,11 +94,11 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	private void updateActivity(Game.ClientState newstate) {
 		//Log.d(tag,"new state is " + newstate );
 		switch ( newstate ) {
-		case RECOUNTBOMBS 	: Log.d(tag, tag + "RECOUNT"); updateFireButtonText(); break;
-		case INTURN 		: Log.d(tag, tag + "INTURN"); updateFireButtonText(); break;			
-		case WAIT 			: Log.d(tag, tag + "WAIT");break;
-		case POSTGAMELOOSER : Log.d(tag, tag + "LOOSE"); progress(); break;
-		case POSTGAMEWINNER : Log.d(tag, tag + "WIN"); progress(); break;
+		case RECOUNTBOMBS 	: Log.d(tag, tag + " RECOUNT"); updateFireButtonText(); break;
+		case INTURN			: Log.d(tag, tag + " INTURN");  updateFireButtonText(); break;
+		case WAIT 			: Log.d(tag, tag + " WAIT"); viewflipper.showNext(); break;
+		case POSTGAMELOOSER : Log.d(tag, tag + " LOOSE"); progress(); break;
+		case POSTGAMEWINNER : Log.d(tag, tag + " WIN"); progress(); break;
 		default : break; 
 		}
 	}
@@ -120,5 +122,29 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		LocalClient.getInstance().getClientAsObservable().deleteObserver(this);
 		startActivity(new Intent(this,PostGame.class));
 		finish();
+	}
+	
+	//Unused for the moment
+	private long[] getBombPattern(List<Bomb> listofbombs) {
+		int hit = 250;
+		int miss = 0;
+		int hit_gap = 100;
+		int miss_gap = 350;
+		
+		long[] pattern = new long[listofbombs.size() * 2 + 1];
+		pattern[0] = 0;
+	    
+		for (int a = 0; a < listofbombs.size(); a++) {
+			
+			if (listofbombs.get(a).hit) {
+				pattern[a * 2 + 1] = hit;
+				pattern[a * 2 + 2] = hit_gap;
+			} else {
+				pattern[a * 2 + 1] = miss;
+				pattern[a * 2 + 2] = miss_gap;
+			}
+		}
+		
+		return pattern;
 	}
 }

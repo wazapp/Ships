@@ -10,6 +10,6 @@ public interface IGame {
 	void clientReportFinishedBombing(IShipsClient client);
 	Bomb dropBomb(IShipsClient Shootingclient, Bomb b);
 	
-	List<Bomb> getOpponentsShots();
-	List<Bomb> getOpponentsLatestShots();
+	List<Bomb> getOpponentsBombsBoard();
+	List<Bomb> getOpponentsLatestTurnBombs();
 }
