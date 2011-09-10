@@ -23,4 +23,5 @@
     <string name="postgameDataShots">Number of shots:</string>
     <string name="postgameDataShips">Number of ships:</string>
     <string name="ingameFireButton">Fire away!</string>
+    <string name="sinkaship"> Sink A Ship</string>
 </resources>

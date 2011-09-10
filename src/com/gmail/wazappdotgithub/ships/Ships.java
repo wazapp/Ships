@@ -26,9 +26,9 @@ public class Ships extends Activity {
                 try {
                     int waited = 0;
                     while(_active && (waited < _splashTime)) {
-                        sleep(100);
+                        sleep(1200);
                         if(_active) {
-                            waited += 100;
+                            waited += 1200;
                         }
                     }
                 } catch(InterruptedException e) {

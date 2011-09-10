@@ -4,8 +4,11 @@
       android:versionCode="1"
       android:versionName="1.0">
     <uses-sdk android:minSdkVersion="7" />
+    <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
+    <uses-permission android:name="android.permission.SET_ORIENTATION"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 	
-    <application android:icon="@drawable/icon" android:label="@string/app_name">
+    <application android:label="@string/sinkaship" android:icon="@drawable/launcher" android:killAfterRestore="true">
         <activity android:name=".Ships"
                   android:label="@string/app_name">
             <intent-filter>

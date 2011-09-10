@@ -2,9 +2,9 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/tableLayout1" android:layout_width="fill_parent"
 	android:layout_height="fill_parent" android:layout_gravity="center">
-    <com.gmail.wazappdotgithub.ships.model.views.PreGameBoardView android:id="@+id/pregame_BoardView" android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="fill_parent"></com.gmail.wazappdotgithub.ships.model.views.PreGameBoardView>
+    <com.gmail.wazappdotgithub.ships.model.views.PreGameBoardView android:id="@+id/pregame_BoardView" android:layout_width="fill_parent" android:layout_height="399dp" android:layout_gravity="bottom"></com.gmail.wazappdotgithub.ships.model.views.PreGameBoardView>
 	<TableRow android:layout_column="1" android:id="@+id/tableRow2"
-		android:gravity="center" android:layout_height="wrap_content" android:layout_width="fill_parent">
+		android:gravity="center" android:layout_width="fill_parent" android:layout_weight="1" android:layout_height="0dp">
 		<Button android:layout_width="wrap_content" android:id="@+id/pregame_button_rotate" android:text="Rotate" android:layout_height="wrap_content" android:layout_weight="1"></Button>
 		<Button android:layout_width="wrap_content" android:id="@+id/pregame_button_randomize" android:text="Randomize" android:layout_height="wrap_content" android:layout_weight="1"></Button>
 		<Button android:layout_width="wrap_content" android:id="@+id/pregame_button_start" android:text="Start" android:layout_height="wrap_content" android:layout_weight="1"></Button>
