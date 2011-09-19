@@ -12,16 +12,18 @@ import android.view.MotionEvent;
 
 public class PreGameBoardView extends BoardView {
 	IBoard board;	
-	
+
 	public PreGameBoardView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		board = LocalClient.getInstance().getBoard();
+
+		if ( ! isInEditMode() )
+			board = LocalClient.getInstance().getBoard();
 	}
 
 	public int shipIdUnderCursor() {
 		return board.getShipId(currentTouchCol, currentTouchRow);
 	}
-	
+
 	@Override
 	protected void drawSpecial(Canvas canvas, int offset) {
 		for (IShip s : board.arrayOfShips()) {

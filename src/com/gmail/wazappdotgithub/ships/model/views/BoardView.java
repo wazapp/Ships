@@ -68,12 +68,26 @@ public abstract class BoardView extends View implements OnTouchListener{
 		
 		drawWater(canvas,offs);
 
-		drawSpecial(canvas,offs);
+		if ( ! isInEditMode() )
+			drawSpecial(canvas,offs);
 		
 		drawGrid(canvas,offs, min);
 		drawSelect(canvas);
 	}
 	
+	
+	
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		/*
+		 * The board is a square
+		 */
+		int min = Math.min(super.getMeasuredWidth(), super.getMeasuredHeight());
+		setMeasuredDimension(min, min);
+	}
+
+
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		Log.d(tag,tag + " touched");
