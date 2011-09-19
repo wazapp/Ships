@@ -4,11 +4,13 @@
 	android:layout_width="fill_parent" android:layout_height="fill_parent">
 	<!-- configuring the INTURN layout -->
 	<TableLayout android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:id="@+id/ingame_inturn_view">
+		android:layout_height="wrap_content" 
+		android:id="@+id/ingame_inturn_view"
+		android:layout_gravity="center">
 		<com.gmail.wazappdotgithub.ships.model.views.InTurnBoardView
 			android:layout_width="fill_parent" android:id="@+id/ingame_inturn_boardview"
-			android:layout_height="wrap_content" android:layout_gravity="center"
-			android:layout_weight="1" android:layout_marginTop="30dip"></com.gmail.wazappdotgithub.ships.model.views.InTurnBoardView>
+			android:layout_height="wrap_content" android:layout_gravity="bottom">
+			</com.gmail.wazappdotgithub.ships.model.views.InTurnBoardView>
 		<TableRow android:id="@+id/tableRow1" android:layout_width="wrap_content"
 			android:layout_height="wrap_content">
 			<Button android:layout_width="wrap_content" android:text="Fire!"
@@ -17,12 +19,15 @@
 		</TableRow>
 	</TableLayout>
 	<!-- configuring the WAIT layout -->
-	<TableLayout android:layout_height="wrap_content"
-		android:layout_width="wrap_content" android:id="@+id/ingame_wait_view">
+	<TableLayout 
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content" 
+		android:id="@+id/ingame_wait_view"
+		android:layout_gravity="center">
 		<com.gmail.wazappdotgithub.ships.model.views.WaitBoardView
 			android:layout_width="fill_parent" android:id="@+id/ingame_wait_boardview"
-			android:layout_height="wrap_content" android:layout_gravity="center"
-			android:layout_weight="1" android:layout_marginTop="30dip"></com.gmail.wazappdotgithub.ships.model.views.WaitBoardView>
+			android:layout_height="wrap_content" android:layout_gravity="bottom">
+			</com.gmail.wazappdotgithub.ships.model.views.WaitBoardView>
 		<TableRow android:layout_height="wrap_content"
 			android:layout_width="wrap_content" android:id="@+id/TableRow01">
 			<Button android:layout_width="wrap_content" android:text="Next"
