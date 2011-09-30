@@ -72,7 +72,7 @@ public final class PreGame extends Activity implements Observer {
 	}	
 	
 	private void updateActivity(Game.ClientState newstate) {
-		Log.d(tag,"new state is " + newstate );
+		//Log.d(tag,"new state is " + newstate );
 		switch ( newstate ) {
 		case PREGAME : enableInteraction(); break;
 		case WAITGAME : progress(); break;
