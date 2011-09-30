@@ -27,21 +27,8 @@ public class PreGameBoardView extends BoardView {
 	@Override
 	protected void drawSpecial(Canvas canvas, int offset) {
 		for (IShip s : board.arrayOfShips()) {
-
-			int x = s.getXposition() * offset;
-			int y = s.getYposition() * offset;
-			int si = s.getSize() * offset;
-
-			if ( s.isHorizontal() ) {
-				canvas.drawRect(x, y, x + si, y + offset, waterPaint);
-				canvas.drawRect(x + 2, y + 2, x - 2 + si, y - 2 + offset, backgroundPaint);
-				canvas.drawRect(x + 3, y + 3, x - 3 + si, y - 3 + offset, shipsPaint);
-			} else {
-				canvas.drawRect(x, y, x + offset, y + si, waterPaint);
-				canvas.drawRect(x + 2, y + 2, x - 2 + offset, y - 2 + si, backgroundPaint);
-				canvas.drawRect(x + 3, y + 3, x - 3 + offset, y - 3 + si, shipsPaint);
+			drawShip(canvas, offset, s);
 			}
-		}
 	}
 
 	@Override
