@@ -22,6 +22,9 @@
     <string name="postgameLooserGreet">Awww...</string>
     <string name="postgameDataShots">Number of shots:</string>
     <string name="postgameDataShips">Number of ships:</string>
-    <string name="ingameFireButton">Fire away!</string>
+    <string name="ingameFireButton_Fire">Fire away!</string>
     <string name="sinkaship"> Sink A Ship</string>
+    <string name="ingameFireButton_Evaluating">Evaluating...</string>
+    <string name="ingameFireButton_Continue">Continue</string>
+    <string name="ingameWaitButton_Waiting">Waiting...</string>
 </resources>
