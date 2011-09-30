@@ -13,6 +13,8 @@ import com.gmail.wazappdotgithub.ships.model.views.BoardView;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,6 +40,8 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	
 	private Animation out = new RotateAnimation(0f, 90f);
 	private Animation in = new RotateAnimation(90f, 0f); // TODO just testing the pivots(f,f,f,f)
+	
+	private MediaPlayer mp;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,8 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		viewflipper.setInAnimation(in);
 		viewflipper.setOutAnimation(out);
 		
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+		
 		updateFireButtonText();
 	}
 	
@@ -78,7 +84,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	 * Using this as is recommended in http://developer.android.com/guide/topics/fundamentals/processes-and-threads.html
 	 * to enable incremental presentation of the bombs 
 	 */
-	private class EvaluateBombsTask extends AsyncTask<List<Bomb>,Void,Void> {
+	private class EvaluateBombsTask extends AsyncTask<List<Bomb>,Boolean,Void> {
 	    /** The system calls this to perform work in a worker thread and
 	      * delivers it the parameters given to AsyncTask.execute() 
 	     * @return */
@@ -100,7 +106,9 @@ public class InGame extends Activity implements OnClickListener, Observer {
 			try {
 				for (Bomb b : params[0]) {
 					v.addDelayedBomb(b);	//possibly have a currentView pointer in InGame
-					publishProgress(((Void[]) null));
+					publishProgress(b.hit); // play sound if miss
+					if (b.hit == false)
+			    		mp.start();	
 					Thread.sleep(Constants.animated_bombdelay_ms);
 				}
 
@@ -111,8 +119,8 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		}
 	    
 	    @Override
-		protected void onProgressUpdate(Void... values) {
-	    	v.invalidate();		
+		protected void onProgressUpdate(Boolean... values) {
+	    	v.invalidate();
 	    }
 
 		/** The system calls this to perform work in the UI thread and delivers
@@ -197,6 +205,10 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	}
 	
 	private void spawnIncrementalBombThread(Game.ClientState newstate) {
+		if (mp != null)
+			mp.release();
+		
+		mp = MediaPlayer.create(this, R.raw.plopp);
 		new EvaluateBombsTask().execute(LocalClient.getInstance().requestInTurnClientAcceptedBombs());
 
 	}
