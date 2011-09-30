@@ -12,11 +12,13 @@ import com.gmail.wazappdotgithub.ships.model.Game.ClientState;
 import com.gmail.wazappdotgithub.ships.model.views.BoardView;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -42,6 +44,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	private Animation in = new RotateAnimation(90f, 0f); // TODO just testing the pivots(f,f,f,f)
 	
 	private MediaPlayer mp;
+	private Vibrator vibro;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		viewflipper.setOutAnimation(out);
 		
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+		vibro = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		
 		updateFireButtonText();
 	}
@@ -109,6 +113,9 @@ public class InGame extends Activity implements OnClickListener, Observer {
 					publishProgress(b.hit); // play sound if miss
 					if (b.hit == false)
 			    		mp.start();	
+					else
+						vibro.vibrate(Constants.animated_hitvibro_ms);
+						
 					Thread.sleep(Constants.animated_bombdelay_ms);
 				}
 
