@@ -1,7 +1,6 @@
 package com.gmail.wazappdotgithub.ships.model.Client;
 
 import java.util.Random;
-
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Game;
@@ -13,14 +12,14 @@ import com.gmail.wazappdotgithub.ships.model.Game;
 public final class ComputerClient extends AClient {
 	
 	private static ComputerClient instance = null;
-	private static String tag = "Ships_ComputerClient";
+	protected String tag = "Ships_ComputerClient ";
 	// Some AI
 	private Random rand;
 	
 	//just a random bomb
 	private Bomb getBomb() {
 		Bomb boom = null;
-		while ( boom == null || shootingRange.contains(boom) || inturnBombs.contains(boom)) {
+		while ( boom == null || historicalBombs.contains(boom) || inturnBombs.contains(boom)) {
 			boom = new Bomb(rand.nextInt(Constants.DEFAULT_BOARD_SIZE),
 					rand.nextInt(Constants.DEFAULT_BOARD_SIZE));
 			/*Log.d(tag, tag + "bomb is " 
@@ -30,10 +29,13 @@ public final class ComputerClient extends AClient {
 					*/
 		}
 		
-		//Log.d(tag, tag + "bomb is accepted");
 		return boom;
 	}
 	
+	@Override
+	protected String tag() {
+		return tag;
+	}
 	
 	public static IShipsClient newInstance() {
 		instance = new ComputerClient();
@@ -59,20 +61,32 @@ public final class ComputerClient extends AClient {
 		board.randomiseShipsLocations();
 		board.finalise();
 		setChanged();
-		reportReady();
-	}
-	
-	@Override
-	public void setToStateInTurn() {
-		currentState = Game.ClientState.INTURN;
-		setChanged();
 		notifyObservers(currentState);
 		
-		for (int i = 0; i < numLiveShips(); i++ ) //TODO separate rules for number of bombs
-			inturnBombs.add(getBomb());
-			//inturnBombs.add(Game.getConfiguredInstance().dropBomb(this, getBomb()));
-		
-		reportAcceptBombs();
-		reportBombingCompleted();
+		reportReady();
 	}
+
+	private void generateBombs() {
+		for (int i = 0; i < bombstoplace; i++ )
+			inturnBombs.add(getBomb());
+	}
+	
+	@Override 
+	protected void enterStateActions(Game.ClientState newstate) {
+		currentState = newstate;
+		
+		switch ( currentState ) {
+		case INTURN : restockBombs(); generateBombs(); requestNextState(); break;
+		case I_EVALUATE : requestNextState(); break; // not interested in the result at the moment
+		case I_COMPLETEDEVALUATION : requestNextState(); break;
+		case READYCHANGETURNS : break; // wait for game (other player)
+		case WAIT : manageBombsForStateSwitch() ; break; // automatic
+		case W_EVALUATE : requestNextState(); break;
+		case W_COMPLETEDEVALUATION : requestNextState(); break;
+		default : break;
+		}
+		
+		setChanged();
+		notifyObservers(currentState);
+	}	
 }

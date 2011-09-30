@@ -9,30 +9,39 @@ import com.gmail.wazappdotgithub.ships.model.IBoard;
 import com.gmail.wazappdotgithub.ships.model.Client.AClient.EndGameData;
 
 public interface IShipsClient {
-	
-	//used by game logic to set the client to the appropriate state
+
+	// Game uses these to move in states before and after the game is running
 	public void setToStatePreGame();
 	public void setToStateWaitGame();
-	public void setToStateWait();
-	public void setToStateInTurn();
 	public void setToStatePostGameAsWinner();
 	public void setToStatePostGameAsLooser();
+	
+	/** 
+	 * Call this to request to move away from current state
+	 * The client requests a new state from the Game
+	 */
+	public void requestNextState();
+	
+	/**
+	 * Game to call this to enforce the move to the appropriate state
+	 */
+	public void putToNextState(Game.ClientState newstate);
+	
 	
 	public EndGameData retrieveEndGameData();
 	
 	//possibly sit in another interface!
-	public List<Bomb> getBombsBoard();
-	public List<Bomb> requestOpponentBombsBoard();
-	
+	public List<Bomb> getHistoricalBombs();
 	public List<Bomb> getLatestTurnBombs();
-	public List<Bomb> requestOpponentLatestTurnBombs();
+	
+	public List<Bomb> requestInturnClientHistoricalBombs();
+	public List<Bomb> requestInTurnClientAcceptedBombs();
 	
 	public List<Bomb> getInTurnBombs();
 	
 	public Game.ClientState getState();
 	public IBoard getBoard();
-	public void reportAcceptBombs();
-	public void reportBombingCompleted();
+	
 	public Observable getClientAsObservable();
 	
 	/**
