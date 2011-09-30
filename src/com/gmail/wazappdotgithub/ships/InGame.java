@@ -3,15 +3,17 @@ package com.gmail.wazappdotgithub.ships;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-
+import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Game;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
 import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
+import com.gmail.wazappdotgithub.ships.model.Game.ClientState;
 import com.gmail.wazappdotgithub.ships.model.views.BoardView;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,21 +24,20 @@ import android.widget.Button;
 import android.widget.ViewFlipper;
 
 /**
- * A view which will be used while the game turns are carried out
- * will switch between two views 
+ * An activity which will be used while the game turns are carried out
+ * will switch between two views. It Uses an AsyncTask to present the 
+ * latest Bombs on the view in an incremental fashion.
  * @author tor
- *
  */
 public class InGame extends Activity implements OnClickListener, Observer {
 
 	private String tag = "Ships_InGame";
-	ViewFlipper viewflipper;
-	View waitokbutton,inturnokbutton;
-	BoardView waitView,inturnView;
+	private ViewFlipper viewflipper;
+	private Button waitokbutton,inturnokbutton;
+	private BoardView waitView,inturnView;
 	
-	Animation out = new RotateAnimation(0f, 90f);
-	Animation in = new RotateAnimation(90f, 0f); // TODO just testing the pivots(f,f,f,f)
-	
+	private Animation out = new RotateAnimation(0f, 90f);
+	private Animation in = new RotateAnimation(90f, 0f); // TODO just testing the pivots(f,f,f,f)
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +56,8 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		//Log.d(tag,tag + " animations completed");
 		viewflipper = (ViewFlipper) findViewById(R.id.ingame_flipper);
 		//Log.d(tag,tag + " viewcompleted");
-		waitokbutton = findViewById(R.id.ingame_wait_okbutton);
-		inturnokbutton = findViewById(R.id.ingame_inturn_okbutton);
+		waitokbutton = (Button) findViewById(R.id.ingame_wait_okbutton);
+		inturnokbutton = (Button) findViewById(R.id.ingame_inturn_okbutton);
 		//Log.d(tag,tag + " buttons completed");
 		
 		inturnView = (BoardView) findViewById(R.id.ingame_inturn_boardview);
@@ -72,18 +73,67 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		
 		updateFireButtonText();
 	}
+	
+	/*
+	 * Using this as is recommended in http://developer.android.com/guide/topics/fundamentals/processes-and-threads.html
+	 * to enable incremental presentation of the bombs 
+	 */
+	private class EvaluateBombsTask extends AsyncTask<List<Bomb>,Void,Void> {
+	    /** The system calls this to perform work in a worker thread and
+	      * delivers it the parameters given to AsyncTask.execute() 
+	     * @return */
+		private BoardView v = waitView;
+		
+		@Override
+		protected Void doInBackground(List<Bomb>... params) {
+			/*
+			Log.d(tag, tag + "Animation Status ");
+			Log.d(tag, tag + "Animation Status in.hasStarted " +  in.hasStarted() + " hasEnded() " + in.hasEnded());
+			Log.d(tag, tag + "Animation Status out.hasStarted " +  out.hasStarted() + " hasEnded() " + out.hasEnded());
+			Log.d(tag, tag + "Starting incremental bombing ");
+			*/ // TODO wait for the animation to complete before starting to drop bombs, not sure how thoese flags work
+			
+			Log.d(tag,tag + " Evaluate Thread got " + params[0].size() + " bombs during " + LocalClient.getInstance().getState());
+			if ( LocalClient.getInstance().getState() == ClientState.I_EVALUATE )
+				v = inturnView;
+			
+			try {
+				for (Bomb b : params[0]) {
+					v.addDelayedBomb(b);	//possibly have a currentView pointer in InGame
+					publishProgress(((Void[]) null));
+					Thread.sleep(Constants.animated_bombdelay_ms);
+				}
+
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+	    
+	    @Override
+		protected void onProgressUpdate(Void... values) {
+	    	v.invalidate();		
+	    }
+
+		/** The system calls this to perform work in the UI thread and delivers
+	      * the result from doInBackground() */
+		@Override
+	    protected void onPostExecute(Void v) {
+			LocalClient.getInstance().requestNextState();
+	    }
+	}
 
 	@Override
 	public void onClick(View v) {
-		if ( v == waitokbutton ) {
+		Game.ClientState current_state = LocalClient.getInstance().getState();
+		if ( current_state == Game.ClientState.W_COMPLETEDEVALUATION 
+				|| current_state == Game.ClientState.I_COMPLETEDEVALUATION )
 			viewflipper.showNext();
-			
-		} else if ( v == inturnokbutton ) {
-			LocalClient.getInstance().reportAcceptBombs();
-			LocalClient.getInstance().reportBombingCompleted();
-		}
+		
+		
+		//always
+		LocalClient.getInstance().requestNextState();
 	}
-
 	
 	@Override
 	public void update(Observable observable, Object data) {
@@ -91,38 +141,93 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		updateActivity((Game.ClientState) data);
 	}	
 	
+	/*
+	 * Let the UI react to an update from the Client
+	 */
 	private void updateActivity(Game.ClientState newstate) {
 		//Log.d(tag,"new state is " + newstate );
+
 		switch ( newstate ) {
-		case RECOUNTBOMBS 	: Log.d(tag, tag + " RECOUNT"); updateFireButtonText(); break;
-		case INTURN			: Log.d(tag, tag + " INTURN");  updateFireButtonText(); break;
-		case WAIT 			: Log.d(tag, tag + " WAIT"); viewflipper.showNext(); break;
-		case POSTGAMELOOSER : Log.d(tag, tag + " LOOSE"); progress(); break;
-		case POSTGAMEWINNER : Log.d(tag, tag + " WIN"); progress(); break;
+		case RECOUNTBOMBS : 
+			updateFireButtonText(); 
+			break;
+			
+		case INTURN : 
+			updateFireButtonText(); 
+			break;
+			
+		case I_EVALUATE : 
+			updateButton(inturnokbutton,false, getString(R.string.ingameFireButton_Evaluating)); 
+			spawnIncrementalBombThread(newstate); 
+			break;
+			
+		case I_COMPLETEDEVALUATION : 
+			updateButton(inturnokbutton, true, getString(R.string.ingameFireButton_Continue)); 
+			break;
+			
+		case W_EVALUATE	:
+			updateButton(waitokbutton,false, getString(R.string.ingameFireButton_Evaluating)); 
+			spawnIncrementalBombThread(newstate); 
+			break;  
+			
+		case W_COMPLETEDEVALUATION : 
+			updateButton(waitokbutton,true, getString(R.string.ingameFireButton_Continue)); 
+			break;
+			
+		case READYCHANGETURNS : 
+			updateButton(waitokbutton,false, getString(R.string.ingameWaitButton_Waiting));
+			waitView.clearDelayedBombs();
+			updateButton(inturnokbutton,false, getString(R.string.ingameWaitButton_Waiting)); 
+			inturnView.clearDelayedBombs();
+			break;
+			
+		case WAIT : 
+			break;
+			
+		case POSTGAMELOOSER : 
+			progress(); 
+			break;
+			
+		case POSTGAMEWINNER : 
+			progress(); 
+			break;
+			
 		default : break; 
 		}
 	}
 	
+	private void spawnIncrementalBombThread(Game.ClientState newstate) {
+		new EvaluateBombsTask().execute(LocalClient.getInstance().requestInTurnClientAcceptedBombs());
+
+	}
+	
+	// a helper method
+	private void updateButton(Button b, boolean enabled, String newtext) {
+		b.setEnabled(enabled);
+		b.setText(newtext);
+	}
+	
+	// a helper method which updates the text on the firebutton when the player is placing bombs
 	private void updateFireButtonText() {
 		IShipsClient c = LocalClient.getInstance();
 		int remain = c.getRemainingBombs();
 		int max = c.numLiveShips();
-		Button b = ((Button)inturnokbutton);
 		
 		if ( remain < max ) {
-			b.setEnabled(false);
-			b.setText(remain+"/"+max);
+			updateButton(inturnokbutton, false, remain+"/"+max);			
 		} else {
-			b.setEnabled(true);
-			b.setText(getString(R.string.ingameFireButton));
+			updateButton(inturnokbutton, true, getString(R.string.ingameFireButton_Fire));
 		}
 	}
 	
+	// move from this activity to the next
 	private void progress() {
 		LocalClient.getInstance().getClientAsObservable().deleteObserver(this);
 		startActivity(new Intent(this,PostGame.class));
 		finish();
 	}
+	
+	
 	
 	//Unused for the moment
 	private long[] getBombPattern(List<Bomb> listofbombs) {
