@@ -2,7 +2,6 @@ package com.gmail.wazappdotgithub.ships.model.views;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Delayed;
 
 import com.gmail.wazappdotgithub.ships.R;
 import com.gmail.wazappdotgithub.ships.common.Constants;
@@ -15,8 +14,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.*;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.View.OnTouchListener;
 
 /**

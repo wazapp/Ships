@@ -1,9 +1,5 @@
 package com.gmail.wazappdotgithub.ships.model.views;
 
-
-import java.util.LinkedList;
-import java.util.List;
-
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.IShip;
 import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
