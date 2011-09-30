@@ -1,5 +1,10 @@
 package com.gmail.wazappdotgithub.ships.model.views;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
 
@@ -8,6 +13,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 /**
  * Implementation of BoardView which is used while the client is inturn state 
@@ -22,6 +28,8 @@ public final class InTurnBoardView extends BoardView {
 	private static Paint target_two = new Paint();
 	private static Paint target_center = new Paint();
 	
+	private List<Bomb> delayedBombs = new LinkedList<Bomb>();
+	
 	public InTurnBoardView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		
@@ -35,13 +43,11 @@ public final class InTurnBoardView extends BoardView {
 	 */
 	@Override
 	protected void drawSpecial(Canvas canvas, int offset) {
+		//Log.d(tag, Thread.currentThread().getName() + " redrawing inturnview");
 		int obytwo = offset / 2;
 		
-		for (Bomb b : LocalClient.getInstance().getBombsBoard()) {
-			if ( b.hit ) 
-				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo , obytwo, hitPaint);
-			else
-				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo, missPaint);
+		for (Bomb b : LocalClient.getInstance().requestInturnClientHistoricalBombs()) {
+			drawBomb(canvas, b, offset);
 		}
 		
 		for (Bomb b : LocalClient.getInstance().getInTurnBombs()) {
@@ -56,13 +62,8 @@ public final class InTurnBoardView extends BoardView {
 			}
 		}
 		
-		for (Bomb b : LocalClient.getInstance().getLatestTurnBombs()) {
-			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2, backgroundPaint);
-			if ( b.hit ) {
-				canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2 - 2 , hitPaint);
-			} else {
-				canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2), offset / 2 - 2, missPaint);
-			}
+		for (Bomb b : delayedBombs) {
+			drawNewBomb(canvas, b, offset);
 		}
 	}
 	

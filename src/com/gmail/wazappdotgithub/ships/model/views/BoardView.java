@@ -1,7 +1,13 @@
 package com.gmail.wazappdotgithub.ships.model.views;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.Delayed;
+
 import com.gmail.wazappdotgithub.ships.R;
 import com.gmail.wazappdotgithub.ships.common.Constants;
+import com.gmail.wazappdotgithub.ships.model.Bomb;
+import com.gmail.wazappdotgithub.ships.model.IShip;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -38,6 +44,8 @@ public abstract class BoardView extends View implements OnTouchListener{
 	
 	protected int selectedShip, currentTouchCol, currentTouchRow;
 	
+	protected List<Bomb> delayedBombs = new LinkedList<Bomb>();
+	
 	public BoardView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
@@ -62,8 +70,8 @@ public abstract class BoardView extends View implements OnTouchListener{
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
-		Log.d(tag,tag + " drawing");
-		int min = Math.min(this.getHeight(), this.getWidth());
+		//Log.d(tag,tag + " drawing, measured ="+super.getMeasuredHeight()+" vs=" +getHeight() );
+		int min = Math.min(super.getWidth(), super.getHeight());
 		int offs = min / Constants.DEFAULT_BOARD_SIZE;
 		
 		drawWater(canvas,offs);
@@ -72,10 +80,27 @@ public abstract class BoardView extends View implements OnTouchListener{
 			drawSpecial(canvas,offs);
 		
 		drawGrid(canvas,offs, min);
-		drawSelect(canvas);
+		//drawSelect(canvas);
+	}
+	
+	/**
+	 * Used to add bombs to be drawn during some delayed process.
+	 * default implementation does nothing
+	 * @param b
+	 */
+	public synchronized void addDelayedBomb(Bomb b) {
+		if ( b != null ) 
+			delayedBombs.add(b);
 	}
 	
 	
+	/**
+	 * Used to clear bombs drawn during last round
+	 * default implementation does nothing
+	 */
+	public synchronized void clearDelayedBombs() {
+		delayedBombs.clear();
+	}
 	
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -85,12 +110,13 @@ public abstract class BoardView extends View implements OnTouchListener{
 		 */
 		int min = Math.min(super.getMeasuredWidth(), super.getMeasuredHeight());
 		setMeasuredDimension(min, min);
+		//Log.d(tag, tag + " setting size to " + min +"x"+min);
 	}
 
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		Log.d(tag,tag + " touched");
+		//Log.d(tag,tag + " touched");
 		updateLocationAndSelect(event);
 		
 		//code to perform some action on the selected or pressed ship
@@ -121,7 +147,44 @@ public abstract class BoardView extends View implements OnTouchListener{
 		}
 	}
 	
-	 
+	/**
+	 * Default implementation for drawing a ship
+	 * @param canvas the canvas to draw to
+	 * @param offset the current offset
+	 * @param s the IShip to draw
+	 */
+	protected void drawShip(Canvas canvas, int offset, IShip s) {
+		int x = s.getXposition() * offset;
+		int y = s.getYposition() * offset;
+		int si = s.getSize() * offset;
+
+		if ( s.isHorizontal() ) {
+			canvas.drawRect(x, y, x + si, y + offset, waterPaint);
+			canvas.drawRect(x + 2, y + 2, x - 2 + si, y - 2 + offset, backgroundPaint);
+			canvas.drawRect(x + 3, y + 3, x - 3 + si, y - 3 + offset, shipsPaint);
+		} else {
+			canvas.drawRect(x, y, x + offset, y + si, waterPaint);
+			canvas.drawRect(x + 2, y + 2, x - 2 + offset, y - 2 + si, backgroundPaint);
+			canvas.drawRect(x + 3, y + 3, x - 3 + offset, y - 3 + si, shipsPaint);
+		}
+	}
+	
+	protected void drawBomb(Canvas canvas, Bomb b, int offset) {
+		if ( b.hit )
+			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2, hitPaint);
+		else
+			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2), offset / 2, missPaint);	
+	}
+	
+	protected void drawNewBomb(Canvas canvas, Bomb b, int offset) {
+		canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2, backgroundPaint);
+		if ( b.hit ) {
+			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2 - 2 , hitPaint);
+		} else {
+			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2), offset / 2 - 2, missPaint);
+		}
+	}
+	
 	private final void drawSelect(Canvas canvas) {
 		//the select
 		canvas.drawRect(selectCol, selectPaint);
