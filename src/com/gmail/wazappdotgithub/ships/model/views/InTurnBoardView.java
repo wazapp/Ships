@@ -1,8 +1,5 @@
 package com.gmail.wazappdotgithub.ships.model.views;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
 
@@ -24,8 +21,6 @@ public final class InTurnBoardView extends BoardView {
 	private static Paint target_one = new Paint();
 	private static Paint target_two = new Paint();
 	private static Paint target_center = new Paint();
-	
-	private List<Bomb> delayedBombs = new LinkedList<Bomb>();
 	
 	public InTurnBoardView(Context context, AttributeSet attrs) {
 		super(context, attrs);
