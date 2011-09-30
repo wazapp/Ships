@@ -7,9 +7,10 @@ import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
 public interface IGame {
 
 	void clientReportReadyForGame(IShipsClient client, IBoard board);
-	void clientReportFinishedBombing(IShipsClient client);
 	Bomb dropBomb(IShipsClient Shootingclient, Bomb b);
 	
-	List<Bomb> getOpponentsBombsBoard();
-	List<Bomb> getOpponentsLatestTurnBombs();
+	void progressState(IShipsClient client);
+	
+	List<Bomb> getInTurnClientHistoricalBombs();
+	List<Bomb> getInTurnClientAcceptedBombs();
 }
