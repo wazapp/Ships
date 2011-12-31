@@ -191,11 +191,11 @@ public class Game implements IGame {
 	 */
 	private void changeTurns() {
 		Log.d(tag, tag + " changing turns");
-		Log.d(tag, tag + " currentPlayer has " + currentPlayer.numLiveShips() + "ships");
-		Log.d(tag, tag + " currentOpponent has " + currentOpponent.numLiveShips() + "ships");
+		Log.d(tag, tag + " currentPlayer has " + currentPlayer.getBoard().numLiveShips() + "ships");
+		Log.d(tag, tag + " currentOpponent has " + currentOpponent.getBoard().numLiveShips() + "ships");
 
 		//Check if the game is finished else - continue	
-		if ( currentOpponent.numLiveShips() == 0) {
+		if ( currentOpponent.getBoard().numLiveShips() == 0) {
 			changeStateOfClient(currentOpponent, ClientState.POSTGAMELOOSER);
 			changeStateOfClient(currentPlayer, ClientState.POSTGAMEWINNER);
 			return;
