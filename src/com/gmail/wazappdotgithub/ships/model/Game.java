@@ -7,6 +7,7 @@ import android.util.Log;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.model.Client.ComputerClient;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
+import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
 /**
  * implementation of IGame, contains game logic and manages the states of clients 
  * @author tor
@@ -88,6 +89,18 @@ public class Game implements IGame {
 		return getConfiguredInstance();
 	}
 	
+	public static IGame startRemoteOpponentInstance(IShipsClient InitiatingClient) {
+		instance = new Game();
+		//maybe null all parameters here...
+		player = InitiatingClient;
+		opponent = RemoteClient.getInstance();
+
+		Log.d(tag, tag + " initiating players to PREGAME");
+		changeStateOfClient(player, ClientState.PREGAME);
+		changeStateOfClient(opponent, ClientState.PREGAME);
+
+		return getConfiguredInstance();
+	}
 	// will call the client and ask to update to the requested state 
 	private static void changeStateOfClient(IShipsClient client, ClientState state) {
 		switch (state) {
