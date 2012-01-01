@@ -31,7 +31,7 @@ public class WaitBoardView extends BoardView {
 		}
 		
 		//Paint the old bombs
-		for (Bomb b : LocalClient.getInstance().requestInturnClientHistoricalBombs() ) {
+		for (Bomb b : LocalClient.getInstance().requestInTurnClientHistoricalBombs() ) {
 			drawBomb(canvas, b, offset);
 		}
 		
