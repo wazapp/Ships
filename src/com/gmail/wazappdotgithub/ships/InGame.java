@@ -8,6 +8,7 @@ import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Game;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
 import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
+import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.Statename;
 import com.gmail.wazappdotgithub.ships.model.Game.ClientState;
 import com.gmail.wazappdotgithub.ships.model.views.BoardView;
 
@@ -51,7 +52,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		//Log.d(tag,tag + " initiating");
 		super.onCreate(savedInstanceState);
 		
-		LocalClient.getInstance().getClientAsObservable().addObserver(this);
+		LocalClient.getInstance().addAsObserver(this);
 		
 		setContentView(R.layout.ingame);
 		in.setStartTime(Animation.START_ON_FIRST_FRAME);
@@ -104,7 +105,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 			*/ // TODO wait for the animation to complete before starting to drop bombs, not sure how thoese flags work
 			
 			Log.d(tag,tag + " Evaluate Thread got " + params[0].size() + " bombs during " + LocalClient.getInstance().getState());
-			if ( LocalClient.getInstance().getState() == ClientState.I_EVALUATE )
+			if ( LocalClient.getInstance().getState() == Statename.I_EVALUATE )
 				v = inturnView;
 			
 			try {
@@ -140,9 +141,9 @@ public class InGame extends Activity implements OnClickListener, Observer {
 
 	@Override
 	public void onClick(View v) {
-		Game.ClientState current_state = LocalClient.getInstance().getState();
-		if ( current_state == Game.ClientState.W_COMPLETEDEVALUATION 
-				|| current_state == Game.ClientState.I_COMPLETEDEVALUATION )
+		Statename current_state = LocalClient.getInstance().getState();
+		if ( current_state == Statename.W_COMPLETEDEVALUATION 
+				|| current_state == Statename.I_COMPLETEDEVALUATION )
 			viewflipper.showNext();
 		
 		
@@ -230,7 +231,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	private void updateFireButtonText() {
 		IShipsClient c = LocalClient.getInstance();
 		int remain = c.getRemainingBombs();
-		int max = c.numLiveShips();
+		int max = c.getBoard().numLiveShips();
 		
 		if ( remain < max ) {
 			updateButton(inturnokbutton, false, remain+"/"+max);			
@@ -241,7 +242,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	
 	// move from this activity to the next
 	private void progress() {
-		LocalClient.getInstance().getClientAsObservable().deleteObserver(this);
+		LocalClient.getInstance().removeAsObserver(this);
 		startActivity(new Intent(this,PostGame.class));
 		finish();
 	}
