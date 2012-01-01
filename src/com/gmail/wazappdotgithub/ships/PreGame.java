@@ -23,7 +23,7 @@ public final class PreGame extends Activity implements Observer {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		LocalClient.getInstance().getClientAsObservable().addObserver(this);
+		LocalClient.getInstance().addAsObserver(this);
 		
 		//Log.d(tag,tag + "configuring pregame contentview");
 		setContentView(R.layout.pregame);
@@ -80,7 +80,7 @@ public final class PreGame extends Activity implements Observer {
 		}
 	}
 	private void progress() {
-		LocalClient.getInstance().getClientAsObservable().deleteObserver(this);
+		LocalClient.getInstance().removeAsObserver(this);
 		startActivity(new Intent(this,InGame.class));
 		finish();
 	}
