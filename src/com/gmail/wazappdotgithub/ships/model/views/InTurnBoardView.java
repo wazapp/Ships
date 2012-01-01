@@ -38,11 +38,11 @@ public final class InTurnBoardView extends BoardView {
 		//Log.d(tag, Thread.currentThread().getName() + " redrawing inturnview");
 		int obytwo = offset / 2;
 		
-		for (Bomb b : LocalClient.getInstance().requestInturnClientHistoricalBombs()) {
+		for (Bomb b : LocalClient.getInstance().requestInTurnClientHistoricalBombs()) {
 			drawBomb(canvas, b, offset);
 		}
 		
-		for (Bomb b : LocalClient.getInstance().getInTurnBombs()) {
+		for (Bomb b : LocalClient.getInstance().requestInTurnClientAcceptedBombs()) {
 			if ( b.hit ) 
 				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo , obytwo, hitPaint);
 			else {
