@@ -46,7 +46,6 @@ public final class Bomb extends Message {
 	
 	@Override
 	protected void writeSpecial(DataOutputStream out) throws IOException {		
-		out.writeInt(type.ordinal());
 		out.writeInt(x);
 		out.writeInt(y);
 		out.writeBoolean(hit);
