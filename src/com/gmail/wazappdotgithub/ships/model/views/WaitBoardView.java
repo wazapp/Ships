@@ -2,7 +2,7 @@ package com.gmail.wazappdotgithub.ships.model.views;
 
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.IShip;
-import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
+import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -26,12 +26,12 @@ public class WaitBoardView extends BoardView {
 	@Override
 	protected void drawSpecial(Canvas canvas, int offset) {
 		//Paint my own ships
-		for (IShip s : LocalClient.getInstance().getBoard().arrayOfShips()) {
+		for (IShip s : RemoteClient.getInstance().getBoard().arrayOfShips()) {
 			drawShip(canvas, offset, s);
 		}
 		
 		//Paint the old bombs
-		for (Bomb b : LocalClient.getInstance().requestInTurnClientHistoricalBombs() ) {
+		for (Bomb b : RemoteClient.getInstance().requestInTurnClientHistoricalBombs() ) {
 			drawBomb(canvas, b, offset);
 		}
 		
