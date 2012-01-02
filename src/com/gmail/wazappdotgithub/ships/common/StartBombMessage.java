@@ -14,13 +14,11 @@ public class StartBombMessage extends Message {
 		return type;
 	}
 	
-	public void writeTo(DataOutputStream out) throws IOException {
-		super.writeTo(out);
+	protected void writeSpecial(DataOutputStream out) throws IOException {
 		out.writeInt(number);
 	}
 	
-	public void readFrom(DataInputStream in) throws IOException {
-		super.readFrom(in);
+	protected void readSpecial(DataInputStream in) throws IOException {
 		number = in.readInt();
 				
 	}

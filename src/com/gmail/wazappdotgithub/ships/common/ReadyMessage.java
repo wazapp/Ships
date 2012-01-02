@@ -26,15 +26,13 @@ public class ReadyMessage extends Message {
 	}
 
 	@Override
-	public void writeTo(DataOutputStream out) throws IOException {
-		super.writeTo(out);
+	protected void writeSpecial(DataOutputStream out) throws IOException {		
 		out.writeUTF(nickname);
 		out.writeBoolean(starting);
 	}
 
 	@Override
-	public void readFrom(DataInputStream in) throws IOException {
-		super.readFrom(in);
+	protected void readSpecial(DataInputStream in) throws IOException {
 		nickname = in.readUTF();
 		starting = in.readBoolean();
 	}
