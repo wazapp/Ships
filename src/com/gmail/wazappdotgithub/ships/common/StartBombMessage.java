@@ -20,7 +20,6 @@ public class StartBombMessage extends Message {
 	
 	protected void readSpecial(DataInputStream in) throws IOException {
 		number = in.readInt();
-				
 	}
 
 }

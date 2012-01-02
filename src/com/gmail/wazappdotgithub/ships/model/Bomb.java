@@ -45,7 +45,7 @@ public final class Bomb extends Message {
 	}
 	
 	@Override
-	public void writeTo(DataOutputStream out) throws IOException {		
+	protected void writeSpecial(DataOutputStream out) throws IOException {		
 		out.writeInt(type.ordinal());
 		out.writeInt(x);
 		out.writeInt(y);
@@ -54,11 +54,7 @@ public final class Bomb extends Message {
 	}
 
 	@Override
-	public void readFrom(DataInputStream in) throws IOException {
-		int ordinal = in.readInt();
-		if ( ordinal != type.ordinal() )
-			throw new RuntimeException("Error in protocol, did not read expected ordinal");
-		
+	protected void readSpecial(DataInputStream in) throws IOException {
 		x = in.readInt();
 		y = in.readInt();
 		hit = in.readBoolean();
