@@ -1,8 +1,8 @@
 package com.gmail.wazappdotgithub.ships;
 
 import com.gmail.wazappdotgithub.ships.R.id;
-import com.gmail.wazappdotgithub.ships.model.Client.LocalClient;
-import com.gmail.wazappdotgithub.ships.model.Client.AClient.EndGameData;
+import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.EndGameData;
+import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -23,7 +23,7 @@ public class PostGame extends Activity {
 		Log.d(tag,tag + " initiating");
 		setContentView(R.layout.postgame);
 		
-		clientData = LocalClient.getInstance().retrieveEndGameData();
+		clientData = RemoteClient.getInstance().retrieveEndGameData();
 		TextView tv = (TextView) findViewById(id.postgameTextView);
 		if ( clientData != null ) {
 			StringBuffer sb = new StringBuffer();
@@ -45,9 +45,8 @@ public class PostGame extends Activity {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		startActivity(new Intent(this,PreGame.class));
+		startActivity(new Intent(this,UserInput.class));
 		finish();
 		return true;
 	}
-	
 }

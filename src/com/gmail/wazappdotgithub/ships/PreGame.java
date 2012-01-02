@@ -22,6 +22,7 @@ public final class PreGame extends Activity implements Observer {
 
 	private String tag = "Ships PreGame";
 	private IShipsClient model = RemoteClient.getInstance();
+	private Statename latestState = Statename.PREGAME;
 	
 	ProgressDialog waiting;
 	@Override
@@ -83,26 +84,29 @@ public final class PreGame extends Activity implements Observer {
 	private void updateActivity(Statename newstate) {
 		//Log.d(tag,"new state is " + newstate );
 		switch ( newstate ) {
-		case PREGAME : disableInteraction(); break;
-		case WAITGAME : progress(); break;
-		//default : disableInteraction(); break; 
+		case PREGAME_EXIT : disableInteraction(); break;
+		case WAITGAME : launchProgressDialog() ; model.playerCompletedWaitGame(); break;
+		case WAITGAME_EXIT : dismissProgressDialog(); break;
+		case TURN : progress(); break;
+		case WAIT : progress(); break;
+		default : throw new RuntimeException("Illegal state during pregame activity");
 		}
 	}
 	
-	private void progress() {
-		waiting.setMessage("Connected " + RemoteClient.getInstance().getOpponentName());
+	private void launchProgressDialog() {
+		waiting = ProgressDialog.show(this, "", "Waiting for opponent");
+	}
+	
+	private void dismissProgressDialog() {
+		waiting.setMessage("Connected " + model.getOpponentName());
 		waiting.dismiss();
-		
+		model.playerCompletedWaitGame();
+	}
+	
+	private void progress() {
 		model.removeAsObserver(this);
 		startActivity(new Intent(this,InGame.class));
 		finish();
-	}
-	
-	private void enableInteraction() {
-		findViewById(R.id.pregame_BoardView).setEnabled(true);
-		findViewById(R.id.pregame_button_randomize).setEnabled(true);
-		findViewById(R.id.pregame_button_rotate).setEnabled(true);
-		findViewById(R.id.pregame_button_start).setEnabled(true);
 	}
 	
 	private void disableInteraction() {
@@ -110,7 +114,5 @@ public final class PreGame extends Activity implements Observer {
 		findViewById(R.id.pregame_button_randomize).setEnabled(false);
 		findViewById(R.id.pregame_button_rotate).setEnabled(false);
 		findViewById(R.id.pregame_button_start).setEnabled(false);
-		
-		waiting = ProgressDialog.show(this, "", "Waiting for opponent");
 	}
 }
