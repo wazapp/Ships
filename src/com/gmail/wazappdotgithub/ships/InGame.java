@@ -248,6 +248,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		updateButton(waitokbutton,true, getString(R.string.ingameFireButton_Continue));
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void spawnIncrementalBombThread(DataAccess get) {
 		if (mp != null)
 			mp.release();
