@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import android.util.Log;
+
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.common.EndMessage;
 import com.gmail.wazappdotgithub.ships.common.Protocol;
@@ -26,7 +28,7 @@ import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.Statename;
 public final class ComputerClient implements Runnable {
 
 	private static ComputerClient instance = null;
-	protected String tag = "Ships_ComputerClient ";
+	protected String tag = "Ships ComputerClient ";
 
 	private Socket sock = null;
 	
@@ -72,60 +74,95 @@ public final class ComputerClient implements Runnable {
 
 	@Override
 	public void run() {
+		Thread.currentThread().setName(tag);
 		DataOutputStream out = null;
 		DataInputStream in = null;
-		boolean gameon = true;
-
+		boolean gameOver = false;
+		
 		try {
 			out = new DataOutputStream(sock.getOutputStream());
 			in = new DataInputStream(sock.getInputStream());
 
 			//report ready as soon as the player has done so
 			ReadyMessage rm = new ReadyMessage("Phone", false);
-			new ReadyMessage().readFrom(in);
+			
+			new ReadyMessage().readFrom(in); // don't care about the name etc.
 			rm.writeTo(out);
+			out.flush();
+			
+			gameOver = false;
 
-			gameon = true;
-			StartBombMessage sbm;
-			EndMessage end;
-
-			while ( gameon ) {
-				//read and reply to the player
-				sbm = new StartBombMessage();
+			while ( ! gameOver ) {
+				//read start of transmission
+				StartBombMessage sbm = new StartBombMessage();
 				sbm.readFrom(in);
 				int count = sbm.number;
-				sbm.writeTo(out);
-
+				
+				//read bombs
+				List<Bomb> opp = new LinkedList<Bomb>();
 				for ( int i = 0; i < count; i++) {
-					Bomb incoming = new Bomb(-1, -1);
-					incoming.readFrom(in);
-					incoming = board.bombCoordinate(incoming);
-					incoming.writeTo(out);
+					Bomb b = new Bomb(-1, -1);
+					b.readFrom(in);
+					//check if hit
+					b = board.bombCoordinate(b);
+					opp.add(b);
 				}
-
-				end = new EndMessage(board.numLiveShips() == 0);
+				
+				//Write start of transmission
+				sbm.writeTo(out);
+				
+				//write bombs
+				for ( Bomb b : opp)
+					b.writeTo(out);
+				
+				//write end result
+				EndMessage end = new EndMessage(board.numLiveShips() == 0);
 				end.writeTo(out);
-
+				out.flush();
+				
 				if ( end.isGameOver )
 					break;
 
-
 				//create bombs
+				Log.d(tag,tag+"executing Turn");
 				bombstoplace = board.numLiveShips();
+
+				//write start transmission
+				sbm = new StartBombMessage();
 				sbm.number = bombstoplace;
 				sbm.writeTo(out);
-				sbm.readFrom(in);
-
+				
+				//write bombs
 				for (int j = 0; j < bombstoplace; j++) {
-					Bomb outgoing = getBomb();
-					outgoing.writeTo(out);
-					outgoing.readFrom(in);
-
+					Bomb b = getBomb();
+					inturnBombs.add(b);
+					
+					b.writeTo(out);
 				}
+				
+				out.flush();
+				inturnBombs.clear();
+				
+				//read start transmission
+				Log.d(tag,tag+"waiting for response");
+				sbm.readFrom(in);
+				
+				// read bombs
+				for (int j = 0; j < bombstoplace; j++) {
+					Bomb b = getBomb();
+					b.readFrom(in);
+					
+					historicalBombs.add(b);
+				}
+				
+				//read end result
+				end = new EndMessage(false);
 				end.readFrom(in);
-				gameon = end.isGameOver;
+				gameOver = end.isGameOver;
+				Log.d(tag,tag+"gameOver? " + gameOver);
 			}
 		
+			Log.d(tag,tag+"shutting down");
 			in.close();
 			out.close();
 			sock.close();
