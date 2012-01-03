@@ -6,7 +6,6 @@
     <uses-sdk android:minSdkVersion="7" />
     <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
     <uses-permission android:name="android.permission.SET_ORIENTATION"></uses-permission>
-    <!-- <uses-permission android:name="android.permission.INTERNET"></uses-permission> -->
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 	
     <application android:label="@string/sinkaship" android:icon="@drawable/launcher" android:killAfterRestore="true">
@@ -17,9 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="UserInput" android:screenOrientation="portrait"></activity>
-        <activity android:name="PreGame" android:screenOrientation="portrait"></activity>
-        <activity android:screenOrientation="portrait" android:name="InGame"></activity>
-        <activity android:name="PostGame" android:label="@string/postgameTitle" android:theme="@android:style/Theme.Dialog"></activity>
+        <activity android:name=".UserInput" android:screenOrientation="portrait"></activity>
+        <activity android:name=".PreGame" android:screenOrientation="portrait"></activity>
+        <activity android:name=".InGame" android:screenOrientation="portrait" ></activity>
+        <activity android:name=".PostGame" android:label="@string/postgameTitle" android:theme="@android:style/Theme.Dialog"></activity>
     </application>
 </manifest>
