@@ -6,6 +6,10 @@ import java.io.IOException;
 
 import android.util.Log;
 
+/*
+ * A Class with the ability to read and write itself to/from a 
+ * datastream.
+ */
 public abstract class AbstractMessage {
 	
 	public enum MessageType {
@@ -31,7 +35,7 @@ public abstract class AbstractMessage {
 		int ordinal = in.readInt();
 		if ( ordinal != getType().ordinal() ) {
 			MessageType[] vals = MessageType.values();
-			throw new RuntimeException("Error in protocol, did not read expected ordinal. Read " + vals[ordinal] + " expected " + getType());
+			throw new RuntimeException("AbstractMessage, did not read expected ordinal. Read " + vals[ordinal] + " expected " + getType());
 		}
 		
 		readSpecial(in);
