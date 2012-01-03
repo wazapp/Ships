@@ -10,4 +10,5 @@ public class Constants {
     public static final int DEFAULT_SHIPS_NUM = DEFAULT_SHIPS.length;
     public static final int animated_bombdelay_ms = 500;
     public static final int animated_hitvibro_ms = 100;
+    public static final int DEFAULT_PORT = 48152;
 }
