@@ -87,7 +87,8 @@ public final class RemoteClient extends Observable implements IShipsClient {
 	public void removeAsObserver(Observer obs) {
 		this.deleteObserver(obs);
 	}
-	//used from CState to update the changed variable
+	// used from CState to update the changed variable
+	// since setChanged() is protected
 	protected void setToChanged() {
 		setChanged();
 	}
@@ -97,12 +98,6 @@ public final class RemoteClient extends Observable implements IShipsClient {
 	* *********************/
 	@Override
 	public IBoard getBoard() {
-		/* theese methods are used by activities directly
-		 * randomiseships()
-		 * toggleOrientation()
-		 * numLiveShips()
-		 * 
-		 */
 		return board;
 	}
 
@@ -119,22 +114,15 @@ public final class RemoteClient extends Observable implements IShipsClient {
 		return opponentName;
 	}
 	
-	protected String tag() {
-		return tag;
-	}
-	
 	/* ********************
 	* Rule / Protocol Interaction
+	* Used by UI to push the Client into the next state
 	* *********************/
 	@Override
 	public void playerCompletedUserInput() {
 		CState.exitState(Statename.INIT);
 	}
-	/* ********************
-	* Called by Activity to report the user has completed 
-	* the pregame state and has completed moving/ placing
-	* their ships
-	* *********************/
+
 	@Override
 	public void playerCompletedPreGame() {
 		CState.exitState(Statename.PREGAME);
@@ -143,6 +131,26 @@ public final class RemoteClient extends Observable implements IShipsClient {
 	@Override
 	public void playerCompletedWaitGame() {
 		CState.exitState(Statename.WAITGAME);
+	}
+	
+	@Override
+	public void playerCompletedTurn() {
+		CState.exitState(Statename.TURN);
+	}
+	
+	@Override
+	public void playerCompletedTurnEvaluation() {
+		CState.exitState(Statename.TURN_EVAL);
+	}
+	
+	@Override
+	public void playerCompletedWait() {
+		CState.exitState(Statename.WAIT);
+	}
+	
+	@Override
+	public void playerCompletedWaitEvaluation() {
+		CState.exitState(Statename.WAIT_EVAL);
 	}
 	
 	/* ********************
@@ -187,22 +195,8 @@ public final class RemoteClient extends Observable implements IShipsClient {
 		return bombstoplace;
 	}
 	
-	@Override
-	public void playerCompletedTurn() {
-		CState.exitState(Statename.TURN);
-	}
-	
-	
 	/* ********************
-	* Methods called during WAIT state
-	* *********************/
-	@Override
-	public void playerCompletedWait() {
-		CState.exitState(Statename.WAIT);
-	}
-	
-	/* ********************
-	* Methods called during EVALUATION / TURN, WAIT state to read current
+	* Methods called during different states to read current
 	* bombs, historical bombs etc.
 	* *********************/
 	
@@ -223,18 +217,7 @@ public final class RemoteClient extends Observable implements IShipsClient {
 		default : return null;
 		}
 	}
-	
-	@Override
-	public void playerCompletedTurnEvaluation() {
-		Log.d(tag,tag+"claims to have completed evaluation");
-		CState.exitState(Statename.TURN_EVAL);
-	}
-	
-	@Override
-	public void playerCompletedWaitEvaluation() {
-		Log.d(tag,tag+"claims to have completed evaluation");
-		CState.exitState(Statename.WAIT_EVAL);
-	}
+
 	/*
 	 * used by CState to manage the lists of bomb
 	 * Following a bomb run by the bombs will be moved 
