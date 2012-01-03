@@ -36,4 +36,9 @@ public class ReadyMessage extends Message {
 		nickname = in.readUTF();
 		starting = in.readBoolean();
 	}
+	
+	@Override
+	public String toString() {
+		return nickname + " is " + ((starting) ? "starting" : "waiting");
+	}
 }

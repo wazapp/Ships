@@ -27,4 +27,9 @@ public class EndMessage extends Message {
 	protected void readSpecial(DataInputStream in) throws IOException {
 		isGameOver = in.readBoolean();
 	}
+	
+	@Override
+	public String toString() {
+		return (isGameOver) ? "gameover" : "gameon";
+	}
 }

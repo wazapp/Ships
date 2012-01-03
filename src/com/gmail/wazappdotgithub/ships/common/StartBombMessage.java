@@ -21,5 +21,10 @@ public class StartBombMessage extends Message {
 	protected void readSpecial(DataInputStream in) throws IOException {
 		number = in.readInt();
 	}
+	
+	@Override
+	public String toString() {
+		return "["+number+"]";
+	}
 
 }

@@ -59,4 +59,9 @@ public final class Bomb extends Message {
 		hit = in.readBoolean();
 		destrship = in.readBoolean();
 	}
+	
+	@Override
+	public String toString() {
+		return "["+x+","+y+","+hit+"]";
+	}
 }

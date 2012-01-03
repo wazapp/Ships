@@ -24,7 +24,7 @@ public abstract class Message {
 		writeSpecial(out);
 		
 		String tag = Thread.currentThread().getName();
-		Log.d(tag,tag + " wrote " + getType());
+		Log.d(tag,tag + " wrote " + getType() + " " + toString());
 	}
 	
 	public void readFrom(DataInputStream in) throws IOException {
@@ -37,7 +37,7 @@ public abstract class Message {
 		readSpecial(in);
 		
 		String tag = Thread.currentThread().getName();
-		Log.d(tag,tag + " read " + getType());
+		Log.d(tag,tag + " read " + getType() +" "+ toString());
 		
 	}
 }
