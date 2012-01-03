@@ -2,6 +2,7 @@ package com.gmail.wazappdotgithub.ships.model.views;
 
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.IShip;
+import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.DataAccess;
 import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
 
 import android.content.Context;
@@ -31,7 +32,7 @@ public class WaitBoardView extends BoardView {
 		}
 		
 		//Paint the old bombs
-		for (Bomb b : RemoteClient.getInstance().requestInTurnClientHistoricalBombs() ) {
+		for (Bomb b : RemoteClient.getInstance().requestInTurnClientHistoricalBombs(DataAccess.REMOTE) ) {
 			drawBomb(canvas, b, offset);
 		}
 		

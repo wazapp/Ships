@@ -7,8 +7,13 @@ import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.IBoard;
 
 public interface IShipsClient {
+	public static enum DataAccess {
+		LOCAL,
+		REMOTE
+	}
 	
 	public static enum Statename {
+		INIT, 		//class is set up
 		PREGAME,	// preparing the board, placing ships
 		PREGAME_EXIT,
 		WAITGAME,	// waiting for the other player to complete pregame
@@ -37,11 +42,13 @@ public interface IShipsClient {
 	public void removeAsObserver(Observer obs);
 
 	// Protocol related methods
+	public void playerCompletedUserInput();
 	public void playerCompletedPreGame();
 	public void playerCompletedWaitGame();
 	public void playerCompletedTurn();
 	public void playerCompletedWait();
-	public void playerCompletedEvaluation();
+	public void playerCompletedTurnEvaluation();
+	public void playerCompletedWaitEvaluation();
 
 	// General access methods 
 	public IBoard getBoard();
@@ -49,8 +56,8 @@ public interface IShipsClient {
 	public String getOpponentName();
 	public boolean placeBomb(int xcoord, int ycoord);
 	public int getRemainingBombs();
-	public List<Bomb> requestInTurnClientAcceptedBombs();
-	public List<Bomb> requestInTurnClientHistoricalBombs();
+	public List<Bomb> requestInTurnClientAcceptedBombs(DataAccess get);
+	public List<Bomb> requestInTurnClientHistoricalBombs(DataAccess get);
 	public EndGameData retrieveEndGameData();
 }
 

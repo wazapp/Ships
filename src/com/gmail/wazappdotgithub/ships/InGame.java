@@ -6,6 +6,7 @@ import java.util.Observer;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
+import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.DataAccess;
 import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.Statename;
 import com.gmail.wazappdotgithub.ships.model.views.BoardView;
@@ -35,7 +36,7 @@ import android.widget.ViewFlipper;
  */
 public class InGame extends Activity implements OnClickListener, Observer {
 
-	private String tag = "Ships_InGame";
+	private String tag = "Ships InGame ";
 	private ViewFlipper viewflipper;
 	private Button waitokbutton,inturnokbutton;
 	private BoardView waitView,inturnView;
@@ -48,40 +49,32 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	
 	private IShipsClient model = RemoteClient.getInstance();
 	
+	private ProgressDialog exitturn_progressdialog;
+	private ProgressDialog exitwait_progressdialog;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		//Log.d(tag,tag + " initiating");
+		Log.d(tag,tag + "Activity initiating");
 		super.onCreate(savedInstanceState);
 		model.addAsObserver(this);
 		
-		/*
-		 * Note that the player will enter this Activity / state 
-		 * either being in Turn or in Wait
-		 * This Activity covers several client states (the whole game loop)
-		 */
-		
 		setContentView(R.layout.ingame);
 		in.setStartTime(Animation.START_ON_FIRST_FRAME);
-		in.setDuration(1000);
+		in.setDuration(250);
 		
 		out.setStartTime(Animation.START_ON_FIRST_FRAME);
-		out.setDuration(1000);
-		//Log.d(tag,tag + " animations completed");
+		out.setDuration(250);
 		
 		viewflipper = (ViewFlipper) findViewById(R.id.ingame_flipper);
-		//Log.d(tag,tag + " viewcompleted");
 		
 		waitokbutton = (Button) findViewById(R.id.ingame_wait_okbutton);
 		inturnokbutton = (Button) findViewById(R.id.ingame_inturn_okbutton);
-		//Log.d(tag,tag + " buttons completed");
 		
 		inturnView = (BoardView) findViewById(R.id.ingame_inturn_boardview);
 		waitView = (BoardView) findViewById(R.id.ingame_wait_boardview);
-		//Log.d(tag,tag + " views completed");
 		
 		waitokbutton.setOnClickListener(this);
-		inturnokbutton.setOnClickListener(this);		
-		//Log.d(tag,tag + " onclick listeners completed");
+		inturnokbutton.setOnClickListener(this);
 		
 		viewflipper.setInAnimation(in);
 		viewflipper.setOutAnimation(out);
@@ -110,6 +103,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		
 		@Override
 		protected Void doInBackground(List<Bomb>... params) {
+			Thread.currentThread().setName("Evaluate " + model.getState());
 			/*
 			Log.d(tag, tag + "Animation Status ");
 			Log.d(tag, tag + "Animation Status in.hasStarted " +  in.hasStarted() + " hasEnded() " + in.hasEnded());
@@ -117,7 +111,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 			Log.d(tag, tag + "Starting incremental bombing ");
 			*/ // TODO wait for the animation to complete before starting to drop bombs, not sure how thoese flags work
 			
-			Log.d(tag,tag + " Evaluate Thread got " + params[0].size() + " bombs during " + model.getState());
+			Log.d(tag,tag + Thread.currentThread().getName() + params[0].size() + " bombs");
 			if ( model.getState() == Statename.TURN_EVAL )
 				v = inturnView;
 			
@@ -149,10 +143,10 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		@Override
 	    protected void onPostExecute(Void v) {
 			if ( model.getState() == Statename.TURN_EVAL )
-				exitTurnEval();
+				exitTurnEval(); 
 			
 			if ( model.getState() == Statename.WAIT_EVAL )
-				exitWaitEval();
+				exitWaitEval(); 
 	    }
 	}
 
@@ -160,16 +154,21 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	public void onClick(View v) {
 		Statename current_state = model.getState();
 		// for when the bombs have been placed
-		if ( current_state == Statename.TURN )
+		if ( current_state == Statename.TURN ) {
 			model.playerCompletedTurn();
-		
+		} else
+			
 		// for when the player has looked at his bombs
-		if (current_state == Statename.TURN_EVAL)
-			model.playerCompletedEvaluation();
+		if (current_state == Statename.TURN_EVAL) {
+			model.playerCompletedTurnEvaluation();
+			viewflipper.showNext();
+		} else
 		
 		// for when the player has looked at the opponents bombs
-		if (current_state == Statename.WAIT_EVAL)
-			model.playerCompletedEvaluation();
+		if (current_state == Statename.WAIT_EVAL) {
+			model.playerCompletedWaitEvaluation();
+			viewflipper.showNext();
+		}
 	}
 	
 	@Override
@@ -182,7 +181,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	 * Let the UI react to an update from the Client
 	 */
 	private void updateActivity(Statename newstate) {
-		//Log.d(tag,"new state is " + newstate );
+		Log.d(tag,tag + "new state is " + newstate );
 
 		switch ( newstate ) {
 		case RECOUNTBOMBS : updateFireButtonText();	break;
@@ -204,16 +203,21 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	}
 	
 	private void exitTurn() {
-		ProgressDialog.show(this, "", "Bombing "+ model.getOpponentName()+"'s"+" ships");
+		exitturn_progressdialog = 
+				ProgressDialog.show(this, "", "Bombing "+ model.getOpponentName()+"'s"+" ships");
 	}
 	
 	private void enterTurnEval() {
-		//close progress dialog
+		exitturn_progressdialog.setMessage("Received bombs");
+		exitturn_progressdialog.dismiss();
 		updateButton(inturnokbutton,false, getString(R.string.ingameFireButton_Evaluating)); 
 		//Thread will ask for progress
-		spawnIncrementalBombThread();
+		spawnIncrementalBombThread(DataAccess.LOCAL);
 	}
 	
+	/*
+	 * Enable the button to progress after evaluation
+	 */
 	private void exitTurnEval() {
 		inturnView.clearDelayedBombs();
 		updateButton(inturnokbutton, true, getString(R.string.ingameFireButton_Continue));
@@ -224,26 +228,32 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	}
 	
 	private void exitWait() {
-		ProgressDialog.show(this, "", "Waiting for " + model.getOpponentName());
+		exitwait_progressdialog = 
+				ProgressDialog.show(this, "", "Waiting for " + model.getOpponentName());
 	}
 	
 	private void enterWaitEval() {
+		exitwait_progressdialog.setMessage("Received bombs");
+		exitwait_progressdialog.dismiss();
 		updateButton(waitokbutton,false, getString(R.string.ingameFireButton_Evaluating));
-		spawnIncrementalBombThread();
 		//thread will call next state
+		spawnIncrementalBombThread(DataAccess.REMOTE);
 	}
 	
+	/*
+	 * Enable the button to progress after evaluation
+	 */
 	private void exitWaitEval() {
 		waitView.clearDelayedBombs();
 		updateButton(waitokbutton,true, getString(R.string.ingameFireButton_Continue));
 	}
 	
-	private void spawnIncrementalBombThread() {
+	private void spawnIncrementalBombThread(DataAccess get) {
 		if (mp != null)
 			mp.release();
 		
 		mp = MediaPlayer.create(this, R.raw.plopp);
-		new EvaluateBombsTask().execute(model.requestInTurnClientAcceptedBombs());
+		new EvaluateBombsTask().execute(model.requestInTurnClientAcceptedBombs(get));
 	}
 	
 	// a helper method
@@ -257,11 +267,10 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		int remain = model.getRemainingBombs();
 		int max = model.getBoard().numLiveShips();
 		
-		if ( remain < max ) {
-			updateButton(inturnokbutton, false, remain+"/"+max);			
-		} else {
-			updateButton(inturnokbutton, true, getString(R.string.ingameFireButton_Fire));
-		}
+		if ( remain == 0 )
+			updateButton(inturnokbutton, true, getString(R.string.ingameFireButton_Fire));			
+		else
+			updateButton(inturnokbutton, false, remain+"/"+max);
 	}
 	
 	// move from this activity to the next

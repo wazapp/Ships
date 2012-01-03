@@ -2,6 +2,7 @@ package com.gmail.wazappdotgithub.ships.model.views;
 
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
+import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.DataAccess;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -38,11 +39,11 @@ public final class InTurnBoardView extends BoardView {
 		//Log.d(tag, Thread.currentThread().getName() + " redrawing inturnview");
 		int obytwo = offset / 2;
 		
-		for (Bomb b : RemoteClient.getInstance().requestInTurnClientHistoricalBombs()) {
+		for (Bomb b : RemoteClient.getInstance().requestInTurnClientHistoricalBombs(DataAccess.LOCAL)) {
 			drawBomb(canvas, b, offset);
 		}
 		
-		for (Bomb b : RemoteClient.getInstance().requestInTurnClientAcceptedBombs()) {
+		for (Bomb b : RemoteClient.getInstance().requestInTurnClientAcceptedBombs(DataAccess.LOCAL)) {
 			if ( b.hit ) 
 				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo , obytwo, hitPaint);
 			else {
@@ -62,7 +63,6 @@ public final class InTurnBoardView extends BoardView {
 	@Override 
 	protected void onTouchSpecial(MotionEvent event) {
 		if ( event.getAction() == MotionEvent.ACTION_UP) {
-			
 			RemoteClient.getInstance().placeBomb(translateX(event), translateY(event));
 		}
 	}
