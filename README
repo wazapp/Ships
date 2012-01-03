@@ -1,2 +1,15 @@
 This will eventually become a BattleShip - like game for Android phones.
 This is essentially a practice run, getting some hands on with Android.
+
+The latest version is prepared for network play
+
+TODO:
+Error management, especially network
+Selecting friend from list
+Send SMS invitation to friend
+Join from SMS invitation
+Remove rotate button
+Fix layouts once and for all
+Preferences (sound / vibro )
+Preference, see network address/port for server
+Write an AI
