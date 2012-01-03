@@ -11,6 +11,12 @@ import com.gmail.wazappdotgithub.ships.model.BoardUsingSimpleShip;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.IBoard;
 
+/*
+ * The Remote client is the implementation for IShipsClient
+ * It is a part of the Model ( RemoteClient, CState and Protocol )
+ * with which the UI controls the state switches and reads any 
+ * relevant information from the model.
+ */
 
 public final class RemoteClient extends Observable implements IShipsClient {
 
@@ -27,8 +33,6 @@ public final class RemoteClient extends Observable implements IShipsClient {
 	protected IBoard board = null;
 	// List of all bombs placed by this client
 	protected List<Bomb> historicalBombs = null;
-	// List of bombs placed last turn (by player)
-	protected List<Bomb> latestTurnBombs = null;
 	// List of bombs placed during this turn
 	protected List<Bomb> inturnBombs = null;
 	
@@ -41,28 +45,27 @@ public final class RemoteClient extends Observable implements IShipsClient {
 	/* ********************
 	* Constructors etc .
 	* *********************/
-	public static IShipsClient newInstance(Observer obs) {
-		instance = new RemoteClient(obs);
+	public static IShipsClient newInstance(Observer obs, boolean starter) {
+		instance = new RemoteClient(obs, starter);
 		return instance;
 	}
 	
 	public static IShipsClient getInstance() {
-		/*if ( instance == null )
+		if ( instance == null )
 			throw new RuntimeException("Calling getInstance on RemoteClient, but there is no instance");
-		*/
+		
 		return instance;
 	}
 	
-	private RemoteClient(Observer obs) {
+	private RemoteClient(Observer obs, boolean starter) {
 		//initiate the client, ready for board interactions
 		Log.d(tag, tag + "Constructing");
 		state = Statename.INIT;
-		//TODO change this to accomodate this being a client as well
-		starter = true;
+		
+		this.starter = starter;
 		
 		board = new BoardUsingSimpleShip();
 		historicalBombs = new LinkedList<Bomb>();
-		latestTurnBombs = new LinkedList<Bomb>();
 		inturnBombs = new LinkedList<Bomb>();
 		
 		//preparing remote data

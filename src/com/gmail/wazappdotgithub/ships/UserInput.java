@@ -39,7 +39,7 @@ public class UserInput extends Activity implements Observer{
 					server.start();
 					
 					Log.d(tag, tag + "creating remoteclient");
-					RemoteClient.newInstance(UserInput.this);
+					RemoteClient.newInstance(UserInput.this, true);
 					Log.d(tag, tag + "completed remoteclient");
 					
 					RemoteClient.getInstance().playerCompletedUserInput();
