@@ -7,30 +7,39 @@ import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.IBoard;
 
 public interface IShipsClient {
+	/*
+	 * Used to specify if we want to read Local or Cached (Remote) data
+	 * from the model
+	 */
 	public static enum DataAccess {
 		LOCAL,
 		REMOTE
 	}
 	
+	/*
+	 * Specifies the states of the Client
+	 */
 	public static enum Statename {
-		INIT, 		//class is set up
-		PREGAME,	// preparing the board, placing ships
+		INIT, 			// class is set up
+		PREGAME,		// preparing the board, placing ships
 		PREGAME_EXIT,
-		WAITGAME,	// waiting for the other player to complete pregame
+		WAITGAME,		// waiting for the other player to complete pregame
 		WAITGAME_EXIT,
-		TURN, 		// place bombs
+		TURN, 			// place bombs
 		TURN_EXIT,
-		RECOUNTBOMBS, // tell UI the number of bombs have changed
-		TURN_EVAL,	// look at the evaluation
+		RECOUNTBOMBS, 	// tell UI the number of bombs have changed
+		TURN_EVAL,		// look at the evaluation
 		TURN_EVAL_EXIT,
-		WAIT,		// wait for the other player to place bombs
+		WAIT,			// wait for the other player to place bombs
 		WAIT_EXIT,
-		WAIT_EVAL,	// look at the evaluation
+		WAIT_EVAL,		// look at the evaluation
 		WAIT_EVAL_EXIT,
-		GAMEOVER
+		GAMEOVER		// game over
 	}
 	
-	// TODO move this?
+	/*
+	 * just a wrapper for some data used when the game is over
+	 */
 	public class EndGameData {
 		public boolean winner = false;
 		public int bombsShot = 0;
