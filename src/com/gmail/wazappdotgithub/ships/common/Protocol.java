@@ -36,7 +36,7 @@ public class Protocol implements Runnable {
 	/* instance fields */
 	private boolean asServer = true;
 	private boolean launchComputer = false;
-	private boolean gameover = true;
+	private boolean gameover = false;
 
 	/*
 	 * These need to be fair because we are retrieving messages in a specific order
@@ -158,6 +158,7 @@ public class Protocol implements Runnable {
 			else
 				gameAsClient(out, in);
 
+			Log.w(tag, tag+"exiting");
 			in.close();
 			out.close();
 			remote.close();

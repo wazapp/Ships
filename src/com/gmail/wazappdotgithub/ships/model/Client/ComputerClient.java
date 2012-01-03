@@ -162,7 +162,7 @@ public final class ComputerClient implements Runnable {
 				Log.d(tag,tag+"gameOver? " + gameOver);
 			}
 		
-			Log.d(tag,tag+"shutting down");
+			Log.w(tag,tag+"shutting down");
 			in.close();
 			out.close();
 			sock.close();
