@@ -39,22 +39,21 @@ public final class InTurnBoardView extends BoardView {
 		//Log.d(tag, Thread.currentThread().getName() + " redrawing inturnview");
 		int obytwo = offset / 2;
 		
+		//Draw all earlier bombs
 		for (Bomb b : RemoteClient.getInstance().requestInTurnClientHistoricalBombs(DataAccess.LOCAL)) {
 			drawBomb(canvas, b, offset);
 		}
 		
+		//draw whatever I entered this turn
 		for (Bomb b : RemoteClient.getInstance().requestInTurnClientAcceptedBombs(DataAccess.LOCAL)) {
-			if ( b.hit ) 
-				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo , obytwo, hitPaint);
-			else {
 				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo, target_one);
 				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo-2, target_two);
 				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo-4, target_one);
 				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo-6, target_two);
 				canvas.drawCircle(b.x * offset + obytwo, b.y * offset + obytwo, obytwo-8, target_center);
-			}
 		}
 		
+		//draw my hits/misses during evaluation
 		for (Bomb b : delayedBombs) {
 			drawNewBomb(canvas, b, offset);
 		}
