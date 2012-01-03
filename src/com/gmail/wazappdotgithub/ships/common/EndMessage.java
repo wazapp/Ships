@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class EndMessage extends Message {
+public class EndMessage extends AbstractMessage {
 
 	private static final MessageType type = MessageType.END_MESSAGE;
 	public boolean isGameOver = false;

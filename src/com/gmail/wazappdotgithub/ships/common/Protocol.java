@@ -11,7 +11,7 @@ import java.util.concurrent.BlockingQueue;
 
 import android.util.Log;
 
-import com.gmail.wazappdotgithub.ships.common.Message.MessageType;
+import com.gmail.wazappdotgithub.ships.common.AbstractMessage.MessageType;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Client.ComputerClient;
 
@@ -33,8 +33,8 @@ public class Protocol implements Runnable {
      * These need to be fair because we are retrieving messages in a specific order
      * The longest expected stream is Start, 10 bombs, End
      */
-	private final BlockingQueue<Message> outgoingQueue = new ArrayBlockingQueue<Message>(12, true);
-	private final BlockingQueue<Message> incomingQueue = new ArrayBlockingQueue<Message>(12, true);
+	private final BlockingQueue<AbstractMessage> outgoingQueue = new ArrayBlockingQueue<AbstractMessage>(12, true);
+	private final BlockingQueue<AbstractMessage> incomingQueue = new ArrayBlockingQueue<AbstractMessage>(12, true);
 	
 	
 	public static enum opponentType {
@@ -83,14 +83,14 @@ public class Protocol implements Runnable {
 	/*
 	 * Schedule a message to the remote client
 	 */
-	public void send(Message m) throws InterruptedException {
+	public void send(AbstractMessage m) throws InterruptedException {
 		outgoingQueue.put(m);
 	}
 	
 	/*
 	 * Schedule a retrieval of a message from the remote client
 	 */
-	public Message retrieve() throws InterruptedException {
+	public AbstractMessage retrieve() throws InterruptedException {
 		return incomingQueue.take();
 	}
 	
@@ -200,7 +200,7 @@ public class Protocol implements Runnable {
 	private void sendBombs(DataOutputStream out) throws InterruptedException, IOException {
 		//Read how many bombs to send
 		int count;
-		Message m = outgoingQueue.take();
+		AbstractMessage m = outgoingQueue.take();
 		
 		if (m.getType() != MessageType.START_BOMBMESSAGE)
 			throw new RuntimeException("Expected START_BOMBMESSAGE, got " + m.getType());
@@ -255,7 +255,7 @@ public class Protocol implements Runnable {
 	 * Attempt to write a gamestatemessage to the remote player
 	 */
 	private void writeGameState(DataOutputStream out) throws InterruptedException, IOException {
-		Message end;
+		AbstractMessage end;
 
 		end = outgoingQueue.take();
 		if (end.getType() != MessageType.END_MESSAGE)

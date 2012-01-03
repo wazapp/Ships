@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class StartBombMessage extends Message {
+public class StartBombMessage extends AbstractMessage {
 
 	public static MessageType type = MessageType.START_BOMBMESSAGE;
 	public int number;

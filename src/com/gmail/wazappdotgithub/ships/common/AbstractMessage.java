@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import android.util.Log;
 
-public abstract class Message {
+public abstract class AbstractMessage {
 	
 	public enum MessageType {
 		READY_MESSAGE, 

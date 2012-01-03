@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class ReadyMessage extends Message {
+public class ReadyMessage extends AbstractMessage {
 	
 	private static final MessageType type = MessageType.READY_MESSAGE;
 

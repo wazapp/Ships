@@ -4,12 +4,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import com.gmail.wazappdotgithub.ships.common.Message;
+import com.gmail.wazappdotgithub.ships.common.AbstractMessage;
 
 /*
  * Used to transfer information
  */
-public final class Bomb extends Message {
+public final class Bomb extends AbstractMessage {
 
 	private static final MessageType type = MessageType.BOMB_MESSAGE;
 	public int x;
