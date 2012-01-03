@@ -23,6 +23,8 @@ public class PostGame extends Activity {
 		setContentView(R.layout.postgame);
 		
 		clientData = RemoteClient.getInstance().retrieveEndGameData();
+		
+		//TODO Dialog says Congratualtions even if loosing
 		TextView tv = (TextView) findViewById(id.postgameTextView);
 		if ( clientData != null ) {
 			StringBuffer sb = new StringBuffer();
