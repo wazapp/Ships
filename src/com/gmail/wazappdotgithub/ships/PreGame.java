@@ -1,7 +1,5 @@
 package com.gmail.wazappdotgithub.ships;
 
-
-
 import java.util.Observable;
 import java.util.Observer;
 
@@ -21,17 +19,20 @@ import android.view.View.OnClickListener;
 public final class PreGame extends Activity implements Observer {
 
 	private String tag = "Ships PreGame";
-	private IShipsClient model = RemoteClient.getInstance();
-	private Statename latestState = Statename.PREGAME;
+	private IShipsClient model;
 	
-	ProgressDialog waiting;
+	private ProgressDialog waiting;
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d(tag,tag + "configuring pregame contentview");
+		setContentView(R.layout.pregame);
+		
+		model = RemoteClient.getInstance();
 		model.addAsObserver(this);
 		
-		//Log.d(tag,tag + "configuring pregame contentview");
-		setContentView(R.layout.pregame);
 		
 		View randomizeButton = findViewById(R.id.pregame_button_randomize);
 		randomizeButton.setOnClickListener(new OnClickListener() {
@@ -73,7 +74,6 @@ public final class PreGame extends Activity implements Observer {
 				model.playerCompletedPreGame();
 			}
 		});
-		
 	}
 
 	@Override
@@ -82,7 +82,9 @@ public final class PreGame extends Activity implements Observer {
 	}	
 	
 	private void updateActivity(Statename newstate) {
-		//Log.d(tag,"new state is " + newstate );
+		
+		Log.d(tag, tag + "updateActivity " + newstate );
+		
 		switch ( newstate ) {
 		case PREGAME_EXIT : disableInteraction(); break;
 		case WAITGAME : launchProgressDialog() ; model.playerCompletedWaitGame(); break;
@@ -100,7 +102,6 @@ public final class PreGame extends Activity implements Observer {
 	private void dismissProgressDialog() {
 		waiting.setMessage("Connected " + model.getOpponentName());
 		waiting.dismiss();
-		model.playerCompletedWaitGame();
 	}
 	
 	private void progress() {

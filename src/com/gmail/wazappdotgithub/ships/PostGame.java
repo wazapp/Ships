@@ -5,7 +5,6 @@ import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.EndGameData;
 import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 
 
 public class PostGame extends Activity {
-	private String tag = "PostGame";
+	private String tag = "Ships PostGame ";
 	EndGameData clientData = null;
 	
 	@Override
@@ -45,7 +44,7 @@ public class PostGame extends Activity {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		startActivity(new Intent(this,UserInput.class));
+		//startActivity(new Intent(this,UserInput.class));
 		finish();
 		return true;
 	}

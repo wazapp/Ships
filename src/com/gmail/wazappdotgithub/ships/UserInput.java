@@ -14,17 +14,17 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 public class UserInput extends Activity implements Observer{
 	
-	Intent nextActivity;
+	private String tag = "Ships UserInput ";
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
         setContentView(R.layout.userinput);
         
         final Button letsContinueButton = (Button) findViewById(R.id.button1);
@@ -32,8 +32,17 @@ public class UserInput extends Activity implements Observer{
             public void onClick(View v) {
             	
             	try {
-					Protocol.newInstance(opponentType.REMOTECOMPUTER);
+            		Log.d(tag, tag + "creating and launching protocol");
+            		
+            		//TODO update this to accomodate both joining and hosting games
+					Thread server = new Thread(Protocol.newInstance(opponentType.REMOTECOMPUTER));
+					server.start();
+					
+					Log.d(tag, tag + "creating remoteclient");
 					RemoteClient.newInstance(UserInput.this);
+					Log.d(tag, tag + "completed remoteclient");
+					
+					RemoteClient.getInstance().playerCompletedUserInput();
 					
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -62,7 +71,6 @@ public class UserInput extends Activity implements Observer{
         fleeHome.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 finish();
-                
             }
         });
              
@@ -72,9 +80,14 @@ public class UserInput extends Activity implements Observer{
 	public void update(Observable observable, Object data) {
 		Statename s = ((Statename) data);
 		if (s == Statename.PREGAME) {
+			Log.d(tag, tag + "Received " + s + " event");
 			RemoteClient.getInstance().removeAsObserver(this);
-			startActivity(new Intent(UserInput.this, PreGame.class));
-			finish();
+			Log.d(tag, tag + "Creating intent");
+			Intent next = new Intent(UserInput.this, PreGame.class);
+			Log.d(tag, tag + "starting activity");
+			startActivity(next);
+			
+			//this shall not finish because postgame will return to it
 		}
 	}
 
