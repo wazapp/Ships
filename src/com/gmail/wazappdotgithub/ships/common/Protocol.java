@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import android.util.Log;
+
 import com.gmail.wazappdotgithub.ships.common.Message.MessageType;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Client.ComputerClient;
@@ -16,18 +18,23 @@ import com.gmail.wazappdotgithub.ships.model.Client.ComputerClient;
 public class Protocol implements Runnable {
 	
 	/* Static fields */
-	public static Protocol instance;
+	public static final String tag = "Ships Protocol ";
+	public static Runnable instance;
 	public static final int listen_port = 48152;
 	public static ServerSocket listenTo;
 	public static Socket connect;
 	
     /* instance fields */
     private boolean asServer = true;
-    //private boolean established = false;
+    private boolean launchComputer = false;
     private boolean gameon = true;
     
-	private final BlockingQueue<Message> outgoingQueue = new ArrayBlockingQueue<Message>(10);
-	private final BlockingQueue<Message> incomingQueue = new ArrayBlockingQueue<Message>(10);
+    /*
+     * These need to be fair because we are retrieving messages in a specific order
+     * The longest expected stream is Start, 10 bombs, End
+     */
+	private final BlockingQueue<Message> outgoingQueue = new ArrayBlockingQueue<Message>(12, true);
+	private final BlockingQueue<Message> incomingQueue = new ArrayBlockingQueue<Message>(12, true);
 	
 	
 	public static enum opponentType {
@@ -35,14 +42,14 @@ public class Protocol implements Runnable {
 		REMOTEPERSON
 	}
 	
-	public static Protocol newInstance(opponentType type) throws IOException {
+	public static Runnable newInstance(opponentType type) throws IOException {
 		if ( instance == null )
 			instance = new Protocol(type);
 		
 		return instance;
 	}
 	
-	public static Protocol newInstance(opponentType type, Inet4Address addr, int port) throws IOException {
+	public static Runnable newInstance(opponentType type, Inet4Address addr, int port) throws IOException {
 		if ( instance == null )
 			instance = new Protocol(addr, port);		
 		
@@ -53,22 +60,24 @@ public class Protocol implements Runnable {
 		if (instance == null)
 			throw new RuntimeException("There is no instance of Protocol");
 		
-		return instance;
+		return (Protocol) instance;
 	}
 	
 	private Protocol(opponentType type) throws IOException {
 		this.asServer = true;
+		Log.d(tag, tag + "Initiating Protocol.. opening socket");
 		listenTo = new ServerSocket(listen_port);
 		
 		if ( type == opponentType.REMOTECOMPUTER ) {
-			Thread computer = new Thread(ComputerClient.newInstance());
-			computer.start();
+			launchComputer = true;
 		}
 	}
 	
 	private Protocol(Inet4Address addr, int port) throws IOException {
+		Log.d(tag, tag + "Initiating Protocol.. connecting");
 		this.asServer = false;
 		connect = new Socket(addr,port);
+		Log.d(tag, tag + "Initiating Protocol.. connect ok");
 	}
 	
 	/*
@@ -88,15 +97,22 @@ public class Protocol implements Runnable {
 	@Override
 	public void run() {
 		
+		Thread.currentThread().setName(tag);
 		DataOutputStream out = null;
 		DataInputStream in = null;
 		Socket remote = null;
-		Message m;
 		
 		try {
 			if (asServer) {
+				//Start the computerclient if required
+				if ( launchComputer ) {
+					Log.d(tag, tag + "Launching Computer Opponent");
+					Thread computer = new Thread(ComputerClient.newInstance());
+					computer.start();
+				}
+				
 				remote = listenTo.accept();
-
+				Log.d(tag, tag + "accepted Connection");
 			} else {
 				remote = connect;
 			}
@@ -116,8 +132,8 @@ public class Protocol implements Runnable {
 		try {
 			
 			//Write the ready message to the remote player
-			m = outgoingQueue.take();
-			m.writeTo(out);
+			ReadyMessage rm = (ReadyMessage) outgoingQueue.take();
+			rm.writeTo(out);
 			out.flush();
 			
 			// expect a ready message from the remote player
@@ -126,7 +142,6 @@ public class Protocol implements Runnable {
 			incomingQueue.put(response);
 			
 			// both clients have now reported ready
-			//established = true;
 			
 			if (asServer)
 				gameAsServer(out, in);
@@ -138,10 +153,8 @@ public class Protocol implements Runnable {
 			remote.close();
 			
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -182,12 +195,59 @@ public class Protocol implements Runnable {
 	}
 	
 	/*
+	 * Attempts to send the number of bombs provided by the client 
+	 */
+	private void sendBombs(DataOutputStream out) throws InterruptedException, IOException {
+		//Read how many bombs to send
+		int count;
+		Message m = outgoingQueue.take();
+		
+		if (m.getType() != MessageType.START_BOMBMESSAGE)
+			throw new RuntimeException("Expected START_BOMBMESSAGE, got " + m.getType());
+		count = ((StartBombMessage) m).number;
+		
+		// write start transmission
+		m.writeTo(out);
+
+		// write bombs
+		for (int i = 0; i < count ; i++) {
+			m = outgoingQueue.take();
+			if (m.getType() != MessageType.BOMB_MESSAGE)
+				throw new RuntimeException("Expected BOMB_MESSAGE " +i+"/"+count+", got " + m.getType());
+			m.writeTo(out);			
+		}
+		
+		out.flush();
+	}
+
+	/*
+	 * Read a number of bombs from remote
+	 */
+	private void receiveBombs(DataInputStream in) throws InterruptedException, IOException {
+		int count;
+		StartBombMessage s = new StartBombMessage();
+
+		//Read start transmission
+		s.readFrom(in);
+		count = s.number;
+		
+		//forward to client
+		incomingQueue.put(s);
+		
+		//read bombs
+		for (int i = 0; i < count; i++) {
+			Bomb b = new Bomb(-1, -1);
+			b.readFrom(in);
+			incomingQueue.put(b);
+		}
+	}
+	
+	/*
 	 * Attempt to read a game state message from the remote player
 	 */
 	private void readGameState(DataInputStream in) throws InterruptedException, IOException{
 		EndMessage end = new EndMessage(false);
-		end.readFrom(in);
-		
+		end.readFrom(in);		
 		incomingQueue.put(end);
 	}
 	
@@ -199,56 +259,9 @@ public class Protocol implements Runnable {
 
 		end = outgoingQueue.take();
 		if (end.getType() != MessageType.END_MESSAGE)
-			throw new RuntimeException("Expected Gamestate message was not a gamestatemessage");
+			throw new RuntimeException("Expected END_MESSAGE got " + end.getType());
 
 		end.writeTo(out);
 		out.flush();
-	}
-	
-	/*
-	 * Attempts to send the number of bombs provided by the client 
-	 */
-	private void sendBombs(DataOutputStream out) throws InterruptedException, IOException {
-		//Read how many bombs to send
-		int count;
-		Message s = outgoingQueue.take();
-		
-		if (s.getType() != MessageType.START_BOMBMESSAGE)
-			throw new RuntimeException("Expected bomb transmission was not a bomb transmission");
-		count = ((StartBombMessage) s).number;
-		
-		// let the remote know how many
-		s.writeTo(out);
-		// send them
-		for (int i = 0; i < count ; i++) {
-			Message m = outgoingQueue.take();
-			m.writeTo(out);
-			i++;
-		}
-		
-		// return
-		out.flush();
-	}
-
-	/*
-	 * Read a number of bombs from remote
-	 */
-	private void receiveBombs(DataInputStream in) throws InterruptedException, IOException {
-		//Read how many bombs to receive
-		int count;
-		StartBombMessage s = new StartBombMessage();
-		s.readFrom(in);
-		count = s.number;
-		
-		//forward to client
-		incomingQueue.put(s);
-		
-		//read this number of bombs
-		for (int i = 0; i < count; i++) {
-			Bomb b = new Bomb(-1, -1);
-			
-			b.readFrom(in);
-			incomingQueue.put(b);
-		}
 	}
 }
