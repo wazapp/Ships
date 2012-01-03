@@ -7,14 +7,15 @@ import java.util.Observer;
 
 import android.util.Log;
 
+import com.gmail.wazappdotgithub.ships.model.BoardUsingSimpleShip;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.IBoard;
 
 
-public class RemoteClient extends Observable implements IShipsClient {
+public final class RemoteClient extends Observable implements IShipsClient {
 
-	private static RemoteClient instance = null;
-	private static String tag = "Ships_RemoteClient ";
+	private static IShipsClient instance = null;
+	private static String tag = "Ships RemoteClient ";
 	
 	protected Statename state;
 	protected String opponentName;
@@ -40,24 +41,36 @@ public class RemoteClient extends Observable implements IShipsClient {
 	/* ********************
 	* Constructors etc .
 	* *********************/
-	
 	public static IShipsClient newInstance(Observer obs) {
 		instance = new RemoteClient(obs);
-		
 		return instance;
 	}
 	
 	public static IShipsClient getInstance() {
-		if ( instance == null )
+		/*if ( instance == null )
 			throw new RuntimeException("Calling getInstance on RemoteClient, but there is no instance");
-		
+		*/
 		return instance;
 	}
 	
 	private RemoteClient(Observer obs) {
 		//initiate the client, ready for board interactions
+		Log.d(tag, tag + "Constructing");
+		state = Statename.INIT;
+		//TODO change this to accomodate this being a client as well
+		starter = true;
+		
+		board = new BoardUsingSimpleShip();
+		historicalBombs = new LinkedList<Bomb>();
+		latestTurnBombs = new LinkedList<Bomb>();
+		inturnBombs = new LinkedList<Bomb>();
+		
+		//preparing remote data
+		r_historicalBombs = new LinkedList<Bomb>();
+		r_inturnBombs = new LinkedList<Bomb>();
+		
 		addAsObserver(obs);
-		CState.setClient(this);
+		CState.initClient(this);
 	}
 	
 	/* ********************
@@ -110,7 +123,10 @@ public class RemoteClient extends Observable implements IShipsClient {
 	/* ********************
 	* Rule / Protocol Interaction
 	* *********************/
-	
+	@Override
+	public void playerCompletedUserInput() {
+		CState.exitState(Statename.INIT);
+	}
 	/* ********************
 	* Called by Activity to report the user has completed 
 	* the pregame state and has completed moving/ placing
@@ -124,7 +140,6 @@ public class RemoteClient extends Observable implements IShipsClient {
 	@Override
 	public void playerCompletedWaitGame() {
 		CState.exitState(Statename.WAITGAME);
-		//will enter either Turn or Wait
 	}
 	
 	/* ********************
@@ -152,8 +167,11 @@ public class RemoteClient extends Observable implements IShipsClient {
 		
 		// if allowed to place a bomb, do so
 		if ( bombstoplace > 0 ) {
-				inturnBombs.add(b);
-				bombstoplace--;
+			inturnBombs.add(b);
+			bombstoplace--;
+			
+			setChanged();
+			notifyObservers(Statename.RECOUNTBOMBS);
 			return true;
 
 		} else { // only removal is allowed
@@ -181,58 +199,62 @@ public class RemoteClient extends Observable implements IShipsClient {
 	}
 	
 	/* ********************
-	* Methods called during EVALUATION state to read current
+	* Methods called during EVALUATION / TURN, WAIT state to read current
 	* bombs, historical bombs etc.
 	* *********************/
 	
 	@Override
-	public List<Bomb> requestInTurnClientAcceptedBombs() {
-		switch(state) {
-		case TURN_EVAL : return inturnBombs;
-		case WAIT_EVAL : return r_inturnBombs;
-		default : throw new RuntimeException("requested accepted bombs outside relevant state");
+	public List<Bomb> requestInTurnClientAcceptedBombs(DataAccess get) {
+		switch( get ) {
+		case LOCAL		: return inturnBombs;
+		case REMOTE		: return r_inturnBombs;
+		default : return null;
 		}
 	}
 	
 	@Override
-	public List<Bomb> requestInTurnClientHistoricalBombs() {
-		switch(state) {
-		case TURN_EVAL : return historicalBombs;
-		case WAIT_EVAL : return r_historicalBombs;
-		default : throw new RuntimeException("requested accepted bombs outside relevant state");
+	public List<Bomb> requestInTurnClientHistoricalBombs(DataAccess get) {
+		switch(get) {
+		case LOCAL : return historicalBombs;
+		case REMOTE: return r_historicalBombs;
+		default : return null;
 		}
 	}
 	
 	@Override
-	public void playerCompletedEvaluation() {
-		switch(state) {
-		case TURN_EVAL : 
-			CState.exitState(Statename.TURN_EVAL);
-		case WAIT_EVAL :
-			CState.exitState(Statename.WAIT_EVAL);
-		}
+	public void playerCompletedTurnEvaluation() {
+		Log.d(tag,tag+"claims to have completed evaluation");
+		CState.exitState(Statename.TURN_EVAL);
 	}
 	
-	//used by CState to manage the lists of bombs
+	@Override
+	public void playerCompletedWaitEvaluation() {
+		Log.d(tag,tag+"claims to have completed evaluation");
+		CState.exitState(Statename.WAIT_EVAL);
+	}
+	/*
+	 * used by CState to manage the lists of bomb
+	 * Following a bomb run by the bombs will be moved 
+	 * into historical storage
+	 */
 	protected void manageBombsForStateSwitch() {
 		switch ( state ) {
-		case WAIT : 
-			int latest = latestTurnBombs.size();
-			historicalBombs.addAll( latestTurnBombs );
-			latestTurnBombs.clear();
-			//Log.d(tag(),tag() + "moved "+latest+" bombs to historicalBombs store, now " + historicalBombs.size());
-			break;
-		case TURN :
-			//local
-			latestTurnBombs = inturnBombs;
-			inturnBombs = new LinkedList<Bomb>();
-			
-			//remote
+		case WAIT_EVAL_EXIT : 
+			// Manage remote bombs
+			Log.d(tag,tag+"Move remote bomb cache to history");
 			r_historicalBombs.addAll( r_inturnBombs );
 			r_inturnBombs.clear();
-			//Log.d(tag(),tag() + "moved " + latestTurnBombs.size() +" bombs to latestTurn store, cleared inturn store");
 			break;
-		default : break;
+			
+		case TURN_EVAL_EXIT :
+			// manage local bombs
+			Log.d(tag,tag+"Move local bomb cache to history");
+			historicalBombs.addAll( inturnBombs );
+			inturnBombs.clear();
+			break;
+			
+		case WAITGAME_EXIT : /* ignore, there are no bombs to manage */ break;
+		default : throw new RuntimeException(tag + "Manage bomb list in invalid state " + state);
 		}
 	}
 
