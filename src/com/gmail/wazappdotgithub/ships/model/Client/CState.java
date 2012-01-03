@@ -3,6 +3,7 @@ package com.gmail.wazappdotgithub.ships.model.Client;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.common.EndMessage;
 import com.gmail.wazappdotgithub.ships.common.StartBombMessage;
 import com.gmail.wazappdotgithub.ships.common.Protocol;
@@ -158,9 +159,7 @@ public final class CState {
 	 */
 	private static void enterTurn() {
 		cl.manageBombsForStateSwitch();
-
-		// use rules to determine the number of bombs to restock.
-		cl.bombstoplace = cl.getBoard().numLiveShips();
+		cl.recountBombs();
 
 		stateUpdate(Statename.TURN);
 	};
@@ -298,7 +297,7 @@ public final class CState {
 					
 					Log.d(tag, tag+"schedule for send "+ x + " bombs");
 					//send the state of the game to the opponent
-					cl.is_game_over = cl.getBoard().numLiveShips() == 0;
+					cl.is_game_over = cl.getBoard().numLiveShips() <= 0;
 					network.send(new EndMessage(cl.is_game_over));
 
 				} catch (InterruptedException e) {

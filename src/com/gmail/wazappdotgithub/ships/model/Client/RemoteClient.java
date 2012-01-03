@@ -7,6 +7,7 @@ import java.util.Observer;
 
 import android.util.Log;
 
+import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.model.BoardUsingSimpleShip;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.IBoard;
@@ -193,6 +194,13 @@ public final class RemoteClient extends Observable implements IShipsClient {
 	@Override
 	public int getRemainingBombs() { 
 		return bombstoplace;
+	}
+	
+	protected void recountBombs() {
+		int remaining_spaces = Constants.DEFAULT_BOARD_SIZE * Constants.DEFAULT_BOARD_SIZE - historicalBombs.size();
+		bombstoplace = getBoard().numLiveShips();
+		if (bombstoplace > remaining_spaces)
+			bombstoplace = remaining_spaces;
 	}
 	
 	/* ********************

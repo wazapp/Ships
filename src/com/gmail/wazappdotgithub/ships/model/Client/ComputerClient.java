@@ -116,7 +116,7 @@ public final class ComputerClient implements Runnable {
 					b.writeTo(out);
 				
 				//write end result
-				EndMessage end = new EndMessage(board.numLiveShips() == 0);
+				EndMessage end = new EndMessage(board.numLiveShips() <= 0);
 				end.writeTo(out);
 				out.flush();
 				
@@ -125,7 +125,7 @@ public final class ComputerClient implements Runnable {
 
 				//create bombs
 				Log.d(tag,tag+"executing Turn");
-				bombstoplace = board.numLiveShips();
+				recountBombs();
 
 				//write start transmission
 				sbm = new StartBombMessage();
@@ -182,5 +182,12 @@ public final class ComputerClient implements Runnable {
 		}
 
 		return boom;
+	}
+	
+	private void recountBombs() {
+		int remaining_spaces = Constants.DEFAULT_BOARD_SIZE * Constants.DEFAULT_BOARD_SIZE - historicalBombs.size();
+		bombstoplace = board.numLiveShips();
+		if (bombstoplace > remaining_spaces)
+			bombstoplace = remaining_spaces;
 	}
 }
