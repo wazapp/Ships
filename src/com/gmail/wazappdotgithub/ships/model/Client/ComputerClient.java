@@ -63,7 +63,7 @@ public final class ComputerClient implements Runnable {
 	}
 
 	private ComputerClient() throws UnknownHostException, IOException {
-		sock = new Socket("localhost",Protocol.listen_port);
+		sock = new Socket("localhost",Constants.DEFAULT_PORT);
 		rand = new Random(System.currentTimeMillis());
 		board = new BoardUsingSimpleShip();
 		board.randomiseShipsLocations();
