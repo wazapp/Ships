@@ -1,13 +1,16 @@
 package com.gmail.wazappdotgithub.ships.model.Client;
 
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.common.EndMessage;
-import com.gmail.wazappdotgithub.ships.common.StartBombMessage;
-import com.gmail.wazappdotgithub.ships.common.Protocol;
 import com.gmail.wazappdotgithub.ships.common.ReadyMessage;
+import com.gmail.wazappdotgithub.ships.comms.ComModule;
+import com.gmail.wazappdotgithub.ships.comms.IComModule;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.Statename;
 import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
@@ -81,7 +84,7 @@ public final class CState {
 
 	/* Convenience, used throughout the class */ 
 	private static void stateUpdate(Statename newstate) {
-		Log.d(tag,tag+"changing state to " + newstate);
+		//Log.d(tag,tag+"changing state to " + newstate);
 		cl.state = newstate;
 		cl.setToChanged();
 		cl.notifyObservers(newstate);
@@ -112,11 +115,15 @@ public final class CState {
 
 		try {
 			cl.board.finalise();
-			Protocol.getInstance().send(new ReadyMessage("Player", cl.starter));
-
-		} catch (InterruptedException e) {
+			//Protocol.getInstance().send(new ReadyMessage("Player", cl.starter));
+			Protocol.writeReady("Player", cl.starter, ComModule.getInstance().getOut());
+			/*} catch (InterruptedException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Main thread waited for blocking queue");
+			*/
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		enterState(Statename.WAITGAME);
@@ -138,11 +145,16 @@ public final class CState {
 		
 		try {
 			ReadyMessage ready;
-			ready = (ReadyMessage) Protocol.getInstance().retrieve();
+			//ready = (ReadyMessage) Protocol.getInstance().retrieve();
+			ready = Protocol.readReady(ComModule.getInstance().getIn());
 			//read some data from the Message
 			cl.opponentName = ready.nickname;
 
-		} catch (InterruptedException e) {
+		/*} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			*/
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -181,37 +193,14 @@ public final class CState {
 			@Override
 			protected Void doInBackground(Void... params) {
 				Thread.currentThread().setName("Turn Evaluation networking");
+				IComModule network = ComModule.getInstance();
 				try {
-					Protocol network = Protocol.getInstance();
-					
-					//Let the protocol know how many bombs to expect
-					StartBombMessage sbm = new StartBombMessage();
-					sbm.number = cl.inturnBombs.size();
-					network.send(sbm);
-
-					//send them
-					for (Bomb b : cl.inturnBombs) {
-						network.send(b);
-					}
-
-					// replace the sent bombs with the received 
-					// bombs that contain hit information
-					cl.inturnBombs.clear();
-					
-					StartBombMessage s = (StartBombMessage) network.retrieve();
-					int count = s.number;
-					
-					for (int i = 0; i < count; i++) {
-						Bomb b = (Bomb) network.retrieve();
-						cl.inturnBombs.add(b);
-					}
-
-					//read if the game is over
-					EndMessage end = (EndMessage) network.retrieve();
+					Protocol.writeBombs(cl.inturnBombs, network.getOut());
+					cl.inturnBombs = Protocol.readBombs(network.getIn());
+					EndMessage end = Protocol.readGameState(network.getIn());
 					cl.is_game_over = end.isGameOver;
 
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 
@@ -259,48 +248,28 @@ public final class CState {
 		new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
+				Thread.currentThread().setName("Wait Evaluation networking");
+				IComModule network = ComModule.getInstance();
+				
 				try {
-					Thread.currentThread().setName("Wait Evaluation networking");
-					Protocol network = Protocol.getInstance();
+					Log.d(tag,tag+"Awaiting incomging bombs");
+					cl.r_inturnBombs = Protocol.readBombs(network.getIn());
+					List<Bomb> bombsToRemote = new LinkedList<Bomb>();
 					
-					//find out how many bombs the opponent sends
-					StartBombMessage s = (StartBombMessage) network.retrieve();
-					int count = s.number;
-
-					if ( count == 0 )
-						throw new RuntimeException(tag + "Scheduled to recieve 0 bombs");
-					Log.d(tag, tag+"recieving and evaluating"+count+" bombs");
-										
-					//retrieve the remote bombs
-					for (int i = 0; i < count; i++) {
-						Bomb b = (Bomb) network.retrieve();
-						// Bomb the coordinate locally and place the bomb in
-						// the local cache
-						Log.d(tag, tag+"evaluating"+i);
-						b = cl.getBoard().bombCoordinate(b);
-						cl.r_inturnBombs.add(b);
-						
+					for(Bomb b : cl.r_inturnBombs) {
+						b = cl.board.bombCoordinate(b);
+						bombsToRemote.add(b);
 					}
 					
-					if ( cl.r_inturnBombs.size() != count )
-						throw new RuntimeException(tag + "local cache mismatch, possibly enter TURN before completion");
+					Log.d(tag,tag+"Writing response");
+					Protocol.writeBombs(bombsToRemote, network.getOut());
 					
-					//expect to send the same number back
-					network.send(s);
+					cl.is_game_over = cl.board.numLiveShips() == 0;
 					
-					//send response back
-					int x = 0;
-					for ( Bomb b : cl.r_inturnBombs) {
-						network.send(b);
-						x++;
-					}
+					Log.d(tag,tag+"Writing gamestate");
+					Protocol.writeGameState(cl.is_game_over, network.getOut());
 					
-					Log.d(tag, tag+"schedule for send "+ x + " bombs");
-					//send the state of the game to the opponent
-					cl.is_game_over = cl.getBoard().numLiveShips() <= 0;
-					network.send(new EndMessage(cl.is_game_over));
-
-				} catch (InterruptedException e) {
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 
