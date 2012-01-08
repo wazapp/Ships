@@ -6,7 +6,6 @@ import android.util.Log;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.common.EndMessage;
 import com.gmail.wazappdotgithub.ships.common.StartBombMessage;
-import com.gmail.wazappdotgithub.ships.common.Protocol;
 import com.gmail.wazappdotgithub.ships.common.ReadyMessage;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.Statename;

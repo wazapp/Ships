@@ -1,4 +1,4 @@
-package com.gmail.wazappdotgithub.ships.common;
+package com.gmail.wazappdotgithub.ships.model.Client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,9 +11,13 @@ import java.util.concurrent.BlockingQueue;
 
 import android.util.Log;
 
+import com.gmail.wazappdotgithub.ships.common.AbstractMessage;
+import com.gmail.wazappdotgithub.ships.common.Constants;
+import com.gmail.wazappdotgithub.ships.common.EndMessage;
+import com.gmail.wazappdotgithub.ships.common.ReadyMessage;
+import com.gmail.wazappdotgithub.ships.common.StartBombMessage;
 import com.gmail.wazappdotgithub.ships.common.AbstractMessage.MessageType;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
-import com.gmail.wazappdotgithub.ships.model.Client.ComputerClient;
 
 /*
  * The protocol's purpose is to manage the network communication

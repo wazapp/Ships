@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
-import com.gmail.wazappdotgithub.ships.common.Protocol;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.Statename;
-import com.gmail.wazappdotgithub.ships.common.Protocol.opponentType;
+import com.gmail.wazappdotgithub.ships.model.Client.Protocol.opponentType;
+import com.gmail.wazappdotgithub.ships.model.Client.Protocol;
 import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
 
 import android.app.Activity;
