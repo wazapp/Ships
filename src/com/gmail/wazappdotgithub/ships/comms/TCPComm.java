@@ -49,6 +49,7 @@ public final class TCPComm {
 	}
 	
 	protected void stop() throws IOException {
+		Log.d(tag, tag + "stopping services");
 		if ( out != null )
 			out.close();
 		if ( in != null )
