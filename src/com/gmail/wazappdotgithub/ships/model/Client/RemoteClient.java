@@ -1,5 +1,8 @@
 package com.gmail.wazappdotgithub.ships.model.Client;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;

@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.gmail.wazappdotgithub.ships.common.Constants;
+import com.gmail.wazappdotgithub.ships.comms.ComModule;
+import com.gmail.wazappdotgithub.ships.comms.TCPComm;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.Statename;
-import com.gmail.wazappdotgithub.ships.model.Client.Protocol.opponentType;
-import com.gmail.wazappdotgithub.ships.model.Client.Protocol;
 import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
 
 import android.app.Activity;
@@ -32,11 +33,8 @@ public class UserInput extends Activity implements Observer{
             public void onClick(View v) {
             	
             	try {
-            		Log.d(tag, tag + "creating and launching protocol");
-            		
-            		//TODO update this to accomodate both joining and hosting games
-					Thread server = new Thread(Protocol.newInstance(opponentType.REMOTECOMPUTER));
-					server.start();
+            		Log.d(tag, tag + "launching Communication Module");
+					ComModule.serve_computer(Constants.DEFAULT_PORT);
 					
 					Log.d(tag, tag + "creating remoteclient");
 					RemoteClient.newInstance(UserInput.this, true);
@@ -70,6 +68,7 @@ public class UserInput extends Activity implements Observer{
         final Button fleeHome = (Button) findViewById(R.id.button2);
         fleeHome.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+            	
                 finish();
             }
         });
