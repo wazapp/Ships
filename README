@@ -4,7 +4,6 @@ This is essentially a practice run, getting some hands on with Android.
 The latest version is prepared for network play
 
 TODO:
-Make some Protocol methods abstract (or static?) 
 Error management, especially network
 Selecting friend from list
 Send SMS invitation to friend
