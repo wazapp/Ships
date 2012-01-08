@@ -6,7 +6,6 @@ import java.util.Observer;
 
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.comms.ComModule;
-import com.gmail.wazappdotgithub.ships.comms.TCPComm;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.Statename;
 import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
 
