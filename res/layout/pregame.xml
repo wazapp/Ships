@@ -16,8 +16,6 @@
 	</TableRow>
 	<TableRow android:id="@+id/tableRow2"
 		 android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1">
-		<Button android:layout_width="0dp" android:id="@+id/pregame_button_rotate"
-			android:text="Rotate" android:layout_weight="1" android:layout_height="wrap_content" android:layout_gravity="bottom"></Button>
 		<Button android:layout_width="0dp" android:id="@+id/pregame_button_randomize"
 			android:text="Randomize" android:layout_weight="1" android:layout_height="wrap_content" android:layout_gravity="bottom"></Button>
 		<Button android:layout_width="0dp" android:id="@+id/pregame_button_start"

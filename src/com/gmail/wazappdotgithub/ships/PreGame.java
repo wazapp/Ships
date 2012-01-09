@@ -44,7 +44,7 @@ public final class PreGame extends Activity implements Observer {
 				findViewById(R.id.pregame_BoardView).invalidate();
 			}
 		});
-		
+		/*
 		View rotateButton = findViewById(R.id.pregame_button_rotate);
 		rotateButton.setOnClickListener(new OnClickListener() {
 			
@@ -58,7 +58,7 @@ public final class PreGame extends Activity implements Observer {
 				}
 			}
 		});
-		
+		*/
 		View startButtonView = findViewById(R.id.pregame_button_start);
 		startButtonView.setOnClickListener(new OnClickListener() {
 			
@@ -113,7 +113,7 @@ public final class PreGame extends Activity implements Observer {
 	private void disableInteraction() {
 		findViewById(R.id.pregame_BoardView).setEnabled(false);
 		findViewById(R.id.pregame_button_randomize).setEnabled(false);
-		findViewById(R.id.pregame_button_rotate).setEnabled(false);
+		//findViewById(R.id.pregame_button_rotate).setEnabled(false);
 		findViewById(R.id.pregame_button_start).setEnabled(false);
 	}
 }
