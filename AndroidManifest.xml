@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.SET_ORIENTATION"></uses-permission>
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 	
-    <application android:label="@string/sinkaship" android:icon="@drawable/launcher" android:killAfterRestore="true">
+    <application android:label="@string/sinkaship" android:icon="@drawable/launcher" android:killAfterRestore="true" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
         <activity android:name=".Ships"
                   android:label="@string/app_name">
             <intent-filter>
@@ -19,6 +19,6 @@
         <activity android:name=".UserInput" android:screenOrientation="portrait"></activity>
         <activity android:name=".PreGame" android:screenOrientation="portrait"></activity>
         <activity android:name=".InGame" android:screenOrientation="portrait" ></activity>
-        <activity android:name=".PostGame" android:label="@string/postgameTitle" android:theme="@android:style/Theme.Dialog"></activity>
+        <activity android:name=".PostGame" android:label="@string/postgameTitle"></activity>
     </application>
 </manifest>
