@@ -61,17 +61,19 @@ public final class RemoteClient extends Observable implements IShipsClient {
 	private RemoteClient(Observer obs, boolean starter) {
 		//initiate the client, ready for board interactions
 		Log.d(tag, tag + "Constructing");
-		state = Statename.INIT;
-		
+		this.state = Statename.INIT;
+		this.opponentName = null;
+		this.is_game_over = false;
+		this.is_winner = false;
 		this.starter = starter;
 		
-		board = new BoardUsingSimpleShip();
-		historicalBombs = new LinkedList<Bomb>();
-		inturnBombs = new LinkedList<Bomb>();
+		this.board = new BoardUsingSimpleShip();
+		this.historicalBombs = new LinkedList<Bomb>();
+		this.inturnBombs = new LinkedList<Bomb>();
 		
 		//preparing remote data
-		r_historicalBombs = new LinkedList<Bomb>();
-		r_inturnBombs = new LinkedList<Bomb>();
+		this.r_historicalBombs = new LinkedList<Bomb>();
+		this.r_inturnBombs = new LinkedList<Bomb>();
 		
 		addAsObserver(obs);
 		CState.initClient(this);
