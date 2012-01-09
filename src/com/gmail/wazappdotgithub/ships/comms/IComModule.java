@@ -4,18 +4,29 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+/*
+ * Simple interface for the Communication module.
+ * The current module currently only supports TCP connections.
+ */
 public interface IComModule {
 
-	public static enum opponentType {
-		SERVE_COMPUTER,
-		SERVE_TCPIP,
-		CONNECT_TCPIP,
-		SERVE_BLUE,
-		CONNECT_BLUE
-	}
-	
+	/**
+	 * Returns the DataInputStream for the established connection 
+	 * @return null if there is no established connection
+	 */
 	public DataInputStream getIn();
+	
+	/**
+	 * Returns the DataOutputStream for the established connection
+	 * @return null if there is no established connection
+	 */
 	public DataOutputStream getOut();
+	
+	/**
+	 * Attempt to gracefully close all connections and reset the
+	 * connection 
+	 * @throws IOException
+	 */
 	public void stop() throws IOException;
 	
 }
