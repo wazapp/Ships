@@ -199,6 +199,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	}
 	
 	private void enterTurn() {
+		waitView.clearDelayedBombs();
 		updateFireButtonText();
 	}
 	
@@ -219,11 +220,12 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	 * Enable the button to progress after evaluation
 	 */
 	private void exitTurnEval() {
-		inturnView.clearDelayedBombs();
+		
 		updateButton(inturnokbutton, true, getString(R.string.ingameFireButton_Continue));
 	}
 	
 	private void enterWait() {
+		inturnView.clearDelayedBombs();
 		model.playerCompletedWait();
 	}
 	
@@ -244,7 +246,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	 * Enable the button to progress after evaluation
 	 */
 	private void exitWaitEval() {
-		waitView.clearDelayedBombs();
+		
 		updateButton(waitokbutton,true, getString(R.string.ingameFireButton_Continue));
 	}
 	

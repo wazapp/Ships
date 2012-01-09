@@ -1,6 +1,7 @@
 package com.gmail.wazappdotgithub.ships.model.views;
 
 import com.gmail.wazappdotgithub.ships.model.Bomb;
+import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.Statename;
 import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.DataAccess;
 
@@ -61,8 +62,10 @@ public final class InTurnBoardView extends BoardView {
 	
 	@Override 
 	protected void onTouchSpecial(MotionEvent event) {
-		if ( event.getAction() == MotionEvent.ACTION_UP) {
-			RemoteClient.getInstance().placeBomb(translateX(event), translateY(event));
+		if ( RemoteClient.getInstance().getState() == Statename.TURN) {
+			if ( event.getAction() == MotionEvent.ACTION_UP) {
+				RemoteClient.getInstance().placeBomb(translateX(event), translateY(event));
+			}
 		}
 	}
 }
