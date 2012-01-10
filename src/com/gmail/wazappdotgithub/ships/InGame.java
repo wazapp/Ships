@@ -104,13 +104,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		@Override
 		protected Void doInBackground(List<Bomb>... params) {
 			Thread.currentThread().setName("Evaluate " + model.getState());
-			/*
-			Log.d(tag, tag + "Animation Status ");
-			Log.d(tag, tag + "Animation Status in.hasStarted " +  in.hasStarted() + " hasEnded() " + in.hasEnded());
-			Log.d(tag, tag + "Animation Status out.hasStarted " +  out.hasStarted() + " hasEnded() " + out.hasEnded());
-			Log.d(tag, tag + "Starting incremental bombing ");
-			*/ // TODO wait for the animation to complete before starting to drop bombs, not sure how thoese flags work
-			
+
 			Log.d(tag,tag + Thread.currentThread().getName() + params[0].size() + " bombs");
 			if ( model.getState() == Statename.TURN_EVAL )
 				v = inturnView;
@@ -160,14 +154,14 @@ public class InGame extends Activity implements OnClickListener, Observer {
 			
 		// for when the player has looked at his bombs
 		if (current_state == Statename.TURN_EVAL) {
-			model.playerCompletedTurnEvaluation();
 			viewflipper.showNext();
+			model.playerCompletedTurnEvaluation();
 		} else
 		
 		// for when the player has looked at the opponents bombs
 		if (current_state == Statename.WAIT_EVAL) {
-			model.playerCompletedWaitEvaluation();
 			viewflipper.showNext();
+			model.playerCompletedWaitEvaluation();
 		}
 	}
 	
@@ -226,6 +220,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	
 	private void enterWait() {
 		inturnView.clearDelayedBombs();
+		//possible wait for animation?
 		model.playerCompletedWait();
 	}
 	
