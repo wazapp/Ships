@@ -182,6 +182,7 @@ public abstract class BoardView extends View implements OnTouchListener{
 		} else {
 			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2), offset / 2 - 2, missPaint);
 		}
+		canvas.drawText(String.valueOf(b.score), b.x * offset, b.y * offset, backgroundPaint);
 	}
 	
 	private final void drawSelect(Canvas canvas) {

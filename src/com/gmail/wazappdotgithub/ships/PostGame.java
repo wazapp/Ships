@@ -24,20 +24,17 @@ public class PostGame extends Activity {
 		
 		clientData = RemoteClient.getInstance().retrieveEndGameData();
 		
-		//TODO Dialog says Congratualtions even if loosing
+		//TODO Dialog says Congratulations even if loosing
 		TextView tv = (TextView) findViewById(id.postgameTextView);
 		if ( clientData != null ) {
 			StringBuffer sb = new StringBuffer();
-			sb.append(getString(R.string.postgameWinnerGreet));
-			sb.append("\n");
-			sb.append(getString(R.string.postgameDataShots));
-			sb.append(" ");
-			sb.append(clientData.bombsShot);
-			sb.append("\n");
-			sb.append(getString(R.string.postgameDataShips));
-			sb.append(" ");
-			sb.append(clientData.liveShips);
-
+			sb.append(getString(R.string.postgameWinnerGreet) + "\n");
+			sb.append(getString(R.string.postgameDataShots) + " ");
+			sb.append(clientData.bombsShot +"\n");
+			sb.append(getString(R.string.postgameDataShips) + " ");
+			sb.append(clientData.liveShips + "\n");
+			sb.append("Your Score: " + clientData.score + "\n");
+			sb.append(clientData.r_name + "'s Score: " + clientData.r_score);
 			tv.setText(sb.toString());
 		} else {
 			tv.setText("clientData was null, it aint good");
@@ -47,6 +44,9 @@ public class PostGame extends Activity {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		//startActivity(new Intent(this,UserInput.class));
+		// Want to go to either pregame or finish depending on
+		// if we shall spawn a new game or not
+
 		finish();
 		return true;
 	}

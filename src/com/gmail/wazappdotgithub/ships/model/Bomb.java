@@ -16,9 +16,10 @@ public final class Bomb extends AbstractMessage {
 	public int y;
 	public boolean hit;
 	public boolean destrship;
+	public int score;
 	
 	public Bomb(int xcoord, int ycoord) {
-		x = xcoord; y = ycoord; hit = false; destrship = false;
+		x = xcoord; y = ycoord; hit = false; destrship = false; score = 1;
 	}
 	public void setHit(boolean washit) {
 		hit = washit;
@@ -50,6 +51,7 @@ public final class Bomb extends AbstractMessage {
 		out.writeInt(y);
 		out.writeBoolean(hit);
 		out.writeBoolean(destrship);
+		out.writeInt(score);
 	}
 
 	@Override
@@ -58,6 +60,7 @@ public final class Bomb extends AbstractMessage {
 		y = in.readInt();
 		hit = in.readBoolean();
 		destrship = in.readBoolean();
+		score = in.readInt();
 	}
 	
 	@Override

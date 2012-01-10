@@ -42,8 +42,11 @@ public interface IShipsClient {
 	 */
 	public class EndGameData {
 		public boolean winner = false;
+		public String r_name = "";
 		public int bombsShot = 0;
 		public int liveShips = 0;
+		public int score = 0;
+		public int r_score = 0;
 	}
 	
 	// Observer related

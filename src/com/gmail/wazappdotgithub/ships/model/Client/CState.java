@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.gmail.wazappdotgithub.ships.common.EndMessage;
 import com.gmail.wazappdotgithub.ships.common.ReadyMessage;
+import com.gmail.wazappdotgithub.ships.common.Score;
 import com.gmail.wazappdotgithub.ships.comms.ComModule;
 import com.gmail.wazappdotgithub.ships.comms.IComModule;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
@@ -192,7 +193,7 @@ public final class CState {
 		new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
-				Thread.currentThread().setName("Turn Evaluation networking");
+				Thread.currentThread().setName("Turn Evaluation networking ");
 				IComModule network = ComModule.getInstance();
 				try {
 					Protocol.writeBombs(cl.inturnBombs, network.getOut());
@@ -207,6 +208,7 @@ public final class CState {
 				return null;
 			}
 			protected void onPostExecute(Void result) {
+				Score.scoreme(cl.myscore, cl.inturnBombs);
 				stateUpdate(Statename.TURN_EVAL);
 			}
 			
@@ -277,6 +279,9 @@ public final class CState {
 			}
 
 			protected void onPostExecute(Void result) {
+				// TODO odd to evaluate here, and send score back and forth?
+				// this way both phones have to spend time evaluating
+				Score.scoreme(cl.r_score, cl.r_inturnBombs);
 				stateUpdate(Statename.WAIT_EVAL);
 			}	
 

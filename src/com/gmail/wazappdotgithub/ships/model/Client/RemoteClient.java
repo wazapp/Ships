@@ -8,6 +8,7 @@ import java.util.Observer;
 import android.util.Log;
 
 import com.gmail.wazappdotgithub.ships.common.Constants;
+import com.gmail.wazappdotgithub.ships.common.Score;
 import com.gmail.wazappdotgithub.ships.model.BoardUsingSimpleShip;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.IBoard;
@@ -29,6 +30,7 @@ public final class RemoteClient extends Observable implements IShipsClient {
 	protected boolean starter;
 	protected boolean is_game_over;
 	protected boolean is_winner;
+	protected int myscore;
 	
 	/* Local data */
 	protected IBoard board = null;
@@ -42,6 +44,7 @@ public final class RemoteClient extends Observable implements IShipsClient {
 	/* Remote data */
 	protected List<Bomb> r_historicalBombs = null;
 	protected List<Bomb> r_inturnBombs = null;
+	protected int r_score;
 	
 	/* ********************
 	* Constructors etc .
@@ -66,6 +69,7 @@ public final class RemoteClient extends Observable implements IShipsClient {
 		this.is_game_over = false;
 		this.is_winner = false;
 		this.starter = starter;
+		this.myscore = 0;
 		
 		this.board = new BoardUsingSimpleShip();
 		this.historicalBombs = new LinkedList<Bomb>();
@@ -74,6 +78,7 @@ public final class RemoteClient extends Observable implements IShipsClient {
 		//preparing remote data
 		this.r_historicalBombs = new LinkedList<Bomb>();
 		this.r_inturnBombs = new LinkedList<Bomb>();
+		this.r_score = 0;
 		
 		addAsObserver(obs);
 		CState.initClient(this);
@@ -239,6 +244,7 @@ public final class RemoteClient extends Observable implements IShipsClient {
 			// Manage remote bombs
 			Log.d(tag,tag+"Move remote bomb cache to history");
 			r_historicalBombs.addAll( r_inturnBombs );
+			r_score = Score.scoreme(r_score, r_inturnBombs);
 			r_inturnBombs.clear();
 			break;
 			
@@ -246,6 +252,7 @@ public final class RemoteClient extends Observable implements IShipsClient {
 			// manage local bombs
 			Log.d(tag,tag+"Move local bomb cache to history");
 			historicalBombs.addAll( inturnBombs );
+			myscore = Score.scoreme(myscore, inturnBombs);
 			inturnBombs.clear();
 			break;
 			
@@ -265,7 +272,9 @@ public final class RemoteClient extends Observable implements IShipsClient {
 		endgamedata.liveShips = board.numLiveShips();
 		endgamedata.bombsShot = historicalBombs.size();
 		endgamedata.winner = is_winner;
-
+		endgamedata.score = myscore;
+		endgamedata.r_name = opponentName;
+		endgamedata.r_score = r_score;
 		return endgamedata;
 	}
 	
