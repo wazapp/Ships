@@ -142,10 +142,10 @@ public final class ComputerClient implements Runnable {
 			inturnBombs.add(b);
 		}
 
-		Log.d(tag,tag+"Writing bombs");
+		Log.d(tag,tag+"actTurn, Writing bombs");
 		Protocol.writeBombs(inturnBombs, out);
 		
-		Log.d(tag,tag+"Waiting for response");
+		Log.d(tag,tag+"actTurn, Waiting for response");
 		bombsFromRemote = Protocol.readBombs(in);
 		for ( Bomb b : bombsFromRemote ) {
 			//store hits for future reference
@@ -155,14 +155,14 @@ public final class ComputerClient implements Runnable {
 			historicalBombs.add(b);
 		}
 		
-		Log.d(tag,tag+"Reading Gamestate");
+		Log.d(tag,tag+"actTurn, Reading Gamestate");
 		EndMessage end = Protocol.readGameState(in);
 		gameOver = end.isGameOver;
 		
 	}
 
 	protected void actWait(DataOutputStream out ,	DataInputStream in) throws IOException {
-		Log.d(tag,tag+"Awaiting incomging bombs");
+		Log.d(tag,tag+"actWait, Awaiting incomging bombs");
 		List<Bomb> bombsFromRemote = Protocol.readBombs(in);
 		List<Bomb> bombsToRemote = new LinkedList<Bomb>();
 		
@@ -171,12 +171,12 @@ public final class ComputerClient implements Runnable {
 			bombsToRemote.add(b);
 		}
 		
-		Log.d(tag,tag+"Writing response");
+		Log.d(tag,tag+"actWait, Writing response");
 		Protocol.writeBombs(bombsToRemote, out);
 		
 		gameOver = board.numLiveShips() == 0;
 		
-		Log.d(tag,tag+"Writing gamestate");
+		Log.d(tag,tag+"actWait, Writing gamestate");
 		Protocol.writeGameState(gameOver, out);
 	}
 	
