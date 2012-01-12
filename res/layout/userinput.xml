@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/linearLayout1" android:orientation="vertical" android:layout_above="@+id/button3" android:layout_alignParentLeft="true" android:layout_marginBottom="34dp">
-        <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/button_challenge_friend" android:text="@string/challenge_a_friend"></Button>
-        <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/button_challenge_computer" android:text="@string/getItOn"></Button>
-        <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/button_host_game_lan" android:text="@string/host_local_lan"></Button>
-        <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/button_join_game_lan" android:text="@string/join_lan"></Button>
-        <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/button_quit" android:text="@string/fleeHome"></Button>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent" android:layout_width="fill_parent" android:id="@+id/scrollView1" android:padding="10dip">
+<LinearLayout android:layout_height="fill_parent" android:layout_width="fill_parent" android:id="@+id/linearLayout1" android:orientation="vertical" android:layout_gravity="center">
+        <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="center" android:id="@+id/button_challenge_friend" android:text="@string/challenge_friend"></Button>
+        <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="center" android:id="@+id/button_challenge_computer" android:text="@string/challenge_computer"></Button>
+        <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="center" android:id="@+id/button_host_game_lan" android:text="@string/host_local_lan"></Button>
+        <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="center" android:id="@+id/button_join_game_lan" android:text="@string/join_lan"></Button>
+        <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="center" android:id="@+id/button_quit" android:text="@string/quit"></Button>
+        <ImageView android:id="@+id/imageView1" android:layout_height="wrap_content" android:layout_width="wrap_content" android:src="@drawable/logo2" android:layout_gravity="center" android:layout_margin="10dip"></ImageView>
 </LinearLayout>
+</ScrollView>

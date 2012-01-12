@@ -64,7 +64,6 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 		hostLan.setOnClickListener(this);
 		joinLan.setOnClickListener(this);
 
-
 	}
 
 	@Override
@@ -121,7 +120,7 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 		else if (arg0 == joinLan) {
 			try {
 				ALog.d(tag, "launching Communication Module");
-				ComModule.connect_to_tcp(Inet4Address.getByName("192.168.0.14"), Constants.DEFAULT_PORT);
+				ComModule.connect_to_tcp(Inet4Address.getByName("192.168.1.9"), Constants.DEFAULT_PORT);
 				
 				ALog.d(tag, "creating remoteclient");
 				RemoteClient.newInstance(UserInput.this, false);

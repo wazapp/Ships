@@ -1,34 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, Ships!</string>
+    <string name="sinkaship">Sink A Ship</string>
     <string name="app_name">Ships</string>
-    <string name="goodGuy">Good Guy</string>
-    <string name="badGuy">Bad Guy</string>
-    <string name="awsome">Awsome</string>
-    <string name="veryAwsome">Very Awsome</string>
-    <string name="whatF">WhatTheF</string>
-    <string name="levelAwsome">Level of Awsomeness?</string>
-    <string name="goodBad">Are you good or bad? </string>
     <string name="ok">OK</string>
-    <string name="radical">Radical</string>
-    <string name="outrageous">Outrageous</string>
-    <string name="goodswimmer">Good swimmer?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="getItOn">"Let's get it on!"</string>
-    <string name="fleeHome">Flee home!</string>
+    <string name="challenge_computer">Challenge Phone</string>
+    <string name="quit">Quit</string>
+    <string name="challenge_friend">Challenge a Friend</string>
+    <string name="host_local_lan">Host local game (LAN)</string>
+    <string name="join_lan">Join local game (LAN)</string>
     <string name="postgameTitle">Game Over</string>
     <string name="postgameWinnerGreet">Congratulations!</string>
     <string name="postgameLooserGreet">Awww...</string>
     <string name="postgameDataShots">Number of shots:</string>
     <string name="postgameDataShips">Number of ships:</string>
     <string name="ingameFireButton_Fire">Fire away!</string>
-    <string name="sinkaship"> Sink A Ship</string>
     <string name="ingameFireButton_Evaluating">Evaluating...</string>
     <string name="ingameFireButton_Continue">Continue</string>
     <string name="ingameWaitButton_Waiting">Waiting...</string>
     <string name="textViewTest1">Be so kind and sink some ships please (tap on the blue area).. </string>
-    <string name="challenge_a_friend">Challenge a Friend</string>
-    <string name="host_local_lan">Host local game (LAN)</string>
-    <string name="join_lan">Join local game (LAN)</string>
 </resources>
