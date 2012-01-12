@@ -125,7 +125,7 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 				ComModule.connect_to_tcp(Inet4Address.getByName("192.168.0.14"), Constants.DEFAULT_PORT);
 				
 				Log.d(tag, tag + "creating remoteclient");
-				RemoteClient.newInstance(UserInput.this, true);
+				RemoteClient.newInstance(UserInput.this, false);
 				Log.d(tag, tag + "completed remoteclient");
 
 				RemoteClient.getInstance().playerCompletedUserInput();
