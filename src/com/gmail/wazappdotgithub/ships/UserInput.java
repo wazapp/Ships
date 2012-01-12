@@ -86,7 +86,15 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 		
 		else if (arg0 == hostLan) {
 			try {
+				Log.d(tag, tag + "launching Communication Module");
 				ComModule.serve_from_tcp(Constants.DEFAULT_PORT);
+				
+				Log.d(tag, tag + "creating remoteclient");
+				RemoteClient.newInstance(UserInput.this, true);
+				Log.d(tag, tag + "completed remoteclient");
+
+				RemoteClient.getInstance().playerCompletedUserInput();
+
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -113,8 +121,15 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 
 		else if (arg0 == joinLan) {
 			try {
-				
+				Log.d(tag, tag + "launching Communication Module");
 				ComModule.connect_to_tcp(Inet4Address.getByName("192.168.0.14"), Constants.DEFAULT_PORT);
+				
+				Log.d(tag, tag + "creating remoteclient");
+				RemoteClient.newInstance(UserInput.this, true);
+				Log.d(tag, tag + "completed remoteclient");
+
+				RemoteClient.getInstance().playerCompletedUserInput();
+
 				
 			} catch (Exception e) {
 				e.printStackTrace();
