@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -36,11 +37,11 @@ public final class TCPComm {
 		remote = null;
 		
 		//Set a timeout
-		listen.setSoTimeout(Constants.DEFAULT_SOCKET_TIMEOUT_MS);
+		//listen.setSoTimeout(Constants.DEFAULT_SOCKET_TIMEOUT_MS);
 		
 		if ( computerOpponent ) {
 			Log.d(tag, tag + "Launching Computer Opponent");
-			Thread computer = new Thread( ComputerClient.newInstance() );
+			Thread computer = new Thread( ComputerClient.newInstance(InetAddress.getLocalHost(),Constants.DEFAULT_PORT) );
 			computer.start();
 		}
 
@@ -59,7 +60,7 @@ public final class TCPComm {
 	 * @param port the port to connect to
 	 * @throws IOException
 	 */
-	protected TCPComm(Inet4Address addr, int port) throws IOException {
+	protected TCPComm(InetAddress addr, int port) throws IOException {
 		remote = new Socket();
 		remote.setSoTimeout(Constants.DEFAULT_SOCKET_TIMEOUT_MS);
 		

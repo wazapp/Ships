@@ -3,8 +3,8 @@ package com.gmail.wazappdotgithub.ships.model.Client;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -25,9 +25,8 @@ import com.gmail.wazappdotgithub.ships.model.IBoard;
 
 public final class ComputerClient implements Runnable {
 
-	private static ComputerClient instance = null;
 	private static String name = "Phone";
-	protected String tag = "Ships ComputerClient ";
+	public static final  String tag = "Ships ComputerClient ";
 
 	private Socket sock = null;
 
@@ -48,20 +47,21 @@ public final class ComputerClient implements Runnable {
 	private List<Bomb> hits = null;
 	private Queue<Bomb> prio = null;
 
-	public static Runnable newInstance() throws UnknownHostException, IOException {
-		instance = new ComputerClient();
-
-		return instance;
-	}
-	public static ComputerClient getInstance() {
-		if ( instance == null )
-			throw new RuntimeException("calling getInstance, but there is no instance or Computerclient");
-
-		return instance;
+	public static Runnable newInstance(InetAddress host, int port) throws IOException {
+		return new ComputerClient(host, port);
 	}
 
-	private ComputerClient() throws UnknownHostException, IOException {
-		sock = new Socket("localhost",Constants.DEFAULT_PORT);
+	public static Runnable newInstance(Socket s) throws IOException {
+		return new ComputerClient(s);
+	}
+	
+	private ComputerClient(InetAddress host, int port) throws IOException {
+		this(new Socket(host,port));
+		
+	}
+	
+	private ComputerClient(Socket s) {
+		sock = s;
 		rand = new Random(System.currentTimeMillis());
 		board = new BoardUsingSimpleShip();
 		board.randomiseShipsLocations();

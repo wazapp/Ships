@@ -4,6 +4,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import android.util.Log;
 
 public class ComModule implements IComModule {
 
@@ -11,7 +15,7 @@ public class ComModule implements IComModule {
 	private static final String tag = "Ships Comm ";
 	private static ComModule instance;
 	
-	public static IComModule connect_to_tcp(Inet4Address addr, int port) throws IOException {
+	public static IComModule connect_to_tcp(InetAddress addr, int port) throws IOException {
 		nullCheck();
 		
 		instance = new ComModule();
@@ -70,7 +74,8 @@ public class ComModule implements IComModule {
 
 	@Override
 	public void stop() throws IOException {
-		network.stop();
+		if (network != null)
+			network.stop();
 	}
 
 }

@@ -1,6 +1,8 @@
 package com.gmail.wazappdotgithub.ships;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -33,7 +35,9 @@ public class UserInput extends Activity implements Observer{
             	
             	try {
             		Log.d(tag, tag + "launching Communication Module");
-					ComModule.serve_computer(Constants.DEFAULT_PORT);
+            		//ComModule.serve_from_tcp(Constants.DEFAULT_PORT);
+            		ComModule.serve_computer(Constants.DEFAULT_PORT);
+					//ComModule.connect_to_tcp(Inet4Address.getByName("87.227.1.232"), Constants.DEFAULT_PORT);
 					
 					Log.d(tag, tag + "creating remoteclient");
 					RemoteClient.newInstance(UserInput.this, true);
@@ -45,9 +49,9 @@ public class UserInput extends Activity implements Observer{
 					e.printStackTrace();
 					AlertDialog.Builder builder = new AlertDialog.Builder(UserInput.this);
 					
-					builder.setMessage("An error occurred establishing the connection")
+					builder.setMessage("An error occurred establishing the connection\n" + e.getMessage())
 					       .setCancelable(false)
-					       .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+					       .setPositiveButton("Try again", new DialogInterface.OnClickListener() {
 					           public void onClick(DialogInterface dialog, int id) {
 					                dialog.cancel();
 					           }
@@ -59,7 +63,7 @@ public class UserInput extends Activity implements Observer{
 					       });
 					
 					AlertDialog alert = builder.create();
-					//alert.show() ??
+					alert.show();
 				}
             }
         });

@@ -11,6 +11,6 @@ public class Constants {
     public static final int animated_bombdelay_ms = 500;
     public static final int animated_hitvibro_ms = 100;
     public static final int DEFAULT_PORT = 48152;
-    public static final int DEFAULT_SOCKET_TIMEOUT_MS = 10000; //10 seconds
+    public static final int DEFAULT_SOCKET_TIMEOUT_MS = 5000; //5 seconds
     public static final int[] SCORELEVEL = new int[] {0,2,4,8,16,32,64,128,256,512};
 }
