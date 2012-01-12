@@ -2,6 +2,8 @@ package com.gmail.wazappdotgithub.ships;
 
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -38,7 +40,9 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 
 
 	private Button challengeAFriend = null;
-	private Button letsContinueButton = null;
+	private Button challengeComputer = null;
+	private Button hostLan = null;
+	private Button joinLan = null;
 	private Button fleeHome = null;
 
 
@@ -48,15 +52,18 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 
 		setContentView(R.layout.userinput);
 
-		challengeAFriend = (Button) findViewById(R.id.button3);
+		challengeAFriend = (Button) findViewById(R.id.button_challenge_friend);
 
-		letsContinueButton = (Button) findViewById(R.id.button1);
-
-		fleeHome = (Button) findViewById(R.id.button2);
+		challengeComputer = (Button) findViewById(R.id.button_challenge_computer);
+		hostLan = (Button) findViewById(R.id.button_host_game_lan);
+		joinLan = (Button) findViewById(R.id.button_join_game_lan);
+		fleeHome = (Button) findViewById(R.id.button_quit);
 
 		challengeAFriend.setOnClickListener(this);
-		letsContinueButton.setOnClickListener(this);
+		challengeComputer.setOnClickListener(this);
 		fleeHome.setOnClickListener(this);
+		hostLan.setOnClickListener(this);
+		joinLan.setOnClickListener(this);
 
 
 	}
@@ -74,19 +81,68 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 				Log.e("Error in intent : ", e.toString());
 			}
 
-
 			//this.onActivityResult(1, RESULT_OK, getIntent());
+		}
+		
+		else if (arg0 == hostLan) {
+			try {
+				ComModule.serve_from_tcp(Constants.DEFAULT_PORT);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				AlertDialog.Builder builder = new AlertDialog.Builder(UserInput.this);
 
+				builder.setMessage("An error occurred establishing the connection\n" + e.getMessage())
+				.setCancelable(false)
+				.setPositiveButton("Try again", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				})
+				.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						UserInput.this.finish();
+					}
+				});
 
+				AlertDialog alert = builder.create();
+				alert.show();
+
+			}
 		}
 
-		else if (arg0 == letsContinueButton) {
+		else if (arg0 == joinLan) {
+			try {
+				
+				ComModule.connect_to_tcp(Inet4Address.getByName("192.168.0.14"), Constants.DEFAULT_PORT);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				AlertDialog.Builder builder = new AlertDialog.Builder(UserInput.this);
+
+				builder.setMessage("An error occurred establishing the connection\n" + e.getMessage())
+				.setCancelable(false)
+				.setPositiveButton("Try again", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				})
+				.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						UserInput.this.finish();
+					}
+				});
+
+				AlertDialog alert = builder.create();
+				alert.show();
+
+			}
+		}
+		else if (arg0 == challengeComputer) {
 
 			try {
 				Log.d(tag, tag + "launching Communication Module");
-				//ComModule.serve_from_tcp(Constants.DEFAULT_PORT);
 				ComModule.serve_computer(Constants.DEFAULT_PORT);
-				//ComModule.connect_to_tcp(Inet4Address.getByName("87.227.1.232"), Constants.DEFAULT_PORT);
 
 				Log.d(tag, tag + "creating remoteclient");
 				RemoteClient.newInstance(UserInput.this, true);
