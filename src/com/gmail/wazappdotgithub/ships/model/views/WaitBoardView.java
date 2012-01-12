@@ -17,7 +17,7 @@ import android.view.MotionEvent;
  */
 public class WaitBoardView extends BoardView {
 
-	private String tag = "Ships_WaitBoardView";
+	private String tag = "Ships WaitBoardView ";
 		
 	public WaitBoardView(Context context, AttributeSet attrs) {
 		super(context, attrs);

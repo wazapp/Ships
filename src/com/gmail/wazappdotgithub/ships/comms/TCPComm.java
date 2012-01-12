@@ -4,13 +4,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import android.util.Log;
-
+import com.gmail.wazappdotgithub.ships.common.ALog;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.model.Client.ComputerClient;
 
@@ -40,18 +38,18 @@ public final class TCPComm {
 		//listen.setSoTimeout(Constants.DEFAULT_SOCKET_TIMEOUT_MS);
 		
 		if ( computerOpponent ) {
-			Log.d(tag, tag + "Launching Computer Opponent");
+			ALog.d(tag,"Launching Computer Opponent");
 			Thread computer = new Thread( ComputerClient.newInstance(InetAddress.getLocalHost(),Constants.DEFAULT_PORT) );
 			computer.start();
 		}
 
-		Log.d(tag, tag + "initiating.. listening");
+		ALog.d(tag, "initiating.. listening");
 		remote = listen.accept();
-		Log.d(tag, tag + "initiating.. connection accepted");
+		ALog.d(tag, "initiating.. connection accepted");
 
 		out = new DataOutputStream(remote.getOutputStream());
 		in = new DataInputStream(remote.getInputStream());
-		Log.d(tag, tag + "initiating.. streams established");
+		ALog.d(tag, "initiating.. streams established");
 		
 	}
 	/**
@@ -64,14 +62,14 @@ public final class TCPComm {
 		remote = new Socket();
 		remote.setSoTimeout(Constants.DEFAULT_SOCKET_TIMEOUT_MS);
 		
-		Log.d(tag, tag + "initiating.. connecting");
+		ALog.d(tag, "initiating.. connecting");
 		remote = new Socket(addr, port);
-		Log.d(tag, tag + "initiating.. connect ok");
+		ALog.d(tag, "initiating.. connect ok");
 		
 		out = new DataOutputStream(remote.getOutputStream());
 		in = new DataInputStream(remote.getInputStream());
 		
-		Log.d(tag, tag + "initiating.. streams established");
+		ALog.d(tag, "initiating.. streams established");
 	}
 	
 	/**
@@ -79,7 +77,7 @@ public final class TCPComm {
 	 * @throws IOException
 	 */
 	protected void stop() throws IOException {
-		Log.d(tag, tag + "stopping services");
+		ALog.d(tag, tag + "stopping services");
 		if ( out != null )
 			out.close();
 		if ( in != null )

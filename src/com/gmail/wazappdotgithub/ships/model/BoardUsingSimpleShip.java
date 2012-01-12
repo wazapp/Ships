@@ -2,8 +2,7 @@ package com.gmail.wazappdotgithub.ships.model;
 
 import java.util.Random;
 
-import android.util.Log;
-
+import com.gmail.wazappdotgithub.ships.common.ALog;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 
 /*
@@ -201,13 +200,13 @@ public final class BoardUsingSimpleShip implements IBoard {
 	 */
 	private boolean moveOK(int id, int xcoordinate, int ycoordinate, boolean horizontal, boolean rotateOrder) {
 		if ( isFinal ) {
-			Log.d(tag,tag + "Move disallowed, in final state"); 
+			ALog.d(tag,"Move disallowed, in final state"); 
 			return false;
 		}
 
 		if ( ! rotateOrder ) {// only bother to check this if we do not rotate
 			if (xcoordinate == ships[id].xcolpos && ycoordinate == ships[id].yrowpos) {
-				Log.d(tag,tag + "Move disallowed, irrelevant");
+				ALog.d(tag,"Move disallowed, irrelevant");
 				return false;
 			}
 		}
@@ -215,12 +214,12 @@ public final class BoardUsingSimpleShip implements IBoard {
 		// deep check
 		if ( horizontal ) {
 			if ( ! (xcoordinate + ships[id].size <= Constants.DEFAULT_BOARD_SIZE) ) {
-				Log.d(tag,tag + "Move disallowed, will not fit (x coordinate)"); 
+				ALog.d(tag,"Move disallowed, will not fit (x coordinate)"); 
 				return false; 
 			}
 		} else { 
 			if ( ! (ycoordinate + ships[id].size <= Constants.DEFAULT_BOARD_SIZE) ) {
-				Log.d(tag,tag + "Move disallowed, will not fit (y coordinate)"); 
+				ALog.d(tag,"Move disallowed, will not fit (y coordinate)"); 
 				return false; 
 			}
 		}
@@ -234,14 +233,14 @@ public final class BoardUsingSimpleShip implements IBoard {
 
 					for (int i = 0; i < ships[id].size ; i++) {
 						if ( board[xcoordinate + i][ycoordinate] == true ) {	// check horizontal positions
-							Log.d(tag,tag + "Move disallowed, space is occupied ("+(xcoordinate + i)+","+ycoordinate+")"); return false;
+							ALog.d(tag,"Move disallowed, space is occupied ("+(xcoordinate + i)+","+ycoordinate+")"); return false;
 						}
 					}
 				}
 				else {
 					for (int i = 0; i < ships[id].size ; i++) { // check vertical positions
 						if ( board[xcoordinate][ycoordinate + i] == true ) {
-							Log.d(tag,tag + "Move disallowed, space is occupied ("+xcoordinate+","+(ycoordinate + i)+")"); return false;
+							ALog.d(tag,"Move disallowed, space is occupied ("+xcoordinate+","+(ycoordinate + i)+")"); return false;
 						}
 					}
 				}

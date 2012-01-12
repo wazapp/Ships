@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 
-import android.util.Log;
-
+import com.gmail.wazappdotgithub.ships.common.ALog;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.common.EndMessage;
 import com.gmail.wazappdotgithub.ships.common.ReadyMessage;
@@ -92,7 +91,7 @@ public final class ComputerClient implements Runnable {
 			else
 				gameAsClient(out, in);
 
-			Log.w(tag,tag+"shutting down");
+			ALog.w(tag,"shutting down");
 			in.close();
 			out.close();
 			sock.close();
@@ -142,10 +141,10 @@ public final class ComputerClient implements Runnable {
 			inturnBombs.add(b);
 		}
 
-		Log.d(tag,tag+"actTurn, Writing bombs");
+		ALog.d(tag,"actTurn, Writing bombs");
 		Protocol.writeBombs(inturnBombs, out);
 		
-		Log.d(tag,tag+"actTurn, Waiting for response");
+		ALog.d(tag,"actTurn, Waiting for response");
 		bombsFromRemote = Protocol.readBombs(in);
 		for ( Bomb b : bombsFromRemote ) {
 			//store hits for future reference
@@ -155,14 +154,14 @@ public final class ComputerClient implements Runnable {
 			historicalBombs.add(b);
 		}
 		
-		Log.d(tag,tag+"actTurn, Reading Gamestate");
+		ALog.d(tag,"actTurn, Reading Gamestate");
 		EndMessage end = Protocol.readGameState(in);
 		gameOver = end.isGameOver;
 		
 	}
 
 	protected void actWait(DataOutputStream out ,	DataInputStream in) throws IOException {
-		Log.d(tag,tag+"actWait, Awaiting incomging bombs");
+		ALog.d(tag,"actWait, Awaiting incomging bombs");
 		List<Bomb> bombsFromRemote = Protocol.readBombs(in);
 		List<Bomb> bombsToRemote = new LinkedList<Bomb>();
 		
@@ -171,12 +170,12 @@ public final class ComputerClient implements Runnable {
 			bombsToRemote.add(b);
 		}
 		
-		Log.d(tag,tag+"actWait, Writing response");
+		ALog.d(tag,"actWait, Writing response");
 		Protocol.writeBombs(bombsToRemote, out);
 		
 		gameOver = board.numLiveShips() == 0;
 		
-		Log.d(tag,tag+"actWait, Writing gamestate");
+		ALog.d(tag,"actWait, Writing gamestate");
 		Protocol.writeGameState(gameOver, out);
 	}
 	
@@ -190,7 +189,7 @@ public final class ComputerClient implements Runnable {
 		//generate bombs close to a hit from the latest round
 		int i = prio.size();
 		
-		Log.d(tag, tag + "there were "+ hits.size() +" hits from last round");
+		ALog.d(tag, "there were "+ hits.size() +" hits from last round");
 		for (Bomb boom : hits) {
 			//4 coordinates most likely to contain a ship
 			Bomb[] closest = {
@@ -214,7 +213,7 @@ public final class ComputerClient implements Runnable {
 			}
 		}
 		
-		Log.d(tag, tag + "added "+ (prio.size() - i) +" potential locations");
+		ALog.d(tag, "added "+ (prio.size() - i) +" potential locations");
 	}
 
 	private Bomb getBomb() {
@@ -223,23 +222,23 @@ public final class ComputerClient implements Runnable {
 		//while the queue is not empty
 		while ( (boom = prio.poll()) != null) {
 			if ( historicalBombs.contains(boom) ) {
-				Log.d(tag, tag + " poll in history " + boom);
+				ALog.d(tag, "poll in history " + boom);
 			} else if ( inturnBombs.contains(boom) ) {
-				Log.d(tag, tag + " poll inturn "+ boom);
+				ALog.d(tag, "poll inturn "+ boom);
 			} else {
-				Log.d(tag, tag + " poll ok "+ boom);
+				ALog.d(tag, "poll ok "+ boom);
 				return boom;
 			}
 		}
 		
-		Log.d(tag, tag + " queue empty, resorting to random");
+		ALog.d(tag,"queue empty, resorting to random");
 		//if, at any point the queue was empty, resort to random bomb
 		while ( boom == null || historicalBombs.contains(boom) || inturnBombs.contains(boom)) {
 			boom = new Bomb(rand.nextInt(Constants.DEFAULT_BOARD_SIZE),
 					rand.nextInt(Constants.DEFAULT_BOARD_SIZE));
 		}
 		
-		Log.d(tag,tag + "boom "+ boom.x +", " +boom.y);
+		ALog.d(tag,"boom "+ boom.x +", " +boom.y);
 		return boom;
 	}
 

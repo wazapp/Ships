@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
+import com.gmail.wazappdotgithub.ships.common.ALog;
 import com.gmail.wazappdotgithub.ships.common.EndMessage;
 import com.gmail.wazappdotgithub.ships.common.ReadyMessage;
 import com.gmail.wazappdotgithub.ships.common.Score;
@@ -254,7 +254,7 @@ public final class CState {
 				IComModule network = ComModule.getInstance();
 				
 				try {
-					Log.d(tag,tag+"Awaiting incomging bombs");
+					ALog.d(tag,"Awaiting incomging bombs");
 					cl.r_inturnBombs = Protocol.readBombs(network.getIn());
 					List<Bomb> bombsToRemote = new LinkedList<Bomb>();
 					
@@ -263,12 +263,12 @@ public final class CState {
 						bombsToRemote.add(b);
 					}
 					
-					Log.d(tag,tag+"Writing response");
+					ALog.d(tag,"Writing response");
 					Protocol.writeBombs(bombsToRemote, network.getOut());
 					
 					cl.is_game_over = cl.board.numLiveShips() == 0;
 					
-					Log.d(tag,tag+"Writing gamestate");
+					ALog.d(tag,"Writing gamestate");
 					Protocol.writeGameState(cl.is_game_over, network.getOut());
 					
 				} catch (IOException e) {

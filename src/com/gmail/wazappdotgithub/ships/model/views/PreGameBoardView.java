@@ -1,5 +1,6 @@
 package com.gmail.wazappdotgithub.ships.model.views;
 
+import com.gmail.wazappdotgithub.ships.common.ALog;
 import com.gmail.wazappdotgithub.ships.model.IBoard;
 import com.gmail.wazappdotgithub.ships.model.IShip;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.Statename;
@@ -8,7 +9,6 @@ import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 
 public class PreGameBoardView extends BoardView {
@@ -42,18 +42,18 @@ public class PreGameBoardView extends BoardView {
 				case MotionEvent.ACTION_DOWN : selectedShip = board.getShipId(currentTouchCol, currentTouchRow); break;
 				case MotionEvent.ACTION_MOVE : board.moveShip(selectedShip, currentTouchCol, currentTouchRow); break;
 				case MotionEvent.ACTION_UP : selectedShip = -1; break;
-				default : Log.d("BoardView", "MotionEvent " + event.getAction() + " not caught");
+				default : ALog.d("Ships BoardView ", "MotionEvent " + event.getAction() + " not caught");
 				}
 			} else {
 
 				switch ( event.getAction() ) {
 				case MotionEvent.ACTION_DOWN : selectedShip = board.getShipId(currentTouchCol, currentTouchRow); break;
 				case MotionEvent.ACTION_UP : board.toggleOrientation(selectedShip); selectedShip = -1; break;
-				default : Log.d("BoardView", "MotionEvent " + event.getAction() + " not caught");
+				default : ALog.d("Ships BoardView ", "MotionEvent " + event.getAction() + " not caught");
 				}
 			}
 
-			Log.d("BoardView touchEvent: ","boardview ship:"+selectedShip+ " " + currentTouchCol +", "+ currentTouchRow +  " time: "+ (event.getEventTime() - event.getDownTime()));
+			//ALog.d("Ships BoardView ",touchEvent: ","boardview ship:"+selectedShip+ " " + currentTouchCol +", "+ currentTouchRow +  " time: "+ (event.getEventTime() - event.getDownTime()));
 		}
 	}
 }

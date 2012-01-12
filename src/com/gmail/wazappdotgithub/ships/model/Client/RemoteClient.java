@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import android.util.Log;
-
+import com.gmail.wazappdotgithub.ships.common.ALog;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.common.Score;
 import com.gmail.wazappdotgithub.ships.model.BoardUsingSimpleShip;
@@ -63,7 +62,7 @@ public final class RemoteClient extends Observable implements IShipsClient {
 	
 	private RemoteClient(Observer obs, boolean starter) {
 		//initiate the client, ready for board interactions
-		Log.d(tag, tag + "Constructing");
+		ALog.d(tag,"Constructing");
 		this.state = Statename.INIT;
 		this.opponentName = null;
 		this.is_game_over = false;
@@ -242,7 +241,7 @@ public final class RemoteClient extends Observable implements IShipsClient {
 		switch ( state ) {
 		case WAIT_EVAL_EXIT : 
 			// Manage remote bombs
-			Log.d(tag,tag+"Move remote bomb cache to history");
+			ALog.d(tag,"Move remote bomb cache to history");
 			r_historicalBombs.addAll( r_inturnBombs );
 			r_score = Score.scoreme(r_score, r_inturnBombs);
 			r_inturnBombs.clear();
@@ -250,7 +249,7 @@ public final class RemoteClient extends Observable implements IShipsClient {
 			
 		case TURN_EVAL_EXIT :
 			// manage local bombs
-			Log.d(tag,tag+"Move local bomb cache to history");
+			ALog.d(tag,"Move local bomb cache to history");
 			historicalBombs.addAll( inturnBombs );
 			myscore = Score.scoreme(myscore, inturnBombs);
 			inturnBombs.clear();

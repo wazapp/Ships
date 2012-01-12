@@ -3,11 +3,7 @@ package com.gmail.wazappdotgithub.ships.comms;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import android.util.Log;
 
 public class ComModule implements IComModule {
 

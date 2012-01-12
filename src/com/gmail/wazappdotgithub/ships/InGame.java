@@ -3,6 +3,8 @@ package com.gmail.wazappdotgithub.ships;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+
+import com.gmail.wazappdotgithub.ships.common.ALog;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
@@ -20,7 +22,6 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
@@ -54,7 +55,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.d(tag,tag + "Activity initiating");
+		ALog.d(tag,"Activity initiating");
 		super.onCreate(savedInstanceState);
 		model.addAsObserver(this);
 		
@@ -105,7 +106,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 		protected Void doInBackground(List<Bomb>... params) {
 			Thread.currentThread().setName("Evaluate " + model.getState());
 
-			Log.d(tag,tag + Thread.currentThread().getName() + params[0].size() + " bombs");
+			ALog.d(tag,Thread.currentThread().getName() + params[0].size() + " bombs");
 			if ( model.getState() == Statename.TURN_EVAL )
 				v = inturnView;
 			
@@ -175,7 +176,7 @@ public class InGame extends Activity implements OnClickListener, Observer {
 	 * Let the UI react to an update from the Client
 	 */
 	private void updateActivity(Statename newstate) {
-		Log.d(tag,tag + "new state is " + newstate );
+		ALog.d(tag,"new state is " + newstate );
 
 		switch ( newstate ) {
 		case RECOUNTBOMBS : updateFireButtonText();	break;

@@ -1,5 +1,8 @@
 package com.gmail.wazappdotgithub.ships;
 
+import com.gmail.wazappdotgithub.ships.common.ALog;
+import com.gmail.wazappdotgithub.ships.common.AndroidLog;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +11,7 @@ import android.os.Bundle;
 
 public class Ships extends Activity {
 	
+	private static final String tag ="Ships ";
 	protected boolean _active = true;
 	protected int _splashTime = 2000;
 	
@@ -15,6 +19,9 @@ public class Ships extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Activate non Android dependent logging to use Android logger
+        ALog.setLogger(new AndroidLog());
+        ALog.d(tag, "Activated logging");
         
         setContentView(R.layout.main);
         
@@ -34,12 +41,10 @@ public class Ships extends Activity {
                 } catch(InterruptedException e) {
                     // do nothing
                 } finally {
-                    finish();
-                    
                     Intent intent = new Intent(Ships.this, UserInput.class);
-                
                     startActivity(intent);
                     finish();
+                    
                 }
             }
         };

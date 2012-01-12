@@ -3,11 +3,11 @@ package com.gmail.wazappdotgithub.ships;
 
 import java.io.IOException;
 import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.gmail.wazappdotgithub.ships.common.ALog;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.comms.ComModule;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.Statename;
@@ -25,7 +25,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -78,7 +77,7 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 				startActivityForResult(intent, 1);
 			} catch (Exception e) {
 				e.printStackTrace();
-				Log.e("Error in intent : ", e.toString());
+				ALog.e(tag, e.toString());
 			}
 
 			//this.onActivityResult(1, RESULT_OK, getIntent());
@@ -86,12 +85,12 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 		
 		else if (arg0 == hostLan) {
 			try {
-				Log.d(tag, tag + "launching Communication Module");
+				ALog.d(tag, "launching Communication Module");
 				ComModule.serve_from_tcp(Constants.DEFAULT_PORT);
 				
-				Log.d(tag, tag + "creating remoteclient");
+				ALog.d(tag, "creating remoteclient");
 				RemoteClient.newInstance(UserInput.this, true);
-				Log.d(tag, tag + "completed remoteclient");
+				ALog.d(tag, "completed remoteclient");
 
 				RemoteClient.getInstance().playerCompletedUserInput();
 
@@ -121,12 +120,12 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 
 		else if (arg0 == joinLan) {
 			try {
-				Log.d(tag, tag + "launching Communication Module");
+				ALog.d(tag, "launching Communication Module");
 				ComModule.connect_to_tcp(Inet4Address.getByName("192.168.0.14"), Constants.DEFAULT_PORT);
 				
-				Log.d(tag, tag + "creating remoteclient");
+				ALog.d(tag, "creating remoteclient");
 				RemoteClient.newInstance(UserInput.this, false);
-				Log.d(tag, tag + "completed remoteclient");
+				ALog.d(tag, "completed remoteclient");
 
 				RemoteClient.getInstance().playerCompletedUserInput();
 
@@ -156,12 +155,12 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 		else if (arg0 == challengeComputer) {
 
 			try {
-				Log.d(tag, tag + "launching Communication Module");
+				ALog.d(tag, "launching Communication Module");
 				ComModule.serve_computer(Constants.DEFAULT_PORT);
 
-				Log.d(tag, tag + "creating remoteclient");
+				ALog.d(tag, "creating remoteclient");
 				RemoteClient.newInstance(UserInput.this, true);
-				Log.d(tag, tag + "completed remoteclient");
+				ALog.d(tag, "completed remoteclient");
 
 				RemoteClient.getInstance().playerCompletedUserInput();
 
@@ -223,7 +222,7 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 						no = phoneCur.getString(phoneCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 					}
 
-					Log.e("Phone no & name :***: ", name + " : " + no);
+					ALog.e(tag,"Phone no & name :***: " + name + " : " + no);
 					//txt.append(name + " : " + no + "\n");
 
 					id = null;
@@ -243,10 +242,10 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 			}
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-			Log.e("IllegalArgumentException :: ", e.toString());
+			ALog.e(tag,e.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e("Error :: ", e.toString());
+			ALog.e(tag,e.toString());
 		}
 
 	}
@@ -282,11 +281,8 @@ public class UserInput extends Activity implements Observer, OnClickListener{
 	public void update(Observable observable, Object data) {
 		Statename s = ((Statename) data);
 		if (s == Statename.PREGAME) {
-			Log.d(tag, tag + "Received " + s + " event");
 			RemoteClient.getInstance().removeAsObserver(this);
-			Log.d(tag, tag + "Creating intent");
 			Intent next = new Intent(UserInput.this, PreGame.class);
-			Log.d(tag, tag + "starting activity");
 			startActivity(next);
 
 			//this shall not finish because postgame will return to it

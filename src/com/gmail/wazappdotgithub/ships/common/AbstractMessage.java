@@ -4,8 +4,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import android.util.Log;
-
 /*
  * A Class with the ability to read and write itself to/from a 
  * datastream.
@@ -28,7 +26,7 @@ public abstract class AbstractMessage {
 		writeSpecial(out);
 		
 		String tag = Thread.currentThread().getName();
-		Log.d(tag,tag + " wrote " + getType() + " " + toString());
+		ALog.d(tag,"wrote " + getType() + " " + toString());
 	}
 	
 	public void readFrom(DataInputStream in) throws IOException {
@@ -41,7 +39,7 @@ public abstract class AbstractMessage {
 		readSpecial(in);
 		
 		String tag = Thread.currentThread().getName();
-		Log.d(tag,tag + " read " + getType() +" "+ toString());
+		ALog.d(tag,"read " + getType() +" "+ toString());
 		
 	}
 }

@@ -3,22 +3,21 @@ package com.gmail.wazappdotgithub.ships;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.gmail.wazappdotgithub.ships.common.ALog;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.Statename;
 import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
-import com.gmail.wazappdotgithub.ships.model.views.PreGameBoardView;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 public final class PreGame extends Activity implements Observer {
 
-	private String tag = "Ships PreGame";
+	private String tag = "Ships PreGame ";
 	private IShipsClient model;
 	
 	private ProgressDialog waiting;
@@ -27,7 +26,7 @@ public final class PreGame extends Activity implements Observer {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.d(tag,tag + "configuring pregame contentview");
+		ALog.d(tag,"configuring pregame contentview");
 		setContentView(R.layout.pregame);
 		
 		model = RemoteClient.getInstance();
@@ -39,26 +38,12 @@ public final class PreGame extends Activity implements Observer {
 			
 			@Override
 			public void onClick(View v) {
-				Log.d(tag,"randomisingShips");
+				ALog.d(tag,"randomising ships");
 				model.getBoard().randomiseShipsLocations();
 				findViewById(R.id.pregame_BoardView).invalidate();
 			}
 		});
-		/*
-		View rotateButton = findViewById(R.id.pregame_button_rotate);
-		rotateButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				int id = ((PreGameBoardView) findViewById(R.id.pregame_BoardView)).shipIdUnderCursor();
-				Log.d(tag,"rotatingShip id " + id);
-				if ( id >= 0 ) {
-					model.getBoard().toggleOrientation(id);
-					findViewById(R.id.pregame_BoardView).invalidate();
-				}
-			}
-		});
-		*/
+		
 		View startButtonView = findViewById(R.id.pregame_button_start);
 		startButtonView.setOnClickListener(new OnClickListener() {
 			
@@ -70,7 +55,6 @@ public final class PreGame extends Activity implements Observer {
 				 * 
 				 *  This will send a message to the other player
 				 */
-				Log.d(tag,"start button pressed");
 				model.playerCompletedPreGame();
 			}
 		});
@@ -83,7 +67,7 @@ public final class PreGame extends Activity implements Observer {
 	
 	private void updateActivity(Statename newstate) {
 		
-		Log.d(tag, tag + "updateActivity " + newstate );
+		ALog.d(tag,"updateActivity " + newstate );
 		
 		switch ( newstate ) {
 		case PREGAME_EXIT : disableInteraction(); break;
@@ -113,7 +97,6 @@ public final class PreGame extends Activity implements Observer {
 	private void disableInteraction() {
 		findViewById(R.id.pregame_BoardView).setEnabled(false);
 		findViewById(R.id.pregame_button_randomize).setEnabled(false);
-		//findViewById(R.id.pregame_button_rotate).setEnabled(false);
 		findViewById(R.id.pregame_button_start).setEnabled(false);
 	}
 }

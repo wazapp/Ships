@@ -1,12 +1,12 @@
 package com.gmail.wazappdotgithub.ships;
 
 import com.gmail.wazappdotgithub.ships.R.id;
+import com.gmail.wazappdotgithub.ships.common.ALog;
 import com.gmail.wazappdotgithub.ships.model.Client.IShipsClient.EndGameData;
 import com.gmail.wazappdotgithub.ships.model.Client.RemoteClient;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
@@ -19,7 +19,7 @@ public class PostGame extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		Log.d(tag,tag + " initiating");
+		ALog.d(tag, "initiating");
 		setContentView(R.layout.postgame);
 		
 		clientData = RemoteClient.getInstance().retrieveEndGameData();
