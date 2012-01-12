@@ -28,4 +28,5 @@
     <string name="ingameFireButton_Continue">Continue</string>
     <string name="ingameWaitButton_Waiting">Waiting...</string>
     <string name="textViewTest1">Be so kind and sink some ships please (tap on the blue area).. </string>
+    <string name="challenge_a_friend">Challenge a Friend</string>
 </resources>
