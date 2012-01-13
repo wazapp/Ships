@@ -33,7 +33,7 @@ public abstract class BoardView extends View implements OnTouchListener{
 
 	private String tag = "Ships BoardView ";
 	protected static Paint backgroundPaint = new Paint();
-	protected static Paint foregroundPaint = new Paint();
+	protected static Paint gridPaint = new Paint();
 	protected static Paint shipsPaint = new Paint();
 	protected static Paint selectPaint = new Paint();
 	protected static Paint waterPaint = new Paint();
@@ -58,7 +58,7 @@ public abstract class BoardView extends View implements OnTouchListener{
 		currentTouchCol = 0;
 		
 		BoardView.backgroundPaint.setColor(Color.WHITE);
-		BoardView.foregroundPaint.setColor(Color.BLACK);
+		BoardView.gridPaint.setColor(getResources().getColor(R.color.gridColor));
 		BoardView.shipsPaint.setColor(Color.DKGRAY);
 		BoardView.waterPaint.setColor(getResources().getColor(R.color.waterColor));
 		BoardView.selectPaint.setColor(getResources().getColor(R.color.selectColor));
@@ -138,21 +138,22 @@ public abstract class BoardView extends View implements OnTouchListener{
 	
 	private final void drawWater(Canvas canvas, float offset ) {
 		//the 'water'
-		canvas.drawRect(0, 0, Constants.DEFAULT_BOARD_SIZE * offset,
-				Constants.DEFAULT_BOARD_SIZE * offset, backgroundPaint);
+		//canvas.drawRect(0, 0, Constants.DEFAULT_BOARD_SIZE * offset,
+		//		Constants.DEFAULT_BOARD_SIZE * offset, backgroundPaint);
 		canvas.drawRect(0, 0, Constants.DEFAULT_BOARD_SIZE * offset,
 				Constants.DEFAULT_BOARD_SIZE * offset, waterPaint);
 
 	}
 	private final void drawGrid(Canvas canvas, float offset, int min) {
 		// The grid
-		for (int i = 0 ; i < Constants.DEFAULT_BOARD_SIZE + 1; i++) {
+		for (int i = 0 ; i < Constants.DEFAULT_BOARD_SIZE; i++) {
 			float itimeso = i*offset;
-			canvas.drawLine(0, itimeso, min, itimeso, foregroundPaint);
-			canvas.drawLine(itimeso,0 , itimeso, min, foregroundPaint);
+			canvas.drawLine(0, itimeso, min, itimeso, gridPaint);
+			canvas.drawLine(itimeso,0 , itimeso, min, gridPaint);
 		}
-		//the last one 
-		canvas.drawLine(min - 1, 0, min - 1, min, foregroundPaint);
+		//the last ones 
+		canvas.drawLine(min - 1, 0, min - 1, min, gridPaint);
+		canvas.drawLine(0, min - 1, min - 1, min - 1, gridPaint);
 	}
 	
 	/**
@@ -192,7 +193,7 @@ public abstract class BoardView extends View implements OnTouchListener{
 		} else {
 			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2), offset / 2 - 2, missPaint);
 		}
-		canvas.drawText(String.valueOf(b.score), b.x * offset, b.y * offset, backgroundPaint);
+		//canvas.drawText(String.valueOf(b.score), b.x * offset, b.y * offset, backgroundPaint);
 	}
 	
 	private final void drawSelect(Canvas canvas) {
