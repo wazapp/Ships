@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" android:orientation="vertical" android:background="@color/missColor">
+    android:layout_height="fill_parent" android:orientation="vertical" android:background="@drawable/ocean">
     <ImageView android:layout_height="wrap_content" android:id="@+id/imageView1" android:src="@drawable/logo2" android:layout_gravity="bottom" android:layout_width="fill_parent"></ImageView>
     <ImageView android:layout_height="wrap_content" android:id="@+id/imageView2" android:layout_width="wrap_content" android:src="@drawable/sinkinga" android:layout_gravity="center_vertical"></ImageView>
 </FrameLayout>

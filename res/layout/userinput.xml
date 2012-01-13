@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent" android:layout_width="fill_parent" android:id="@+id/scrollView1" android:padding="10dip">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent" android:layout_width="fill_parent" android:id="@+id/scrollView1" android:padding="10dip" android:background="@drawable/ocean">
 <LinearLayout android:layout_height="fill_parent" android:layout_width="fill_parent" android:id="@+id/linearLayout1" android:orientation="vertical" android:layout_gravity="center">
         <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="center" android:id="@+id/button_challenge_friend" android:text="@string/challenge_friend"></Button>
         <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="center" android:id="@+id/button_challenge_computer" android:text="@string/challenge_computer"></Button>

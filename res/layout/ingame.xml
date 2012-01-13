@@ -2,45 +2,43 @@
 <ViewFlipper android:id="@+id/ingame_flipper"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" 
-	android:layout_height="fill_parent">
+	android:layout_height="fill_parent"
+	android:padding="10dip"
+	android:background="@drawable/ocean">
 	<!-- configuring the INTURN layout -->
 	<TableLayout 
 		android:id="@+id/ingame_inturn_view"
-		android:layout_gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="fill_parent">
+		android:layout_gravity="center_vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
 		<TableRow 
 		android:id="@+id/tableRow1" 
-		android:layout_gravity="center_vertical" android:layout_height="fill_parent" android:layout_weight="2">
+		android:layout_gravity="bottom"	android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1">
 			<com.gmail.wazappdotgithub.ships.model.views.InTurnBoardView
-				android:layout_width="wrap_content" 
-				android:layout_height="wrap_content"
-				android:id="@+id/ingame_inturn_boardview" android:layout_gravity="top">
+				android:id="@+id/ingame_inturn_boardview"
+				android:layout_height="fill_parent" android:layout_weight="1" android:layout_gravity="bottom">
 			</com.gmail.wazappdotgithub.ships.model.views.InTurnBoardView>
 		</TableRow>
 		<TableRow android:id="@+id/tableRow3" 
-			android:layout_width="fill_parent" android:layout_gravity="fill_vertical" android:layout_weight="0.25">
-			<Button android:text="Fire!"
-				android:id="@+id/ingame_inturn_okbutton"
-				android:layout_weight="1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_gravity="center_vertical"></Button>
+			android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1">
+			<Button android:id="@+id/ingame_inturn_okbutton" android:text="Fire!"
+				android:layout_weight="1" android:layout_height="wrap_content" android:layout_gravity="top"></Button>
 		</TableRow>
 	</TableLayout>
+	
 	<!-- configuring the WAIT layout -->
 	<TableLayout android:id="@+id/ingame_wait_view"
-	 android:layout_gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="fill_parent">
-	 <TableRow android:id="@+id/tableRow2" android:layout_width="wrap_content" android:layout_height="0dp" android:layout_weight="2"></TableRow>
+	 android:layout_gravity="center_vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
 		<TableRow 
 		android:id="@+id/tableRow1" 
-		android:layout_gravity="center_vertical" android:layout_height="fill_parent" android:layout_weight="2">
+		android:layout_gravity="bottom" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1">
 			<com.gmail.wazappdotgithub.ships.model.views.WaitBoardView
-				android:layout_width="wrap_content" 
-				android:layout_height="wrap_content"
-				android:id="@+id/ingame_wait_boardview" android:layout_gravity="top">
+				android:id="@+id/ingame_wait_boardview"
+				android:layout_height="fill_parent" android:layout_weight="1" android:layout_gravity="bottom">
 			</com.gmail.wazappdotgithub.ships.model.views.WaitBoardView>
 		</TableRow>
 		<TableRow android:id="@+id/tableRow3" 
-			android:layout_width="fill_parent" android:layout_gravity="fill_vertical" android:layout_weight="0.25">
-			<Button android:text="Next"
-				android:id="@+id/ingame_wait_okbutton"
-				android:layout_weight="1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_gravity="center_vertical"></Button>
+			android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1">
+			<Button android:id="@+id/ingame_wait_okbutton" android:text="Next"
+				android:layout_weight="1" android:layout_height="wrap_content" android:layout_gravity="top"></Button>
 		</TableRow>
 	</TableLayout>
 </ViewFlipper>

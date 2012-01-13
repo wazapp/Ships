@@ -20,4 +20,8 @@
     <string name="ingameFireButton_Continue">Continue</string>
     <string name="ingameWaitButton_Waiting">Waiting...</string>
     <string name="textViewTest1">Be so kind and sink some ships please (tap on the blue area).. </string>
+    <string name="langame_title">Join a network game</string>
+    <string name="langame_ip">ipaddress...</string>
+    <string name="langame_connect">Connect to Host</string>
+    <string name="langame_back">Back</string>
 </resources>

@@ -4,7 +4,8 @@
 	android:layout_height="fill_parent"
 	android:layout_width="fill_parent"
 	android:id="@+id/linearLayout1" 
-	android:orientation="vertical">
+	android:orientation="vertical"
+	android:background="@drawable/ocean">
     
     <TextView android:text="some radom text goes here for now" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:layout_width="wrap_content" android:id="@+id/postgameTextView"></TextView>
     <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout2" android:layout_width="fill_parent">
