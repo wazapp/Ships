@@ -24,11 +24,15 @@ public class PostGame extends Activity {
 		
 		clientData = RemoteClient.getInstance().retrieveEndGameData();
 		
-		//TODO Dialog says Congratulations even if loosing
+		
 		TextView tv = (TextView) findViewById(id.postgameTextView);
 		if ( clientData != null ) {
 			StringBuffer sb = new StringBuffer();
-			sb.append(getString(R.string.postgameWinnerGreet) + "\n");
+			if (clientData.winner)
+				sb.append(getString(R.string.postgameWinnerGreet) + "\n");
+			else
+				sb.append(getString(R.string.postgameLooserGreet) + "\n");
+			
 			sb.append(getString(R.string.postgameDataShots) + " ");
 			sb.append(clientData.bombsShot +"\n");
 			sb.append(getString(R.string.postgameDataShips) + " ");
