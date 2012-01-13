@@ -25,8 +25,8 @@ public abstract class AbstractMessage {
 		
 		writeSpecial(out);
 		
-		String tag = Thread.currentThread().getName();
-		ALog.d(tag,"wrote " + getType() + " " + toString());
+		//String tag = Thread.currentThread().getName();
+		//ALog.d(tag,"wrote " + getType() + " " + toString());
 	}
 	
 	public void readFrom(DataInputStream in) throws IOException {
@@ -38,8 +38,8 @@ public abstract class AbstractMessage {
 		
 		readSpecial(in);
 		
-		String tag = Thread.currentThread().getName();
-		ALog.d(tag,"read " + getType() +" "+ toString());
+		//String tag = Thread.currentThread().getName();
+		//ALog.d(tag,"read " + getType() +" "+ toString());
 		
 	}
 }
