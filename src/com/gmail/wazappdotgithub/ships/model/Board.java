@@ -13,23 +13,22 @@ import com.gmail.wazappdotgithub.ships.common.Constants;
  * some access methods, the largest difference being the class for the Ship itself.
  * 
  */
-public final class BoardUsingSimpleShip implements IBoard {
+public final class Board implements IBoard {
 
-	//TODO consider making this a Singleton class depending on how we end up using 
-	// it in activities
-
-	private boolean[][] board;
+	private int[][] board;
+	private int empty = -1;
 	private ShipSimple[] ships;
 	private boolean isFinal = false;
 	private int liveships;
 	private String tag = "Ships_Board";
 
-	public BoardUsingSimpleShip() {
-		board = new boolean[Constants.DEFAULT_BOARD_SIZE][Constants.DEFAULT_BOARD_SIZE];
+	public Board() {
+		board = new int[Constants.DEFAULT_BOARD_SIZE][Constants.DEFAULT_BOARD_SIZE];
 		ships = new ShipSimple[Constants.DEFAULT_SHIPS_NUM];
 		liveships = Constants.DEFAULT_SHIPS_NUM;
 
-		//add new ships 
+		//add new ships
+		clearboard();
 		//THIS WILL BREAK if ever the number of ships != board size
 		for (int i = 0; i < Constants.DEFAULT_SHIPS_NUM; i++) {
 			ships[i] = new ShipSimple(i, 0, Constants.DEFAULT_SHIPS[i], false);
@@ -38,6 +37,14 @@ public final class BoardUsingSimpleShip implements IBoard {
 
 		if ( ! validate() )
 			throw new IllegalStateException("the board is not valid during construction()");
+	}
+
+	private void clearboard() {
+		for (int i = 0; i < Constants.DEFAULT_SHIPS_NUM; i++) {
+			for (int j = 0; j < Constants.DEFAULT_SHIPS_NUM; j++) {
+				board[i][j] = empty;
+			}
+		}
 	}
 
 	@Override
@@ -82,11 +89,14 @@ public final class BoardUsingSimpleShip implements IBoard {
 		if ( ! coordinatesOk(xcoord, ycoord))
 			return false;
 
-		return board[xcoord][ycoord];
+		return board[xcoord][ycoord] >= 0;
 	}
 
 	@Override 
-	public Bomb bombCoordinate(Bomb b) {
+	public Bomb bombCoordinate(Bomb b) throws IllegalArgumentException {
+		if ( ! coordinatesOk(b.x, b.y) )
+			throw new IllegalArgumentException("Invalid coordinates");
+
 		int s;
 		if ( (s = getShipId(b.x, b.y) ) > -1 ) { // if there is a ship
 			b.setHit(true);
@@ -142,7 +152,8 @@ public final class BoardUsingSimpleShip implements IBoard {
 			int dsn = Constants.DEFAULT_SHIPS_NUM;
 			int dbs = Constants.DEFAULT_BOARD_SIZE;
 
-			board = new boolean[dbs][dbs];
+			board = new int[dbs][dbs];
+			clearboard();
 			ships = new ShipSimple[Constants.DEFAULT_SHIPS_NUM];
 
 			if ( ! validate() )
@@ -203,46 +214,50 @@ public final class BoardUsingSimpleShip implements IBoard {
 			ALog.d(tag,"Move disallowed, in final state"); 
 			return false;
 		}
+		
+		ShipSimple theship = ships[id];
 
 		if ( ! rotateOrder ) {// only bother to check this if we do not rotate
-			if (xcoordinate == ships[id].xcolpos && ycoordinate == ships[id].yrowpos) {
-				ALog.d(tag,"Move disallowed, irrelevant");
+			if (xcoordinate == theship.xcolpos && ycoordinate == theship.yrowpos) {
+				ALog.d(tag,"Move, irrelevant (same position), no rotation");
 				return false;
 			}
 		}
 
 		// deep check
 		if ( horizontal ) {
-			if ( ! (xcoordinate + ships[id].size <= Constants.DEFAULT_BOARD_SIZE) ) {
+			// note  0 + size 2 = 2 = [0,1,2] = wrong
+			// note	 7 + size 2 = 9 = [7,8,9] = wrong
+			// head of ship == x,y coordinate = 1
+			// ensure it fits inside the board
+			if ( ! (xcoordinate + theship.size - 1  < Constants.DEFAULT_BOARD_SIZE) ) {
 				ALog.d(tag,"Move disallowed, will not fit (x coordinate)"); 
 				return false; 
 			}
+			//ensure there is nothing at the intended positions
+			// (unless it is the ship itself already)
+			for (int i = 0; i < theship.size ; i++) {
+				int coordinate = board[xcoordinate + i][ycoordinate];
+				if (  coordinate != empty && coordinate != id ) {
+					ALog.d(tag,"Move disallowed, space is occupied ("+(xcoordinate+1)+","+ycoordinate+"=" +coordinate+")"); 
+					return false;
+				}
+			}
+			
 		} else { 
-			if ( ! (ycoordinate + ships[id].size <= Constants.DEFAULT_BOARD_SIZE) ) {
+			// vertical position, from head coordinate and increasing y value
+			// ensure it fits inside the board
+			if ( ! (ycoordinate + theship.size - 1 < Constants.DEFAULT_BOARD_SIZE) ) {
 				ALog.d(tag,"Move disallowed, will not fit (y coordinate)"); 
 				return false; 
 			}
-		}
-
-		/*
-		 * Need to check positions of all other ships against the suggested position.
-		 */
-		for( ShipSimple othership : ships ) {
-			if ( othership != ships[id] ) { // exclude the ship itself
-				if ( horizontal ) {
-
-					for (int i = 0; i < ships[id].size ; i++) {
-						if ( board[xcoordinate + i][ycoordinate] == true ) {	// check horizontal positions
-							ALog.d(tag,"Move disallowed, space is occupied ("+(xcoordinate + i)+","+ycoordinate+")"); return false;
-						}
-					}
-				}
-				else {
-					for (int i = 0; i < ships[id].size ; i++) { // check vertical positions
-						if ( board[xcoordinate][ycoordinate + i] == true ) {
-							ALog.d(tag,"Move disallowed, space is occupied ("+xcoordinate+","+(ycoordinate + i)+")"); return false;
-						}
-					}
+			//ensure there is nothing at the intended positions
+			// (unless it is the ship itself already)
+			for (int i = 0; i < theship.size ; i++) {
+				int coordinate = board[xcoordinate][ycoordinate + i];
+				if (  coordinate != empty && coordinate != id ) {
+					ALog.d(tag,"Move disallowed, space is occupied ("+xcoordinate+","+(ycoordinate + i)+"=" +coordinate+")"); 
+					return false;
 				}
 			}
 		}
@@ -267,10 +282,10 @@ public final class BoardUsingSimpleShip implements IBoard {
 	private void add(int id) {
 		if ( ships[id].ishorizontal ) {
 			for ( int i = 0; i < ships[id].size; i++)
-				board[ships[id].xcolpos + i][ships[id].yrowpos] = true;
+				board[ships[id].xcolpos + i][ships[id].yrowpos] = id;
 		} else {
 			for ( int i = 0; i < ships[id].size; i++)
-				board[ships[id].xcolpos][ships[id].yrowpos + i] = true;
+				board[ships[id].xcolpos][ships[id].yrowpos + i] = id;
 		}
 	}
 
@@ -280,10 +295,10 @@ public final class BoardUsingSimpleShip implements IBoard {
 	private void remove(int id) {
 		if ( ships[id].ishorizontal ) {
 			for ( int i = 0; i < ships[id].size; i++)
-				board[ships[id].xcolpos + i][ships[id].yrowpos] = false;
+				board[ships[id].xcolpos + i][ships[id].yrowpos] = empty;
 		} else {
 			for ( int i = 0; i < ships[id].size; i++)
-				board[ships[id].xcolpos][ships[id].yrowpos + i] = false;
+				board[ships[id].xcolpos][ships[id].yrowpos + i] = empty;
 		}
 	}
 
@@ -292,16 +307,25 @@ public final class BoardUsingSimpleShip implements IBoard {
 		return liveships;
 	}
 
-	@Override
-	public boolean validate() {
-		int count = 0;
+	
+	private boolean validate() {
+		int count = 0; // existing "ships"
 		for (int i = 0; i < Constants.DEFAULT_BOARD_SIZE; i++)
 			for (int j = 0; j < Constants.DEFAULT_BOARD_SIZE; j++)
-				if (board[i][j] == true ) { count++; }
+				if (board[i][j] >= 0 ) { count++; }
 
-		for (int id = 0; id < Constants.DEFAULT_SHIPS_NUM; id++)
-			if (ships[id] != null) { count -= ships[id].size; };
+		
+		for (int id = 0; id < Constants.DEFAULT_SHIPS_NUM; id++) {
+			ShipSimple sh = ships[id]; 
+			if (sh != null) { 
+				count -= sh.size; //count this ship
+				for ( int s = 0; s < sh.size ; s++ ) { // ensure all coords in it's path is it's own
+					boolean ok = ( sh.ishorizontal ) ? (board[sh.xcolpos + s][sh.yrowpos] == id) : (board[sh.xcolpos][sh.yrowpos + s] == id);
+					if (! ok ) return false;
+				}
+			}
+		}
 
-			return count == 0;
+		return count == 0;
 	}
 }

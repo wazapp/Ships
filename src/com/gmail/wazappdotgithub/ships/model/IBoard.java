@@ -58,7 +58,7 @@ public interface IBoard {
 	 * @param ycord
 	 * @return true if the ship is still alive or if it is a miss
 	 */
-	Bomb bombCoordinate(Bomb bomb);
+	Bomb bombCoordinate(Bomb bomb) throws IllegalArgumentException; 
 	
 	/**
 	 * Randomise the ship's locations and orientations
@@ -91,5 +91,4 @@ public interface IBoard {
 	 */
 	int numLiveShips();
 	
-	public boolean validate();
 }

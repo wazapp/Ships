@@ -29,7 +29,7 @@ public class PreGameBoardView extends BoardView {
 	protected void drawSpecial(Canvas canvas, float offset) {
 		for (IShip s : board.arrayOfShips()) {
 			drawShip(canvas, offset, s);
-			}
+		}
 	}
 
 	@Override

@@ -176,6 +176,7 @@ public abstract class BoardView extends View implements OnTouchListener{
 			canvas.drawRect(x + 2, y + 2, x - 2 + offset, y - 2 + si, backgroundPaint);
 			canvas.drawRect(x + 3, y + 3, x - 3 + offset, y - 3 + si, shipsPaint);
 		}
+		
 	}
 	
 	protected void drawBomb(Canvas canvas, Bomb b, float offset) {
