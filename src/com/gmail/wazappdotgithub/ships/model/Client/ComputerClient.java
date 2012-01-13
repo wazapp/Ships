@@ -14,6 +14,7 @@ import com.gmail.wazappdotgithub.ships.common.ALog;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.common.EndMessage;
 import com.gmail.wazappdotgithub.ships.common.ReadyMessage;
+import com.gmail.wazappdotgithub.ships.model.Board;
 import com.gmail.wazappdotgithub.ships.model.BoardUsingSimpleShip;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.IBoard;
@@ -56,13 +57,12 @@ public final class ComputerClient implements Runnable {
 	
 	private ComputerClient(InetAddress host, int port) throws IOException {
 		this(new Socket(host,port));
-		
 	}
 	
 	private ComputerClient(Socket s) {
 		sock = s;
 		rand = new Random(System.currentTimeMillis());
-		board = new BoardUsingSimpleShip();
+		board = new Board();
 		board.randomiseShipsLocations();
 
 		historicalBombs = new LinkedList<Bomb>();
@@ -153,6 +153,7 @@ public final class ComputerClient implements Runnable {
 			
 			historicalBombs.add(b);
 		}
+		logbombs(bombsFromRemote,"My Bombs");
 		
 		ALog.d(tag,"actTurn, Reading Gamestate");
 		EndMessage end = Protocol.readGameState(in);
@@ -169,6 +170,7 @@ public final class ComputerClient implements Runnable {
 			b = board.bombCoordinate(b);
 			bombsToRemote.add(b);
 		}
+		logbombs(bombsToRemote,"Opponent Bombs");
 		
 		ALog.d(tag,"actWait, Writing response");
 		Protocol.writeBombs(bombsToRemote, out);
@@ -188,8 +190,6 @@ public final class ComputerClient implements Runnable {
 	private void generatePriorityBombs() {
 		//generate bombs close to a hit from the latest round
 		int i = prio.size();
-		
-		ALog.d(tag, "there were "+ hits.size() +" hits from last round");
 		for (Bomb boom : hits) {
 			//4 coordinates most likely to contain a ship
 			Bomb[] closest = {
@@ -213,7 +213,8 @@ public final class ComputerClient implements Runnable {
 			}
 		}
 		
-		ALog.d(tag, "added "+ (prio.size() - i) +" potential locations");
+		ALog.d(tag, "There were "+ hits.size() +" hits from last round, " +
+				"added "+ (prio.size() - i) +" potential locations");
 	}
 
 	private Bomb getBomb() {
@@ -222,23 +223,23 @@ public final class ComputerClient implements Runnable {
 		//while the queue is not empty
 		while ( (boom = prio.poll()) != null) {
 			if ( historicalBombs.contains(boom) ) {
-				ALog.d(tag, "poll in history " + boom);
+				//ALog.d(tag, "poll in history " + boom);
 			} else if ( inturnBombs.contains(boom) ) {
-				ALog.d(tag, "poll inturn "+ boom);
+				//ALog.d(tag, "poll inturn "+ boom);
 			} else {
-				ALog.d(tag, "poll ok "+ boom);
+				//ALog.d(tag, "poll ok "+ boom);
 				return boom;
 			}
 		}
 		
-		ALog.d(tag,"queue empty, resorting to random");
+		ALog.d(tag,"No suggestions, resorting to random");
 		//if, at any point the queue was empty, resort to random bomb
 		while ( boom == null || historicalBombs.contains(boom) || inturnBombs.contains(boom)) {
 			boom = new Bomb(rand.nextInt(Constants.DEFAULT_BOARD_SIZE),
 					rand.nextInt(Constants.DEFAULT_BOARD_SIZE));
 		}
 		
-		ALog.d(tag,"boom "+ boom.x +", " +boom.y);
+		//ALog.d(tag,"boom "+ boom.x +", " +boom.y);
 		return boom;
 	}
 
@@ -248,4 +249,28 @@ public final class ComputerClient implements Runnable {
 		if (bombstoplace > remaining_spaces)
 			bombstoplace = remaining_spaces;
 	}
+	
+	private void logbombs(List<Bomb> bombs, String msg) {
+		StringBuffer sb = new StringBuffer();
+		int hits = 0;
+		int sunk = 0;
+				
+		sb.append(msg + "\n");
+		for (Bomb b : bombs) {
+			sb.append(b);
+			if (b.hit) {
+				hits++;
+				sb.append("*");
+				if (b.destrship) {
+					sunk++;
+					sb.append("*");
+				}
+			}
+			sb.append(", ");
+		}
+		sb.append(" total hits " + hits);
+		sb.append(" total sunk " + sunk);
+		ALog.i(tag, sb.toString());
+	}
+	
 }

@@ -8,6 +8,7 @@ import java.util.Observer;
 import com.gmail.wazappdotgithub.ships.common.ALog;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.common.Score;
+import com.gmail.wazappdotgithub.ships.model.Board;
 import com.gmail.wazappdotgithub.ships.model.BoardUsingSimpleShip;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.IBoard;
@@ -70,7 +71,7 @@ public final class RemoteClient extends Observable implements IShipsClient {
 		this.starter = starter;
 		this.myscore = 0;
 		
-		this.board = new BoardUsingSimpleShip();
+		this.board = new Board();
 		this.historicalBombs = new LinkedList<Bomb>();
 		this.inturnBombs = new LinkedList<Bomb>();
 		
@@ -165,7 +166,12 @@ public final class RemoteClient extends Observable implements IShipsClient {
 	* *********************/
 	@Override
 	public boolean placeBomb(int xcoord, int ycoord) {
-		// TODO sanity check on input!
+		/*
+		 if (xcoord < 0 || xcoord > Constants.DEFAULT_BOARD_SIZE - 1)
+			return false;
+		if (ycoord < 0 || ycoord > Constants.DEFAULT_BOARD_SIZE - 1)
+			return false;
+			*/
 		
 		// Determine if it is a valid coordinate
 		Bomb b = new Bomb(xcoord, ycoord);
