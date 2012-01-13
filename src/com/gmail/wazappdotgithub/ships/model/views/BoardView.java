@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.gmail.wazappdotgithub.ships.R;
+import com.gmail.wazappdotgithub.ships.common.ALog;
 import com.gmail.wazappdotgithub.ships.common.Constants;
 import com.gmail.wazappdotgithub.ships.model.Bomb;
 import com.gmail.wazappdotgithub.ships.model.IShip;
@@ -30,7 +31,7 @@ import android.view.View.OnTouchListener;
  */
 public abstract class BoardView extends View implements OnTouchListener{
 
-	private String tag = "Ships_BoardView";
+	private String tag = "Ships BoardView ";
 	protected static Paint backgroundPaint = new Paint();
 	protected static Paint foregroundPaint = new Paint();
 	protected static Paint shipsPaint = new Paint();
@@ -38,6 +39,7 @@ public abstract class BoardView extends View implements OnTouchListener{
 	protected static Paint waterPaint = new Paint();
 	protected static Paint hitPaint = new Paint();
 	protected static Paint missPaint = new Paint();
+	protected static Paint bombwhitePaint = new Paint();
 
 	protected Rect selectRow, selectCol;
 	
@@ -61,7 +63,11 @@ public abstract class BoardView extends View implements OnTouchListener{
 		BoardView.waterPaint.setColor(getResources().getColor(R.color.waterColor));
 		BoardView.selectPaint.setColor(getResources().getColor(R.color.selectColor));
 		BoardView.hitPaint.setColor(getResources().getColor(R.color.hitColor));
+		BoardView.hitPaint.setAntiAlias(true);
 		BoardView.missPaint.setColor(getResources().getColor(R.color.missColor));
+		BoardView.missPaint.setAntiAlias(true);
+		BoardView.bombwhitePaint.setColor(Color.WHITE);
+		BoardView.bombwhitePaint.setAntiAlias(true);
 		
 		this.setOnTouchListener(this);
 	}
@@ -70,16 +76,17 @@ public abstract class BoardView extends View implements OnTouchListener{
 	@Override
 	protected void onDraw(Canvas canvas) {
 		//Log.d(tag,tag + " drawing, measured ="+super.getMeasuredHeight()+" vs=" +getHeight() );
-		int min = Math.min(super.getWidth(), super.getHeight());
-		int offs = min / Constants.DEFAULT_BOARD_SIZE;
+		int min = Math.min(this.getWidth(), this.getHeight());
+		float offs = min / (float) Constants.DEFAULT_BOARD_SIZE;
 		
 		drawWater(canvas,offs);
-
+		drawGrid(canvas,offs, min);
+		
 		if ( ! isInEditMode() )
 			drawSpecial(canvas,offs);
 		
-		drawGrid(canvas,offs, min);
-		//drawSelect(canvas);
+		//drawSelect(canvas); TODO change to float precision
+		
 	}
 	
 	/**
@@ -126,10 +133,10 @@ public abstract class BoardView extends View implements OnTouchListener{
 	}
 
 	
-	protected abstract void drawSpecial(Canvas canvas, int offset);
+	protected abstract void drawSpecial(Canvas canvas, float offset);
 	protected abstract void onTouchSpecial(MotionEvent event);
 	
-	private final void drawWater(Canvas canvas, int offset ) {
+	private final void drawWater(Canvas canvas, float offset ) {
 		//the 'water'
 		canvas.drawRect(0, 0, Constants.DEFAULT_BOARD_SIZE * offset,
 				Constants.DEFAULT_BOARD_SIZE * offset, backgroundPaint);
@@ -137,13 +144,15 @@ public abstract class BoardView extends View implements OnTouchListener{
 				Constants.DEFAULT_BOARD_SIZE * offset, waterPaint);
 
 	}
-	private final void drawGrid(Canvas canvas, int offset, int min) {
+	private final void drawGrid(Canvas canvas, float offset, int min) {
 		// The grid
-		for (int i = 0 ; i < Constants.DEFAULT_BOARD_SIZE + 1;i++) {
-			int itimeso = i*offset;
+		for (int i = 0 ; i < Constants.DEFAULT_BOARD_SIZE + 1; i++) {
+			float itimeso = i*offset;
 			canvas.drawLine(0, itimeso, min, itimeso, foregroundPaint);
 			canvas.drawLine(itimeso,0 , itimeso, min, foregroundPaint);
 		}
+		//the last one 
+		canvas.drawLine(min - 1, 0, min - 1, min, foregroundPaint);
 	}
 	
 	/**
@@ -152,10 +161,10 @@ public abstract class BoardView extends View implements OnTouchListener{
 	 * @param offset the current offset
 	 * @param s the IShip to draw
 	 */
-	protected void drawShip(Canvas canvas, int offset, IShip s) {
-		int x = s.getXposition() * offset;
-		int y = s.getYposition() * offset;
-		int si = s.getSize() * offset;
+	protected void drawShip(Canvas canvas, float offset, IShip s) {
+		float x = s.getXposition() * offset;
+		float y = s.getYposition() * offset;
+		float si = s.getSize() * offset;
 
 		if ( s.isHorizontal() ) {
 			canvas.drawRect(x, y, x + si, y + offset, waterPaint);
@@ -168,15 +177,16 @@ public abstract class BoardView extends View implements OnTouchListener{
 		}
 	}
 	
-	protected void drawBomb(Canvas canvas, Bomb b, int offset) {
-		if ( b.hit )
-			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2, hitPaint);
-		else
-			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2), offset / 2, missPaint);	
+	protected void drawBomb(Canvas canvas, Bomb b, float offset) {
+		if ( b.hit ) {
+			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2 - 2 , hitPaint);
+		} else {
+			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2), offset / 2 - 2, missPaint);
+		}
 	}
 	
-	protected void drawNewBomb(Canvas canvas, Bomb b, int offset) {
-		canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2, backgroundPaint);
+	protected void drawNewBomb(Canvas canvas, Bomb b, float offset) {
+		canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2, bombwhitePaint);
 		if ( b.hit ) {
 			canvas.drawCircle(b.x * offset + (offset / 2), b.y * offset + (offset / 2) , offset / 2 - 2 , hitPaint);
 		} else {
@@ -190,7 +200,7 @@ public abstract class BoardView extends View implements OnTouchListener{
 		canvas.drawRect(selectCol, selectPaint);
 		canvas.drawRect(selectRow, selectPaint);
 
-		canvas.drawText(currentTouchCol + ", "+currentTouchRow, selectCol.left, selectRow.top + 15, backgroundPaint);
+		//canvas.drawText(currentTouchCol + ", "+currentTouchRow, selectCol.left, selectRow.top + 15, backgroundPaint);
 	}
 	
 	public final int translateX(MotionEvent event) {
@@ -205,18 +215,31 @@ public abstract class BoardView extends View implements OnTouchListener{
 	
 	private final void updateLocationAndSelect(MotionEvent event) {
 		int min = Math.min(this.getHeight(), this.getWidth());
-		// TODO figure out how to restrict the sensitive area, 
-		// right now you can move your finger outside the view and it will still
+		float eX = event.getX();
+		float eY = event.getY();
 		
-		//listen to the touch
-		int offs = min / Constants.DEFAULT_BOARD_SIZE;
+		float touchmin = Math.min(eX,eY);
+		float touchmax = Math.max(eX,eY);
+		
+		// early out
+		if (touchmin <= 0 || touchmax >= min)
+			return;
+		
+		float offs = min / (float) Constants.DEFAULT_BOARD_SIZE;
 
-		currentTouchCol = ( (int) event.getX() ) / offs;
-		currentTouchRow = ( (int) event.getY() ) / offs;
-
+		currentTouchCol = (int) (eX / offs);
+		currentTouchRow = (int) (eY / offs);
+		
 		//code to update the selection rectangles
-		if (currentTouchCol >= 0 && currentTouchRow >= 0)
-			updateSelect(currentTouchCol, currentTouchRow, offs, min);	
+		//if (currentTouchCol >= 0 && currentTouchRow >= 0)
+		updateSelect(currentTouchCol, currentTouchRow, (int)offs, min);
+		
+		if (currentTouchCol < 0 || currentTouchCol >= Constants.DEFAULT_BOARD_SIZE || currentTouchRow < 0 || currentTouchRow >= Constants.DEFAULT_BOARD_SIZE) {
+			ALog.e(tag, "Check failed" + 
+					"["+touchmin+"("+(int) touchmin+"),"+touchmax +"("+(int) touchmax+") against" + 
+					this.getWidth() + "," + this.getHeight() + " becoming ["+currentTouchCol+","+currentTouchRow+"]" 
+					);
+		}
 	}
 	
 	private void updateSelect(int column, int row, int offset, int min) {

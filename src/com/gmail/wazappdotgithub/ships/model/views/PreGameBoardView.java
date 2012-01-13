@@ -26,7 +26,7 @@ public class PreGameBoardView extends BoardView {
 	}
 
 	@Override
-	protected void drawSpecial(Canvas canvas, int offset) {
+	protected void drawSpecial(Canvas canvas, float offset) {
 		for (IShip s : board.arrayOfShips()) {
 			drawShip(canvas, offset, s);
 			}
@@ -42,14 +42,14 @@ public class PreGameBoardView extends BoardView {
 				case MotionEvent.ACTION_DOWN : selectedShip = board.getShipId(currentTouchCol, currentTouchRow); break;
 				case MotionEvent.ACTION_MOVE : board.moveShip(selectedShip, currentTouchCol, currentTouchRow); break;
 				case MotionEvent.ACTION_UP : selectedShip = -1; break;
-				default : ALog.d("Ships BoardView ", "MotionEvent " + event.getAction() + " not caught");
+				default : ALog.d("Ships PregameBoardView ", "MotionEvent " + event.getAction() + " ignored");
 				}
 			} else {
 
 				switch ( event.getAction() ) {
 				case MotionEvent.ACTION_DOWN : selectedShip = board.getShipId(currentTouchCol, currentTouchRow); break;
 				case MotionEvent.ACTION_UP : board.toggleOrientation(selectedShip); selectedShip = -1; break;
-				default : ALog.d("Ships BoardView ", "MotionEvent " + event.getAction() + " not caught");
+				default : ALog.d("Ships PregameBoardView ", "MotionEvent " + event.getAction() + " ignored");
 				}
 			}
 

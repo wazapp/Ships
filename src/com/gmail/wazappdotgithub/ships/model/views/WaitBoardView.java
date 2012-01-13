@@ -25,7 +25,7 @@ public class WaitBoardView extends BoardView {
 	}
 
 	@Override
-	protected void drawSpecial(Canvas canvas, int offset) {
+	protected void drawSpecial(Canvas canvas, float offset) {
 		//Paint my own ships
 		for (IShip s : RemoteClient.getInstance().getBoard().arrayOfShips()) {
 			drawShip(canvas, offset, s);

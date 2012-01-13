@@ -28,17 +28,20 @@ public final class InTurnBoardView extends BoardView {
 		super(context, attrs);
 		
 		target_one.setColor(Color.WHITE);
+		target_one.setAntiAlias(true);
 		target_two.setColor(Color.GREEN);
+		target_two.setAntiAlias(true);
 		target_center.setColor(Color.RED);
+		target_center.setAntiAlias(true);
 	}
 
 	/*
 	 * don't have to override onDraw() since it calls this method... 
 	 */
 	@Override
-	protected void drawSpecial(Canvas canvas, int offset) {
+	protected void drawSpecial(Canvas canvas, float offset) {
 		//Log.d(tag, Thread.currentThread().getName() + " redrawing inturnview");
-		int obytwo = offset / 2;
+		float obytwo = offset / 2;
 		
 		//Draw all earlier bombs
 		for (Bomb b : RemoteClient.getInstance().requestInTurnClientHistoricalBombs(DataAccess.LOCAL)) {
@@ -64,7 +67,7 @@ public final class InTurnBoardView extends BoardView {
 	protected void onTouchSpecial(MotionEvent event) {
 		if ( RemoteClient.getInstance().getState() == Statename.TURN) {
 			if ( event.getAction() == MotionEvent.ACTION_UP) {
-				RemoteClient.getInstance().placeBomb(translateX(event), translateY(event));
+				RemoteClient.getInstance().placeBomb(currentTouchCol, currentTouchRow);
 			}
 		}
 	}
