@@ -5,10 +5,11 @@
 	android:layout_width="fill_parent"
 	android:id="@+id/linearLayout1" 
 	android:orientation="vertical"
+	android:padding="10dip"
 	android:background="@drawable/ocean">
     
-    <TextView android:text="some radom text goes here for now" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:layout_width="wrap_content" android:id="@+id/postgameTextView"></TextView>
-    <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout2" android:layout_width="fill_parent">
+    <TextView android:text="Congratuations! some radom text goes here for now your score, opponents score etc" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:layout_width="fill_parent" android:id="@+id/postgameTextView" android:background="@color/waterColor" android:padding="3dip"></TextView>
+    <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout2" android:layout_width="fill_parent" android:paddingTop="10dip">
         <Button android:id="@+id/button1" android:layout_height="wrap_content" android:text="New Match" android:layout_width="wrap_content" android:layout_weight="0.5"></Button>
         <Button android:id="@+id/button2" android:layout_height="wrap_content" android:text="Exit" android:layout_width="wrap_content" android:layout_weight="0.5"></Button>
     </LinearLayout>

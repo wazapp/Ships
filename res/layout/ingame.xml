@@ -18,7 +18,7 @@
 			</com.gmail.wazappdotgithub.ships.model.views.InTurnBoardView>
 		</TableRow>
 		<TableRow android:id="@+id/tableRow3" 
-			android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1">
+			android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1" android:paddingTop="10dip">
 			<Button android:id="@+id/ingame_inturn_okbutton" android:text="Fire!"
 				android:layout_weight="1" android:layout_height="wrap_content" android:layout_gravity="top"></Button>
 		</TableRow>
@@ -36,7 +36,7 @@
 			</com.gmail.wazappdotgithub.ships.model.views.WaitBoardView>
 		</TableRow>
 		<TableRow android:id="@+id/tableRow3" 
-			android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1">
+			android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1" android:paddingTop="10dip">
 			<Button android:id="@+id/ingame_wait_okbutton" android:text="Next"
 				android:layout_weight="1" android:layout_height="wrap_content" android:layout_gravity="top"></Button>
 		</TableRow>

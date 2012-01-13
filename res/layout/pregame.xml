@@ -16,7 +16,7 @@
 		</com.gmail.wazappdotgithub.ships.model.views.PreGameBoardView>
 	</TableRow>
 	<TableRow android:id="@+id/tableRow2"
-		 android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1">
+		 android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1" android:paddingTop="10dip">
 		<Button android:id="@+id/pregame_button_randomize"
 			android:text="Randomize" android:layout_weight="1" android:layout_height="wrap_content" android:layout_gravity="top"></Button>
 		<Button android:id="@+id/pregame_button_start"
