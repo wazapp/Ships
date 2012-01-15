@@ -273,6 +273,10 @@ public final class RemoteClient extends Observable implements IShipsClient {
 	public EndGameData retrieveEndGameData() {
 		EndGameData endgamedata = new EndGameData();
 		
+		//move all
+		historicalBombs.addAll( inturnBombs );
+		inturnBombs.clear();
+		
 		endgamedata.liveShips = board.numLiveShips();
 		endgamedata.bombsShot = historicalBombs.size();
 		endgamedata.winner = is_winner;
