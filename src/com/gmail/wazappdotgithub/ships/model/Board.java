@@ -21,9 +21,9 @@ public final class Board implements IBoard {
 	private boolean isFinal = false;
 	private int liveships;
 	private String tag = "Ships_Board";
+	private Random r = new Random(System.currentTimeMillis());
 
 	public Board() {
-		board = new int[Constants.DEFAULT_BOARD_SIZE][Constants.DEFAULT_BOARD_SIZE];
 		ships = new ShipSimple[Constants.DEFAULT_SHIPS_NUM];
 		liveships = Constants.DEFAULT_SHIPS_NUM;
 
@@ -34,17 +34,18 @@ public final class Board implements IBoard {
 			ships[i] = new ShipSimple(i, 0, Constants.DEFAULT_SHIPS[i], false);
 			add(i);
 		}
-
-		if ( ! validate() )
-			throw new IllegalStateException("the board is not valid during construction()");
+		
+		validateFull();
 	}
 
 	private void clearboard() {
+		board = new int[Constants.DEFAULT_BOARD_SIZE][Constants.DEFAULT_BOARD_SIZE];
 		for (int i = 0; i < Constants.DEFAULT_SHIPS_NUM; i++) {
 			for (int j = 0; j < Constants.DEFAULT_SHIPS_NUM; j++) {
 				board[i][j] = empty;
 			}
 		}
+		validateEmpty();
 	}
 
 	@Override
@@ -54,58 +55,34 @@ public final class Board implements IBoard {
 
 	@Override
 	public void finalise() {
-		if ( ! validate() )
-			throw new IllegalStateException("The board is not valid during finalise()");
-
+		validateFull();
 		isFinal = true;
 	}
 
 	@Override
 	public int getShipId(int xcord, int ycord) {
-		if ( hasShip(xcord, ycord) ) {
-			for (int id = 0; id < Constants.DEFAULT_SHIPS_NUM; id++) {
-				if ( ships[id].ishorizontal && ships[id].yrowpos == ycord) {
-					if ( xcord >= ships[id].xcolpos 
-							&& xcord < ships[id].xcolpos + ships[id].size ) {
-						return id;
-					}
-
-				} else {
-					if ( ships[id].xcolpos == xcord ) {
-						if ( ycord >= ships[id].yrowpos 
-								&& ycord < ships[id].yrowpos + ships[id].size ) {
-							return id;
-						}
-					}
-				}
-			}
-		}
-
-		return -1;
+		return board[xcord][ycord];
 	}
 
 	@Override
 	public boolean hasShip(int xcoord, int ycoord) {
-		if ( ! coordinatesOk(xcoord, ycoord))
-			return false;
-
-		return board[xcoord][ycoord] >= 0;
+		return board[xcoord][ycoord] > empty;
 	}
 
 	@Override 
 	public Bomb bombCoordinate(Bomb b) throws IllegalArgumentException {
 		if ( ! coordinatesOk(b.x, b.y) )
-			throw new IllegalArgumentException("Invalid coordinates");
+			throw new IllegalArgumentException("Invalid coordinates " + b.x + ", " + b.y);
 
-		int s;
-		if ( (s = getShipId(b.x, b.y) ) > -1 ) { // if there is a ship
+		int ship = board[b.x][b.y];
+		if ( ship > empty ) { // if there is a ship
 			b.setHit(true);
-
-			if ( ! ships[s].makeDamage() ) { // make damage and check if alive
+			if ( ! ships[ship].makeDamage() ) { // make damage and check if alive
 				liveships--;
 				b.destrship = true;
 			}
 		}
+		
 		return b;
 	}
 
@@ -120,7 +97,6 @@ public final class Board implements IBoard {
 			return false;
 		if ( id < 0 ||  ! (id < Constants.DEFAULT_SHIPS_NUM))
 			return false;
-
 
 		remove(id);
 		boolean update = moveOK(id, xcoord, ycoord, horizontal, false);	
@@ -148,16 +124,12 @@ public final class Board implements IBoard {
 	public void randomiseShipsLocations() {
 		// randomize ship rotation and position 
 		if ( ! isFinal ) {
-			Random r = new Random(System.currentTimeMillis());
-			int dsn = Constants.DEFAULT_SHIPS_NUM;
+			
+			int dsn = liveships = Constants.DEFAULT_SHIPS_NUM;
 			int dbs = Constants.DEFAULT_BOARD_SIZE;
 
-			board = new int[dbs][dbs];
 			clearboard();
 			ships = new ShipSimple[Constants.DEFAULT_SHIPS_NUM];
-
-			if ( ! validate() )
-				throw new IllegalStateException("the board is not valid in empty state");
 
 			for (int i = dsn - 1; i > -1; i--) {
 				// Start with the largest ship
@@ -188,6 +160,9 @@ public final class Board implements IBoard {
 
 			}
 		}
+
+		//this.toString();
+		validateFull();
 	}
 
 	@Override
@@ -214,7 +189,7 @@ public final class Board implements IBoard {
 			ALog.d(tag,"Move disallowed, in final state"); 
 			return false;
 		}
-		
+
 		ShipSimple theship = ships[id];
 
 		if ( ! rotateOrder ) {// only bother to check this if we do not rotate
@@ -243,7 +218,7 @@ public final class Board implements IBoard {
 					return false;
 				}
 			}
-			
+
 		} else { 
 			// vertical position, from head coordinate and increasing y value
 			// ensure it fits inside the board
@@ -307,25 +282,51 @@ public final class Board implements IBoard {
 		return liveships;
 	}
 
-	
-	private boolean validate() {
-		int count = 0; // existing "ships"
-		for (int i = 0; i < Constants.DEFAULT_BOARD_SIZE; i++)
-			for (int j = 0; j < Constants.DEFAULT_BOARD_SIZE; j++)
-				if (board[i][j] >= 0 ) { count++; }
-
-		
-		for (int id = 0; id < Constants.DEFAULT_SHIPS_NUM; id++) {
-			ShipSimple sh = ships[id]; 
-			if (sh != null) { 
-				count -= sh.size; //count this ship
-				for ( int s = 0; s < sh.size ; s++ ) { // ensure all coords in it's path is it's own
-					boolean ok = ( sh.ishorizontal ) ? (board[sh.xcolpos + s][sh.yrowpos] == id) : (board[sh.xcolpos][sh.yrowpos + s] == id);
-					if (! ok ) return false;
-				}
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		for (int r = 0; r < Constants.DEFAULT_BOARD_SIZE; r++ ) {
+			for (int c = 0; c < Constants.DEFAULT_BOARD_SIZE; c++ ) {
+				int s = board[r][c];
+				sb.append("["+ ((s==-1)?"*":s) +"]");
 			}
+			ALog.i(tag, sb.toString());
+			sb = new StringBuffer();
+		}
+		return ""; //TODO fix this somehow
+	}
+
+	private boolean validateFull() {
+		try {
+			for ( int i = 0 ; i < Constants.DEFAULT_SHIPS_NUM ; i++) {
+				int expected = Constants.DEFAULT_SHIPS[i]; // expect to find this many
+				int counted = 0;
+				for (int r = 0; r < Constants.DEFAULT_BOARD_SIZE; r++ ) {
+					for (int c = 0; c < Constants.DEFAULT_BOARD_SIZE; c++ ) {
+						if (board[r][c] == i) counted ++;
+					}
+				}
+
+				if ( counted != expected ) throw new IllegalStateException("Board not valid while completed" + i + " counted " + counted + " expected " + expected); 
+			}
+		} catch (Exception e) {
+			ALog.e(tag, e.getMessage());
+			return false;
+		}
+		
+		return true;
+	}
+
+	private boolean validateEmpty() {
+		try {
+			for (int r = 0; r < Constants.DEFAULT_BOARD_SIZE; r++ )
+				for (int c = 0; c < Constants.DEFAULT_BOARD_SIZE; c++ )
+					if ( board[r][c] != empty ) throw new IllegalStateException("Board not valid while empty");
+		} catch (Exception e) {
+			ALog.e(tag, e.getMessage());
+			return false;
 		}
 
-		return count == 0;
+		return true;
 	}
 }

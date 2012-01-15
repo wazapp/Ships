@@ -52,11 +52,10 @@ public interface IBoard {
 	
 	/**
 	 * Place a bomb on the specified location, make damage to any 
-	 * ship on that location and returns if this ship is still alive.
-	 * Will only return false if a ship was destroyed
+	 * ship on that location and returns a new Bomb with the updated information
 	 * @param xcord
 	 * @param ycord
-	 * @return true if the ship is still alive or if it is a miss
+	 * @return an updated Bomb
 	 */
 	Bomb bombCoordinate(Bomb bomb) throws IllegalArgumentException; 
 	
