@@ -70,8 +70,8 @@ public final class PreGame extends Activity implements Observer {
 		ALog.d(tag,"updateActivity " + newstate );
 		
 		switch ( newstate ) {
-		case PREGAME_EXIT : disableInteraction(); break;
-		case WAITGAME : launchProgressDialog() ; model.playerCompletedWaitGame(); break;
+		case PREGAME_EXIT : disableInteraction(); launchProgressDialog(); break;
+		case WAITGAME : model.playerCompletedWaitGame(); break;
 		case WAITGAME_EXIT : dismissProgressDialog(); break;
 		case TURN : progress(); break;
 		case WAIT : progress(); break;

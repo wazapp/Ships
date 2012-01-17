@@ -116,12 +116,8 @@ public final class CState {
 
 		try {
 			cl.board.finalise();
-			//Protocol.getInstance().send(new ReadyMessage("Player", cl.starter));
 			Protocol.writeReady("Player", cl.starter, ComModule.getInstance().getOut());
-			/*} catch (InterruptedException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Main thread waited for blocking queue");
-			*/
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -134,15 +130,6 @@ public final class CState {
 	 * When it does, progress
 	 */
 	private static void enterWaitGame() {
-		//nothing to be done here
-		stateUpdate(Statename.WAITGAME);
-	};
-
-	/*
-	 * Go to either Turn or Wait state
-	 */
-	private static void exitWaitGame() {
-		stateUpdate(Statename.WAITGAME_EXIT);
 		new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
@@ -160,13 +147,22 @@ public final class CState {
 			}
 			protected void onPostExecute(Void result) {
 				// Start whoever was designated as starter
-				if ( cl.starter )
-					enterState(Statename.TURN);
-				else 
-					enterState(Statename.WAIT);
-				
+				stateUpdate(Statename.WAITGAME);
 			}
 		}.execute();
+		
+	};
+
+	/*
+	 * Go to either Turn or Wait state
+	 */
+	private static void exitWaitGame() {
+		stateUpdate(Statename.WAITGAME_EXIT);
+
+		if ( cl.starter )
+			enterState(Statename.TURN);
+		else 
+			enterState(Statename.WAIT);
 
 	};
 
