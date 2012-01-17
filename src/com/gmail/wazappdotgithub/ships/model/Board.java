@@ -329,4 +329,30 @@ public final class Board implements IBoard {
 
 		return true;
 	}
+
+	@Override
+	public boolean moveShipRelative(int id, int xrel, int yrel) {
+		if ( id < 0 ||  ! (id < Constants.DEFAULT_SHIPS_NUM))
+			return false;
+		
+		int xnew = ships[id].xcolpos + xrel;
+		int ynew = ships[id].yrowpos + yrel;
+		
+		if ( ! coordinatesOk(xnew,ynew))
+			return false;
+		
+
+		remove(id);
+		boolean update = moveOK(id, xnew, ynew, ships[id].ishorizontal, false);	
+
+		if ( update ) {		
+			//update ship data
+			ships[id].xcolpos = xnew;
+			ships[id].yrowpos = ynew;
+			//ships[id].ishorizontal = ishorizontal;			
+		}
+
+		add(id);
+		return update;
+	}
 }

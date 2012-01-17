@@ -8,6 +8,7 @@ public class Constants {
     //largest ship at the last position
     public static final int[] DEFAULT_SHIPS = new int[] {2,2,2,2,3,3,3,4,4,6};
     public static final int DEFAULT_SHIPS_NUM = DEFAULT_SHIPS.length;
+    public static final int DEFAULT_SHIP_TOUCH_DELAY_MS = 100; 
     public static final int animated_bombdelay_ms = 500;
     public static final int animated_hitvibro_ms = 100;
     public static final int DEFAULT_PORT = 48152;

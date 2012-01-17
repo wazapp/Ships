@@ -39,6 +39,7 @@ public interface IBoard {
 	 */
 	boolean moveShip(int id, int xcord, int ycord, boolean horizontal);
 	boolean moveShip(int id, int xcord, int ycord);
+	boolean moveShipRelative(int id, int x, int y );
 	
 	/**
 	 * Return true if any part of a ship is present at the 
