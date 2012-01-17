@@ -143,28 +143,31 @@ public final class CState {
 	 */
 	private static void exitWaitGame() {
 		stateUpdate(Statename.WAITGAME_EXIT);
-		
-		try {
-			ReadyMessage ready;
-			//ready = (ReadyMessage) Protocol.getInstance().retrieve();
-			ready = Protocol.readReady(ComModule.getInstance().getIn());
-			//read some data from the Message
-			cl.opponentName = ready.nickname;
+		new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
+				try {
+					ReadyMessage ready;
+					ready = Protocol.readReady(ComModule.getInstance().getIn());
+					//read some data from the Message
+					cl.opponentName = ready.nickname;
 
-		/*} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			*/
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		// Start whoever was designated as starter
-		if ( cl.starter )
-			enterState(Statename.TURN);
-		else 
-			enterState(Statename.WAIT);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				return null;
+			}
+			protected void onPostExecute(Void result) {
+				// Start whoever was designated as starter
+				if ( cl.starter )
+					enterState(Statename.TURN);
+				else 
+					enterState(Statename.WAIT);
+				
+			}
+		}.execute();
+
 	};
 
 	/*
